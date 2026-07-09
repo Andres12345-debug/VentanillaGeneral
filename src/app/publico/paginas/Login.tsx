@@ -1,0 +1,51 @@
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Box } from '@mui/material';
+import { tokenHelper } from '../../../app/utilidades/auth/tokenHelper';
+import { useFormulario } from '../../../app/utilidades/funciones/UsoFormulario';
+import { crearMensaje } from '../../../app/utilidades/funciones/mensaje';
+import { AccesoServicio } from '../../../app/servicios/publicos/AccesoServicio';
+import FormCard from '../../../compartido/ui/FormCard';
+import CampoTexto from '../../../compartido/ui/CampoTexto';
+import BotonPrincipal from '../../../compartido/ui/BotonPrincipal';
+
+const REGEX_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+interface CamposLogin {
+  correoUsuario: string;
+  claveAcceso: string;
+}
+
+const validar = (campos: CamposLogin): Partial<Record<keyof CamposLogin, string>> => {
+  const errores: Partial<Record<keyof CamposLogin, string>> = {};
+  if (!REGEX_EMAIL.test(campos.correoUsuario)) errores.correoUsuario = 'Ingresa un correo válido';
+  if (!campos.claveAcceso) errores.claveAcceso = 'La contraseña es obligatoria';
+  return errores;
+};
+
+const Login: React.FC = () => {
+  const navigate = useNavigate();
+  const { campos, errores, cargando, handleChange, handleSubmit } = useFormulario<CamposLogin>(
+    { correoUsuario: '', claveAcceso: '' },
+    validar,
+    async (valores) => {
+      const respuesta = await AccesoServicio.login(valores);
+      tokenHelper.set(respuesta.token);
+      navigate('/dashboard');
+    }
+  );
+
+  return (
+    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', bgcolor: 'background.default' }}>
+      <FormCard titulo="Iniciar sesión">
+        <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <CampoTexto nombre="correoUsuario" etiqueta="Correo electrónico" tipo="email" valor={campos.correoUsuario} onChange={handleChange} error={errores.correoUsuario} />
+          <CampoTexto nombre="claveAcceso" etiqueta="Contraseña" tipo="password" valor={campos.claveAcceso} onChange={handleChange} error={errores.claveAcceso} />
+          <BotonPrincipal type="submit" cargando={cargando}>Ingresar</BotonPrincipal>
+        </Box>
+      </FormCard>
+    </Box>
+  );
+};
+
+export default Login;
