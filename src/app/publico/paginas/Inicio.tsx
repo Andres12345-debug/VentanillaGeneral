@@ -97,8 +97,8 @@ const Inicio: React.FC = () => {
         sx={{
           bgcolor: 'background.default',
           color: 'text.primary',
-          pt: { xs: 10, md: 14 },
-          pb: { xs: 8, md: 12 },
+          pt: { xs: 10, md: 16 },
+          pb: { xs: 8, md: 14 },
           px: 2,
           position: 'relative',
           overflow: 'hidden',
@@ -117,21 +117,27 @@ const Inicio: React.FC = () => {
         }} />
 
         <Container maxWidth="lg">
-          <Grid container spacing={4} sx={{ alignItems: 'center' }}>
+          <Grid container spacing={6} sx={{ alignItems: 'center' }}>
             <Grid size={{ xs: 12, md: 7 }}>
               <Chip
                 label="Ventanilla Única Digital"
                 size="small"
-                sx={{ bgcolor: 'rgba(18,140,126,0.15)', color: '#128C7E', mb: 2, fontWeight: 700, letterSpacing: 1 }}
+                sx={{ bgcolor: 'rgba(18,140,126,0.15)', color: '#128C7E', mb: 3, fontWeight: 700, letterSpacing: 1 }}
               />
               <Typography
-                variant="h2"
-                sx={{ fontWeight: 800, lineHeight: 1.15, mb: 2, fontSize: { xs: '2.2rem', md: '3rem' } }}
+                variant="h1"
+                sx={{
+                  fontWeight: 800,
+                  lineHeight: 1.05,
+                  mb: 3,
+                  letterSpacing: '-0.02em',
+                  fontSize: { xs: '2.6rem', sm: '3.4rem', md: '4rem' },
+                }}
               >
                 Gestiona tus trámites
-                <Box component="span" sx={{ color: '#25D366' }}> en línea</Box>
+                <Box component="span" sx={{ display: 'block', color: '#25D366' }}>en línea</Box>
               </Typography>
-              <Typography variant="h6" sx={{ color: 'text.secondary', fontWeight: 400, mb: 4, maxWidth: 560, lineHeight: 1.7 }}>
+              <Typography variant="h6" sx={{ color: 'text.secondary', fontWeight: 400, mb: 5, maxWidth: 560, lineHeight: 1.7 }}>
                 Realiza tus solicitudes de forma digital, sigue su progreso en tiempo real y recibe respuestas sin necesidad de desplazarte a las oficinas.
               </Typography>
               <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
@@ -167,45 +173,41 @@ const Inicio: React.FC = () => {
             </Grid>
 
             <Grid size={{ xs: 12, md: 5 }}>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, pl: { md: 4 } }}>
-                {[
-                  'Sin filas ni desplazamientos físicos',
-                  'Seguimiento en tiempo real del trámite',
-                  'Historial completo de tus solicitudes',
-                  'Notificaciones de aprobación o rechazo',
-                ].map((item) => (
-                  <Box key={item} sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                    <CheckCircleOutlinedIcon sx={{ color: '#25D366', flexShrink: 0 }} />
-                    <Typography sx={{ color: 'text.primary' }}>{item}</Typography>
-                  </Box>
-                ))}
-              </Box>
+              <Paper
+                elevation={0}
+                sx={{
+                  position: 'relative',
+                  overflow: 'hidden',
+                  p: 4,
+                  pl: 5,
+                  borderRadius: 4,
+                  border: '1px solid',
+                  borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)',
+                  boxShadow: isDark ? '0 24px 60px rgba(0,0,0,0.45)' : '0 24px 60px rgba(18,140,126,0.16)',
+                  bgcolor: 'background.paper',
+                }}
+              >
+                <Box sx={{ position: 'absolute', top: 0, left: 0, width: 6, height: '100%', bgcolor: '#25D366' }} />
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+                  {[
+                    'Sin filas ni desplazamientos físicos',
+                    'Seguimiento en tiempo real del trámite',
+                    'Historial completo de tus solicitudes',
+                    'Notificaciones de aprobación o rechazo',
+                  ].map((item) => (
+                    <Box key={item} sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                      <CheckCircleOutlinedIcon sx={{ color: '#25D366', flexShrink: 0 }} />
+                      <Typography sx={{ color: 'text.primary', fontWeight: 500 }}>{item}</Typography>
+                    </Box>
+                  ))}
+                </Box>
+              </Paper>
             </Grid>
           </Grid>
         </Container>
       </Box>
 
-      {/* ── ESTADÍSTICAS ─────────────────────────────────────────────────── */}
-      <Box sx={{ bgcolor: '#128C7E', py: 3, px: 2 }}>
-        <Container maxWidth="lg">
-          <Grid container spacing={2} sx={{ justifyContent: 'center' }}>
-            {[
-              { valor: '100%', etiqueta: 'Trámites en línea' },
-              { valor: '24/7', etiqueta: 'Disponibilidad' },
-              { valor: '0', etiqueta: 'Papeles físicos' },
-              { valor: '∞', etiqueta: 'Seguimientos posibles' },
-            ].map((stat) => (
-              <Grid size={{ xs: 6, sm: 3 }} key={stat.etiqueta}>
-                <Box sx={{ textAlign: 'center', color: 'white' }}>
-                  <Typography variant="h4" sx={{ fontWeight: 800 }}>{stat.valor}</Typography>
-                  <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.75)' }}>{stat.etiqueta}</Typography>
-                </Box>
-              </Grid>
-            ))}
-          </Grid>
-        </Container>
-      </Box>
-
+      
       {/* ── CÓMO FUNCIONA ────────────────────────────────────────────────── */}
       <Box sx={{ py: { xs: 7, md: 10 }, px: 2, bgcolor: 'background.paper' }}>
         <Container maxWidth="lg">

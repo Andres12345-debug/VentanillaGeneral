@@ -1,6 +1,7 @@
 import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { Box } from '@mui/material';
+import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
+import { Box, Link, Typography } from '@mui/material';
+import LoginIcon from '@mui/icons-material/Login';
 import { tokenHelper } from '../../../app/utilidades/auth/tokenHelper';
 import { useFormulario } from '../../../app/utilidades/funciones/UsoFormulario';
 import { AccesoServicio } from '../../../app/servicios/publicos/AccesoServicio';
@@ -41,9 +42,21 @@ const Login: React.FC = () => {
   );
 
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', bgcolor: 'background.default' }}>
-      <FormCard titulo="Iniciar sesión">
-        <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+    <Box sx={{ bgcolor: 'background.default' }}>
+      <FormCard
+        titulo="Iniciar sesión"
+        subtitulo="Bienvenido de nuevo, ingresa tus datos para continuar."
+        icono={<LoginIcon />}
+        footer={(
+          <Typography variant="body2" color="text.secondary">
+            ¿No tienes cuenta?{' '}
+            <Link component={RouterLink} to="/registro" sx={{ color: '#128C7E', fontWeight: 700 }}>
+              Regístrate
+            </Link>
+          </Typography>
+        )}
+      >
+        <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
           <CampoTexto nombre="correoUsuario" etiqueta="Correo electrónico" tipo="email" valor={campos.correoUsuario} onChange={handleChange} error={errores.correoUsuario} />
           <CampoTexto nombre="claveAcceso" etiqueta="Contraseña" tipo="password" valor={campos.claveAcceso} onChange={handleChange} error={errores.claveAcceso} />
           <BotonPrincipal type="submit" cargando={cargando}>Ingresar</BotonPrincipal>

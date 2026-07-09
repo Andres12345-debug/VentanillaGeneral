@@ -1,6 +1,7 @@
 import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { Box } from '@mui/material';
+import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
+import { Box, Grid, Link, Typography } from '@mui/material';
+import HowToRegIcon from '@mui/icons-material/HowToReg';
 import { useFormulario } from '../../../app/utilidades/funciones/UsoFormulario';
 import { crearMensaje } from '../../../app/utilidades/funciones/mensaje';
 import { AccesoServicio } from '../../../app/servicios/publicos/AccesoServicio';
@@ -64,17 +65,48 @@ const Registro: React.FC = () => {
   );
 
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', bgcolor: 'background.default', py: 4 }}>
-      <FormCard titulo="Crear cuenta">
-        <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <CampoTexto nombre="correoUsuario" etiqueta="Correo electrónico" tipo="email" valor={campos.correoUsuario} onChange={handleChange} error={errores.correoUsuario} />
-          <CampoTexto nombre="nombreAcceso" etiqueta="Nombre de usuario" valor={campos.nombreAcceso} onChange={handleChange} error={errores.nombreAcceso} />
-          <CampoTexto nombre="claveAcceso" etiqueta="Contraseña" tipo="password" valor={campos.claveAcceso} onChange={handleChange} error={errores.claveAcceso} />
-          <CampoTexto nombre="confirmarClave" etiqueta="Confirmar contraseña" tipo="password" valor={campos.confirmarClave} onChange={handleChange} error={errores.confirmarClave} />
-          <CampoTexto nombre="telefonoUsuario" etiqueta="Teléfono" valor={campos.telefonoUsuario} onChange={handleChange} error={errores.telefonoUsuario} />
-          <CampoTexto nombre="paisUsuario" etiqueta="País" valor={campos.paisUsuario} onChange={handleChange} error={errores.paisUsuario} />
-          <CampoTexto nombre="ciudadUsuario" etiqueta="Ciudad" valor={campos.ciudadUsuario} onChange={handleChange} error={errores.ciudadUsuario} />
-          <CampoTexto nombre="empresaUsuario" etiqueta="Empresa (opcional)" valor={campos.empresaUsuario} onChange={handleChange} error={errores.empresaUsuario} />
+    <Box sx={{ bgcolor: 'background.default' }}>
+      <FormCard
+        titulo="Crear cuenta"
+        subtitulo="Regístrate para empezar a gestionar tus trámites en línea."
+        icono={<HowToRegIcon />}
+        maxWidth={760}
+        footer={(
+          <Typography variant="body2" color="text.secondary">
+            ¿Ya tienes cuenta?{' '}
+            <Link component={RouterLink} to="/login" sx={{ color: '#128C7E', fontWeight: 700 }}>
+              Inicia sesión
+            </Link>
+          </Typography>
+        )}
+      >
+        <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+          <Grid container spacing={2.5}>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <CampoTexto nombre="correoUsuario" etiqueta="Correo electrónico" tipo="email" valor={campos.correoUsuario} onChange={handleChange} error={errores.correoUsuario} />
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <CampoTexto nombre="nombreAcceso" etiqueta="Nombre de usuario" valor={campos.nombreAcceso} onChange={handleChange} error={errores.nombreAcceso} />
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <CampoTexto nombre="claveAcceso" etiqueta="Contraseña" tipo="password" valor={campos.claveAcceso} onChange={handleChange} error={errores.claveAcceso} />
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <CampoTexto nombre="confirmarClave" etiqueta="Confirmar contraseña" tipo="password" valor={campos.confirmarClave} onChange={handleChange} error={errores.confirmarClave} />
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <CampoTexto nombre="telefonoUsuario" etiqueta="Teléfono" valor={campos.telefonoUsuario} onChange={handleChange} error={errores.telefonoUsuario} />
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <CampoTexto nombre="empresaUsuario" etiqueta="Empresa (opcional)" valor={campos.empresaUsuario} onChange={handleChange} error={errores.empresaUsuario} />
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <CampoTexto nombre="paisUsuario" etiqueta="País" valor={campos.paisUsuario} onChange={handleChange} error={errores.paisUsuario} />
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <CampoTexto nombre="ciudadUsuario" etiqueta="Ciudad" valor={campos.ciudadUsuario} onChange={handleChange} error={errores.ciudadUsuario} />
+            </Grid>
+          </Grid>
           <BotonPrincipal type="submit" cargando={cargando}>Registrarse</BotonPrincipal>
         </Box>
       </FormCard>
