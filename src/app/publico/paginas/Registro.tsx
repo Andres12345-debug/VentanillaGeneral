@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Box } from '@mui/material';
 import { useFormulario } from '../../../app/utilidades/funciones/UsoFormulario';
 import { crearMensaje } from '../../../app/utilidades/funciones/mensaje';
@@ -40,6 +40,10 @@ const validar = (campos: CamposRegistro): Partial<Record<keyof CamposRegistro, s
 
 const Registro: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  // El registro no autologuea: si venimos de un enlace público de workflow,
+  // reenviamos "from" al login para que, tras autenticarse, vuelva ahí.
+  const rutaRetorno = (location.state as { from?: string } | null)?.from;
 
   const { campos, errores, cargando, handleChange, handleSubmit } = useFormulario<CamposRegistro>(
     { correoUsuario: '', nombreAcceso: '', claveAcceso: '', confirmarClave: '', telefonoUsuario: '', paisUsuario: '', ciudadUsuario: '', empresaUsuario: '' },
@@ -55,7 +59,7 @@ const Registro: React.FC = () => {
         empresaUsuario: valores.empresaUsuario || undefined,
       });
       crearMensaje('success', 'Cuenta creada. Inicia sesión para continuar.');
-      navigate('/login');
+      navigate('/login', rutaRetorno ? { state: { from: rutaRetorno } } : undefined);
     }
   );
 

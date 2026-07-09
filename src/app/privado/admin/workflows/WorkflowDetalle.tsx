@@ -14,6 +14,7 @@ import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CloseIcon from '@mui/icons-material/Close';
+import LinkIcon from '@mui/icons-material/Link';
 import { crearMensaje } from '../../../../app/utilidades/funciones/mensaje';
 import {
   WorkflowServicio, WorkflowDetalle as WorkflowDetalleType, Etapa, Paso, Formulario, Campo,
@@ -89,6 +90,7 @@ const WorkflowDetalle: React.FC = () => {
   const [clientes, setClientes] = useState<Usuario[]>([]);
   const [clientesSeleccionados, setClientesSeleccionados] = useState<Usuario[]>([]);
   const [asignando, setAsignando] = useState(false);
+  const [actualizandoPublico, setActualizandoPublico] = useState(false);
 
   const [etapaDialogo, setEtapaDialogo] = useState<EtapaDialogoState>(ETAPA_DIALOGO_VACIO);
   const [pasoDialogo, setPasoDialogo] = useState<PasoDialogoState>(PASO_DIALOGO_VACIO);
@@ -136,6 +138,33 @@ const WorkflowDetalle: React.FC = () => {
       crearMensaje('error', error instanceof Error ? error.message : 'Error al asignar');
     } finally {
       setAsignando(false);
+    }
+  };
+
+  // ─── Enlace público (sin asignación previa) ────────────────────────────
+
+  const handleTogglePublico = async (esPublico: boolean) => {
+    if (!id) return;
+    setActualizandoPublico(true);
+    try {
+      await WorkflowServicio.actualizar(Number(id), { esPublico });
+      crearMensaje('success', esPublico ? 'Workflow marcado como público' : 'Workflow marcado como privado');
+      cargarDatos();
+    } catch (error: unknown) {
+      crearMensaje('error', error instanceof Error ? error.message : 'Error al actualizar el workflow');
+    } finally {
+      setActualizandoPublico(false);
+    }
+  };
+
+  const copiarEnlacePublico = async () => {
+    if (!workflow?.tokenPublico) return;
+    const enlace = `${window.location.origin}/tramite/${workflow.tokenPublico}`;
+    try {
+      await navigator.clipboard.writeText(enlace);
+      crearMensaje('success', 'Enlace copiado al portapapeles');
+    } catch {
+      crearMensaje('error', 'No se pudo copiar el enlace');
     }
   };
 
@@ -365,7 +394,24 @@ const WorkflowDetalle: React.FC = () => {
           {workflow.descripcionWorkflow && (
             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>{workflow.descripcionWorkflow}</Typography>
           )}
-          <Chip label={workflow.estadoWorkflow} color={workflow.estadoWorkflow === 'borrador' ? 'default' : 'success'} size="small" sx={{ mt: 1 }} />
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1, flexWrap: 'wrap' }}>
+            <Chip label={workflow.estadoWorkflow} color={workflow.estadoWorkflow === 'borrador' ? 'default' : 'success'} size="small" />
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={Boolean(workflow.esPublico)}
+                  disabled={actualizandoPublico}
+                  onChange={(e) => handleTogglePublico(e.target.checked)}
+                />
+              }
+              label="Público (enlace sin asignación previa)"
+            />
+            {workflow.esPublico && workflow.tokenPublico && (
+              <Button size="small" startIcon={<LinkIcon />} onClick={copiarEnlacePublico}>
+                Copiar enlace
+              </Button>
+            )}
+          </Box>
         </Box>
         <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
           <Button variant="contained" startIcon={<AssignmentIcon />} onClick={abrirDialogoAsignar}>

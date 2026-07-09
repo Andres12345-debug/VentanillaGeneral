@@ -13,6 +13,7 @@ const Login = lazy(() => import('../app/publico/paginas/Login'));
 const Registro = lazy(() => import('../app/publico/paginas/Registro'));
 const RecuperarContrasenia = lazy(() => import('../app/publico/paginas/RecuperarContrasenia'));
 const NuevaContrasenia = lazy(() => import('../app/publico/paginas/NuevaContrasenia'));
+const WorkflowPublico = lazy(() => import('../app/publico/paginas/WorkflowPublico'));
 
 // ── Dashboard compartido ──────────────────────────────────────────
 const TableroPrincipal = lazy(() => import('../app/privado/TableroPrincipal'));
@@ -44,6 +45,7 @@ const RuteoPrincipal: React.FC = () => {
         <Route path="/registro" element={<Registro />} />
         <Route path="/recuperar-password" element={<RecuperarContrasenia />} />
         <Route path="/restablecer-password/:token" element={<NuevaContrasenia />} />
+        <Route path="/tramite/:token" element={<WorkflowPublico />} />
       </Route>
 
       {/* 🔐 PRIVADO — con sidebar y autenticación */}

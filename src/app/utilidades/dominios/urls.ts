@@ -61,4 +61,8 @@ export const URLS = {
   // ─── Respuestas de pasos ────────────────────────────────────────────────
   RESPUESTAS_PASO: (asignacionId: number, codPaso: number) =>
     `${URL_BASE}/asignaciones/${asignacionId}/pasos/${codPaso}/respuestas`,
+
+  // ─── Workflows públicos (enlace sin asignación previa) ───────────────────
+  WORKFLOW_PUBLICO_POR_TOKEN: (token: string) => `${URL_BASE}/publico/workflows/${token}`,
+  WORKFLOW_PUBLICO_COMENZAR: (token: string) => `${URL_BASE}/publico/workflows/${token}/comenzar`,
 };

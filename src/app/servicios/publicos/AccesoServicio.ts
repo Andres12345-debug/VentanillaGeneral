@@ -1,4 +1,5 @@
 import { URLS } from '../../utilidades/dominios/urls';
+import { ApiPublicoServicio } from '../reutilizables/ApiPublicoServicio';
 
 interface LoginBody {
   correoUsuario: string;
@@ -33,45 +34,20 @@ export interface RegistrarResponse {
   token: string;
 }
 
-async function requestPublico<T>(method: 'POST' | 'PATCH', url: string, body: unknown): Promise<T> {
-  const response = await fetch(url, {
-    method,
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  });
-
-  if (!response.ok) {
-    let errorMessage = `Error ${response.status}: ${response.statusText}`;
-    try {
-      const errorBody = await response.json();
-      errorMessage = errorBody?.message ?? errorMessage;
-    } catch {
-      // no-op
-    }
-    throw new Error(errorMessage);
-  }
-
-  if (response.status === 204) {
-    return undefined as unknown as T;
-  }
-
-  return response.json() as Promise<T>;
-}
-
 export const AccesoServicio = {
   login(body: LoginBody): Promise<LoginResponse> {
-    return requestPublico<LoginResponse>('POST', URLS.LOGIN, body);
+    return ApiPublicoServicio.post<LoginResponse>(URLS.LOGIN, body);
   },
 
   registrar(body: RegistrarBody): Promise<RegistrarResponse> {
-    return requestPublico<RegistrarResponse>('POST', URLS.REGISTRAR_USUARIO, body);
+    return ApiPublicoServicio.post<RegistrarResponse>(URLS.REGISTRAR_USUARIO, body);
   },
 
   recuperarPassword(body: RecuperarPasswordBody): Promise<void> {
-    return requestPublico<void>('POST', URLS.RECUPERAR_PASSWORD, body);
+    return ApiPublicoServicio.post<void>(URLS.RECUPERAR_PASSWORD, body);
   },
 
   nuevaPassword(body: NuevaPasswordBody): Promise<void> {
-    return requestPublico<void>('PATCH', URLS.NUEVA_PASSWORD, body);
+    return ApiPublicoServicio.patch<void>(URLS.NUEVA_PASSWORD, body);
   },
 };

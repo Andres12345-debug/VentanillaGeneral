@@ -14,6 +14,8 @@ export interface Workflow {
   nombreWorkflow: string;
   descripcionWorkflow?: string;
   estadoWorkflow: string;
+  esPublico?: boolean;
+  tokenPublico?: string | null;
   fechaCreacion: string;
   fechaActualizacion: string;
   correoUsuario: string;
@@ -73,6 +75,7 @@ export interface UpdateWorkflowDto {
   nombreWorkflow?: string;
   descripcionWorkflow?: string;
   estadoWorkflow?: string;
+  esPublico?: boolean;
 }
 
 export interface CreateEtapaDto {

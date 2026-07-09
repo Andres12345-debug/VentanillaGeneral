@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Box } from '@mui/material';
 import { tokenHelper } from '../../../app/utilidades/auth/tokenHelper';
 import { useFormulario } from '../../../app/utilidades/funciones/UsoFormulario';
@@ -24,13 +24,19 @@ const validar = (campos: CamposLogin): Partial<Record<keyof CamposLogin, string>
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  // Si se llegó acá desde un enlace público de workflow (o cualquier ruta
+  // protegida), "from" indica a dónde volver tras loguearse en vez del
+  // dashboard genérico.
+  const rutaRetorno = (location.state as { from?: string } | null)?.from ?? '/dashboard';
+
   const { campos, errores, cargando, handleChange, handleSubmit } = useFormulario<CamposLogin>(
     { correoUsuario: '', claveAcceso: '' },
     validar,
     async (valores) => {
       const respuesta = await AccesoServicio.login(valores);
       tokenHelper.set(respuesta.token);
-      navigate('/dashboard');
+      navigate(rutaRetorno);
     }
   );
 
