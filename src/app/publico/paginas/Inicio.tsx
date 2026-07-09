@@ -15,6 +15,14 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import DescriptionIcon from '@mui/icons-material/Description';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import GavelIcon from '@mui/icons-material/Gavel';
+import ShortTextIcon from '@mui/icons-material/ShortText';
+import NotesIcon from '@mui/icons-material/Notes';
+import NumbersIcon from '@mui/icons-material/Numbers';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import ToggleOnIcon from '@mui/icons-material/ToggleOn';
+import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
+import ChecklistIcon from '@mui/icons-material/Checklist';
+import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 
 // ─── Datos ───────────────────────────────────────────────────────────────────
 
@@ -80,6 +88,24 @@ const caracteristicas = [
     titulo: 'Resolución ágil',
     descripcion: 'Si tu solicitud es rechazada, puedes corregir y volver a presentarla sin perder el historial de tu proceso.',
   },
+];
+
+const tiposCampo = [
+  { icono: <ShortTextIcon fontSize="small" />, etiqueta: 'Texto corto' },
+  { icono: <NotesIcon fontSize="small" />, etiqueta: 'Texto largo' },
+  { icono: <NumbersIcon fontSize="small" />, etiqueta: 'Número' },
+  { icono: <CalendarMonthIcon fontSize="small" />, etiqueta: 'Fecha' },
+  { icono: <ToggleOnIcon fontSize="small" />, etiqueta: 'Sí / No' },
+  { icono: <RadioButtonCheckedIcon fontSize="small" />, etiqueta: 'Selección única' },
+  { icono: <ChecklistIcon fontSize="small" />, etiqueta: 'Selección múltiple' },
+];
+
+const camposEjemplo = [
+  { etiqueta: 'Nombre completo', tipo: 'Texto corto', requerido: true, icono: <ShortTextIcon fontSize="small" /> },
+  { etiqueta: 'Descripción del caso', tipo: 'Texto largo', requerido: true, icono: <NotesIcon fontSize="small" /> },
+  { etiqueta: 'Monto solicitado', tipo: 'Número', requerido: false, icono: <NumbersIcon fontSize="small" /> },
+  { etiqueta: 'Fecha de la solicitud', tipo: 'Fecha', requerido: true, icono: <CalendarMonthIcon fontSize="small" /> },
+  { etiqueta: '¿Acepta los términos?', tipo: 'Sí / No', requerido: true, icono: <ToggleOnIcon fontSize="small" /> },
 ];
 
 // ─── Componente ──────────────────────────────────────────────────────────────
@@ -307,6 +333,104 @@ const Inicio: React.FC = () => {
                 </Paper>
               </Grid>
             ))}
+          </Grid>
+        </Container>
+      </Box>
+
+      <Divider />
+
+      {/* ── FORMULARIOS DINÁMICOS ────────────────────────────────────────── */}
+      <Box sx={{ py: { xs: 7, md: 10 }, px: 2, bgcolor: 'background.paper' }}>
+        <Container maxWidth="lg">
+          <Grid container spacing={6} sx={{ alignItems: 'center' }}>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Chip
+                label="Constructor de trámites"
+                size="small"
+                sx={{ bgcolor: 'rgba(37,211,102,0.15)', color: '#128C7E', mb: 2, fontWeight: 700, letterSpacing: 1 }}
+              />
+              <Typography variant="h3" sx={{ fontWeight: 800, mb: 2, fontSize: { xs: '1.8rem', md: '2.4rem' } }}>
+                Crea formularios dinámicos sin escribir una línea de código
+              </Typography>
+              <Typography variant="h6" color="text.secondary" sx={{ fontWeight: 400, mb: 3, lineHeight: 1.7 }}>
+                Define los campos de cada paso de tu trámite: elige el tipo de dato, marca cuáles son obligatorios
+                y ordénalos como quieras. Publica un nuevo trámite en minutos, sin depender de desarrollo.
+              </Typography>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 4 }}>
+                {tiposCampo.map((t) => (
+                  <Chip
+                    key={t.etiqueta}
+                    icon={t.icono}
+                    label={t.etiqueta}
+                    variant="outlined"
+                    sx={{ borderColor: 'divider', fontWeight: 600 }}
+                  />
+                ))}
+              </Box>
+              <Button
+                variant="contained"
+                size="large"
+                endIcon={<ArrowForwardIcon />}
+                onClick={() => navigate('/registro')}
+                sx={{
+                  bgcolor: '#25D366', color: '#0b3d2e', '&:hover': { bgcolor: '#1fb857' },
+                  borderRadius: 999,
+                  px: 3.5, py: 1.4, fontSize: '1rem', fontWeight: 700,
+                  boxShadow: '0 4px 24px rgba(37,211,102,0.4)',
+                }}
+              >
+                Crear mi primer trámite
+              </Button>
+            </Grid>
+
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Paper
+                elevation={0}
+                sx={{
+                  p: 3, borderRadius: 4,
+                  border: '1px solid',
+                  borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)',
+                  boxShadow: isDark ? '0 24px 60px rgba(0,0,0,0.45)' : '0 24px 60px rgba(18,140,126,0.16)',
+                }}
+              >
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 700, color: 'text.secondary', textTransform: 'uppercase', letterSpacing: 1 }}>
+                    Paso 1 · Datos del solicitante
+                  </Typography>
+                  <Chip label="Editando" size="small" sx={{ bgcolor: 'rgba(37,211,102,0.15)', color: '#128C7E', fontWeight: 700 }} />
+                </Box>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                  {camposEjemplo.map((campo) => (
+                    <Box
+                      key={campo.etiqueta}
+                      sx={{
+                        display: 'flex', alignItems: 'center', gap: 1.5, p: 1.5, borderRadius: 2,
+                        border: '1px solid',
+                        borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
+                      }}
+                    >
+                      <DragIndicatorIcon sx={{ color: 'text.disabled' }} />
+                      <Box
+                        sx={{
+                          width: 36, height: 36, borderRadius: 1.5, flexShrink: 0,
+                          bgcolor: 'rgba(37,211,102,0.15)', color: '#128C7E',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        }}
+                      >
+                        {campo.icono}
+                      </Box>
+                      <Box sx={{ flexGrow: 1, minWidth: 0 }}>
+                        <Typography variant="body2" sx={{ fontWeight: 600 }} noWrap>{campo.etiqueta}</Typography>
+                        <Typography variant="caption" color="text.secondary">{campo.tipo}</Typography>
+                      </Box>
+                      {campo.requerido && (
+                        <Chip label="Obligatorio" size="small" sx={{ bgcolor: 'rgba(239,68,68,0.12)', color: '#ef4444', fontWeight: 700, fontSize: '0.7rem' }} />
+                      )}
+                    </Box>
+                  ))}
+                </Box>
+              </Paper>
+            </Grid>
           </Grid>
         </Container>
       </Box>
