@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   Box, Typography, Accordion, AccordionSummary, AccordionDetails,
@@ -95,7 +95,7 @@ const WorkflowDetalle: React.FC = () => {
   const [formularioDialogo, setFormularioDialogo] = useState<FormularioDialogoState>(FORMULARIO_DIALOGO_VACIO);
   const [campoDialogo, setCampoDialogo] = useState<CampoDialogoState>(CAMPO_DIALOGO_VACIO);
 
-  const cargarDatos = async () => {
+  const cargarDatos = useCallback(async () => {
     if (!id) return;
     setCargando(true);
     try {
@@ -106,9 +106,9 @@ const WorkflowDetalle: React.FC = () => {
     } finally {
       setCargando(false);
     }
-  };
+  }, [id]);
 
-  useEffect(() => { cargarDatos(); }, [id]);
+  useEffect(() => { cargarDatos(); }, [cargarDatos]);
 
   // ─── Asignar a clientes ────────────────────────────────────────────────
 

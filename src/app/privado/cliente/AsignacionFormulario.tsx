@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   Box, Typography, Stepper, Step, StepLabel, CircularProgress, TextField,
@@ -34,7 +34,7 @@ const AsignacionFormulario: React.FC = () => {
   const [enviando, setEnviando] = useState(false);
   const [reabriendo, setReabriendo] = useState(false);
 
-  const cargar = async () => {
+  const cargar = useCallback(async () => {
     if (!id) return;
     setCargando(true);
     try {
@@ -45,9 +45,9 @@ const AsignacionFormulario: React.FC = () => {
     } finally {
       setCargando(false);
     }
-  };
+  }, [id]);
 
-  useEffect(() => { cargar(); }, [id]);
+  useEffect(() => { cargar(); }, [cargar]);
 
   const pasos = datos?.etapas.flatMap((etapa) => etapa.pasos) ?? [];
   const completados = pasos.filter((p) => p.estadoEjecucionPaso === 'completado');

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead,
@@ -15,7 +15,7 @@ const UsuariosLista: React.FC = () => {
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [cargando, setCargando] = useState(true);
 
-  const cargarUsuarios = async () => {
+  const cargarUsuarios = useCallback(async () => {
     setCargando(true);
     try {
       setUsuarios(await UsuarioServicio.listar());
@@ -24,9 +24,9 @@ const UsuariosLista: React.FC = () => {
     } finally {
       setCargando(false);
     }
-  };
+  }, []);
 
-  useEffect(() => { cargarUsuarios(); }, []);
+  useEffect(() => { cargarUsuarios(); }, [cargarUsuarios]);
 
   const handleEliminar = async (id: number) => {
     if (!window.confirm('¿Estás seguro de eliminar este usuario?')) return;

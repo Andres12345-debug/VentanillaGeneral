@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead,
@@ -24,7 +24,7 @@ const AsignacionesLista: React.FC = () => {
   const [motivoRechazo, setMotivoRechazo] = useState('');
   const [procesando, setProcesando] = useState(false);
 
-  const cargar = async () => {
+  const cargar = useCallback(async () => {
     setCargando(true);
     try {
       const datos = workflowId
@@ -36,9 +36,9 @@ const AsignacionesLista: React.FC = () => {
     } finally {
       setCargando(false);
     }
-  };
+  }, [workflowId]);
 
-  useEffect(() => { cargar(); }, [workflowId]);
+  useEffect(() => { cargar(); }, [cargar]);
 
   const filtradas = filtroEstado === TODOS ? asignaciones : asignaciones.filter((a) => a.estadoAsignacion === filtroEstado);
 

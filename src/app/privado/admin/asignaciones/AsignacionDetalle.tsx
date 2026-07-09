@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   Box, Typography, Chip, CircularProgress, Paper, Button,
@@ -25,7 +25,7 @@ const AsignacionDetalle: React.FC = () => {
   const [motivoRechazo, setMotivoRechazo] = useState('');
   const [procesando, setProcesando] = useState(false);
 
-  const cargar = async () => {
+  const cargar = useCallback(async () => {
     if (!id) return;
     setCargando(true);
     try {
@@ -35,9 +35,9 @@ const AsignacionDetalle: React.FC = () => {
     } finally {
       setCargando(false);
     }
-  };
+  }, [id]);
 
-  useEffect(() => { cargar(); }, [id]);
+  useEffect(() => { cargar(); }, [cargar]);
 
   const handleAprobar = async () => {
     if (!id || !window.confirm('¿Aprobar esta asignación?')) return;

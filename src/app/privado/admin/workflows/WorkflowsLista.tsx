@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead,
@@ -15,7 +15,7 @@ const WorkflowsLista: React.FC = () => {
   const [workflows, setWorkflows] = useState<Workflow[]>([]);
   const [cargando, setCargando] = useState(true);
 
-  const cargarWorkflows = async () => {
+  const cargarWorkflows = useCallback(async () => {
     setCargando(true);
     try {
       const datos = await WorkflowServicio.listar();
@@ -25,9 +25,9 @@ const WorkflowsLista: React.FC = () => {
     } finally {
       setCargando(false);
     }
-  };
+  }, []);
 
-  useEffect(() => { cargarWorkflows(); }, []);
+  useEffect(() => { cargarWorkflows(); }, [cargarWorkflows]);
 
   const handleEliminar = async (id: number) => {
     if (!window.confirm('¿Estás seguro de eliminar este workflow?')) return;
