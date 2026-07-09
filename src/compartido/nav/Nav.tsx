@@ -1,58 +1,73 @@
 import React from 'react';
-import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
+import { AppBar, Toolbar, Typography, Button, IconButton, Box, Container } from '@mui/material';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
+import LightModeIcon from '@mui/icons-material/LightMode';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
+import { useThemeContext } from '../theme/ThemeContexto';
 
 const Nav: React.FC = () => {
   const { pathname } = useLocation();
+  const { mode, toggleTheme } = useThemeContext();
   const isLanding = pathname === '/';
 
   return (
     <AppBar
       position="fixed"
-      elevation={isLanding ? 0 : 1}
+      elevation={0}
       sx={{
-        top: 48,
+        height: 64,
+        justifyContent: 'center',
+        bgcolor: 'sidebar.main',
         zIndex: (theme) => theme.zIndex.drawer + 1,
-        bgcolor: isLanding ? 'background.paper' : undefined,
-        color: isLanding ? 'text.primary' : undefined,
-        backdropFilter: isLanding ? 'blur(12px)' : undefined,
-        borderBottom: isLanding ? '1px solid' : undefined,
-        borderColor: isLanding ? 'divider' : undefined,
       }}
     >
-      <Toolbar>
-        <Box
-          component={RouterLink}
-          to="/"
-          sx={{ display: 'flex', alignItems: 'center', gap: 1, flexGrow: 1, textDecoration: 'none', color: 'inherit' }}
+      <Toolbar disableGutters sx={{ px: 2 }}>
+        <Container
+          maxWidth="lg"
+          disableGutters
+          sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
         >
-          <AccountTreeIcon sx={{ color: 'primary.main', fontSize: 22 }} />
-          <Typography variant="h6" sx={{ fontWeight: 800, letterSpacing: '-0.3px' }}>
-            Ventanilla Única
-          </Typography>
-        </Box>
-        <Box sx={{ display: 'flex', gap: 1 }}>
-          {isLanding && (
-            <Button color="inherit" component={RouterLink} to="/registro"
-              sx={{ fontWeight: 600, opacity: 0.85, '&:hover': { opacity: 1 } }}>
-              Registrarse
-            </Button>
-          )}
-          <Button
-            variant={isLanding ? 'outlined' : 'text'}
-            color={isLanding ? 'primary' : 'inherit'}
+          <Box
             component={RouterLink}
-            to="/login"
-            sx={isLanding ? {
-              borderRadius: 999,
-              px: 2.5,
-              fontWeight: 600,
-            } : {}}
+            to="/"
+            sx={{ display: 'flex', alignItems: 'center', gap: 1, textDecoration: 'none', color: 'inherit' }}
           >
-            Ingresar
-          </Button>
-        </Box>
+            <AccountTreeIcon sx={{ color: '#25D366', fontSize: 22 }} />
+            <Typography variant="h6" sx={{ fontWeight: 800, letterSpacing: '-0.3px', color: 'white' }}>
+              Ventanilla Única
+            </Typography>
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            {isLanding && (
+              <Button
+                component={RouterLink}
+                to="/registro"
+                sx={{ color: 'white', fontWeight: 600, opacity: 0.85, '&:hover': { opacity: 1 } }}
+              >
+                Registrarse
+              </Button>
+            )}
+            <Button
+              variant="outlined"
+              component={RouterLink}
+              to="/login"
+              sx={{
+                borderColor: 'rgba(255,255,255,0.4)',
+                color: 'white',
+                borderRadius: 999,
+                px: 2.5,
+                fontWeight: 600,
+                '&:hover': { borderColor: 'white', bgcolor: 'rgba(255,255,255,0.08)' },
+              }}
+            >
+              Ingresar
+            </Button>
+            <IconButton size="small" onClick={toggleTheme} sx={{ color: 'white', ml: 0.5 }}>
+              {mode === 'light' ? <DarkModeIcon fontSize="small" /> : <LightModeIcon fontSize="small" />}
+            </IconButton>
+          </Box>
+        </Container>
       </Toolbar>
     </AppBar>
   );

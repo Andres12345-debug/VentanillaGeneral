@@ -186,7 +186,7 @@ const Inicio: React.FC = () => {
       </Box>
 
       {/* ── ESTADÍSTICAS ─────────────────────────────────────────────────── */}
-      <Box sx={{ bgcolor: '#128C7E', py: 3 }}>
+      <Box sx={{ bgcolor: '#128C7E', py: 3, px: 2 }}>
         <Container maxWidth="lg">
           <Grid container spacing={2} sx={{ justifyContent: 'center' }}>
             {[

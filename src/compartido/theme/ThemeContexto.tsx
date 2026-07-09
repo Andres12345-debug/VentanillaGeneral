@@ -76,6 +76,21 @@ export const ThemeContextProvider: React.FC<Props> = ({ children }) => {
   const theme = useMemo(
     () =>
       createTheme({
+        typography: {
+          fontFamily: [
+            '-apple-system',
+            'BlinkMacSystemFont',
+            '"Segoe UI"',
+            'Roboto',
+            'Oxygen',
+            'Ubuntu',
+            'Cantarell',
+            '"Fira Sans"',
+            '"Droid Sans"',
+            '"Helvetica Neue"',
+            'sans-serif',
+          ].join(','),
+        },
         palette: {
           mode,
           primary: {
