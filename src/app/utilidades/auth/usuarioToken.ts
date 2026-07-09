@@ -4,7 +4,9 @@ import { tokenHelper } from './tokenHelper';
 export interface TokenPayload {
   sub: number;
   name: string;
-  role: 'admin' | 'cliente';
+  role: 'super_admin' | 'admin' | 'funcionario' | 'cliente';
+  // null solo para super_admin (alcance global, sin empresa)
+  empresa: number | null;
   exp?: number;
 }
 

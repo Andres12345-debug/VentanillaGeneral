@@ -40,9 +40,13 @@ const UsuarioCrear: React.FC = () => {
   });
   const [errores, setErrores] = useState<ErroresCampos>({});
 
+  // Un admin de empresa solo puede crear usuarios 'funcionario' o 'cliente'
+  // (el backend rechaza cualquier otro rol en POST /usuarios de todas formas).
+  const ROLES_ASIGNABLES = ['funcionario', 'cliente'];
+
   useEffect(() => {
     RolesServicio.listar()
-      .then(setRoles)
+      .then((todos) => setRoles(todos.filter((rol) => ROLES_ASIGNABLES.includes(rol.nombreRol))))
       .catch(() => crearMensaje('error', 'Error al cargar los roles'));
   }, []);
 

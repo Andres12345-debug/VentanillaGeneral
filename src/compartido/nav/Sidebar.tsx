@@ -20,6 +20,7 @@ import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import PeopleIcon from '@mui/icons-material/People';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
+import BusinessIcon from '@mui/icons-material/Business';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -41,10 +42,19 @@ interface MenuItem {
 }
 
 const MENUS_POR_ROL: Record<string, MenuItem[]> = {
+  super_admin: [
+    { label: 'Dashboard', path: '/dashboard', icon: <DashboardIcon /> },
+    { label: 'Empresas', path: '/dashboard/empresas', icon: <BusinessIcon /> },
+  ],
   admin: [
     { label: 'Dashboard', path: '/dashboard', icon: <DashboardIcon /> },
     { label: 'Workflows', path: '/dashboard/workflows', icon: <AccountTreeIcon /> },
     { label: 'Usuarios', path: '/dashboard/usuarios', icon: <PeopleIcon /> },
+    { label: 'Asignaciones', path: '/dashboard/asignaciones', icon: <AssignmentIcon /> },
+  ],
+  funcionario: [
+    { label: 'Dashboard', path: '/dashboard', icon: <DashboardIcon /> },
+    { label: 'Workflows', path: '/dashboard/workflows', icon: <AccountTreeIcon /> },
     { label: 'Asignaciones', path: '/dashboard/asignaciones', icon: <AssignmentIcon /> },
   ],
   cliente: [

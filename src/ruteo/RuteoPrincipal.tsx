@@ -19,14 +19,21 @@ const VentanillaUnica = lazy(() => import('../app/publico/paginas/VentanillaUnic
 // ── Dashboard compartido ──────────────────────────────────────────
 const TableroPrincipal = lazy(() => import('../app/privado/TableroPrincipal'));
 
-// ── Admin ─────────────────────────────────────────────────────────
+// ── Admin/funcionario ─────────────────────────────────────────────
 const WorkflowsLista = lazy(() => import('../app/privado/admin/workflows/WorkflowsLista'));
 const WorkflowCrear = lazy(() => import('../app/privado/admin/workflows/WorkflowCrear'));
 const WorkflowDetalle = lazy(() => import('../app/privado/admin/workflows/WorkflowDetalle'));
-const UsuariosLista = lazy(() => import('../app/privado/admin/usuarios/UsuariosLista'));
-const UsuarioCrear = lazy(() => import('../app/privado/admin/usuarios/UsuarioCrear'));
 const AsignacionesLista = lazy(() => import('../app/privado/admin/asignaciones/AsignacionesLista'));
 const AsignacionDetalle = lazy(() => import('../app/privado/admin/asignaciones/AsignacionDetalle'));
+
+// ── Solo admin ────────────────────────────────────────────────────
+const UsuariosLista = lazy(() => import('../app/privado/admin/usuarios/UsuariosLista'));
+const UsuarioCrear = lazy(() => import('../app/privado/admin/usuarios/UsuarioCrear'));
+
+// ── Super admin ───────────────────────────────────────────────────
+const EmpresasLista = lazy(() => import('../app/privado/superadmin/empresas/EmpresasLista'));
+const EmpresaCrear = lazy(() => import('../app/privado/superadmin/empresas/EmpresaCrear'));
+const EmpresaDetalle = lazy(() => import('../app/privado/superadmin/empresas/EmpresaDetalle'));
 
 // ── Cliente ───────────────────────────────────────────────────────
 const MisAsignaciones = lazy(() => import('../app/privado/cliente/MisAsignaciones'));
@@ -56,15 +63,26 @@ const RuteoPrincipal: React.FC = () => {
         {/* Compartido (admin + cliente) */}
         <Route path="/dashboard" element={<TableroPrincipal />} />
 
-        {/* Solo admin */}
-        <Route element={<GuardiaRol rolesPermitidos={['admin']} />}>
+        {/* Admin y funcionario: diseño de workflows y revisión de asignaciones */}
+        <Route element={<GuardiaRol rolesPermitidos={['admin', 'funcionario']} />}>
           <Route path="/dashboard/workflows" element={<WorkflowsLista />} />
           <Route path="/dashboard/workflows/crear" element={<WorkflowCrear />} />
           <Route path="/dashboard/workflows/:id" element={<WorkflowDetalle />} />
-          <Route path="/dashboard/usuarios" element={<UsuariosLista />} />
-          <Route path="/dashboard/usuarios/crear" element={<UsuarioCrear />} />
           <Route path="/dashboard/asignaciones" element={<AsignacionesLista />} />
           <Route path="/dashboard/asignaciones/:id" element={<AsignacionDetalle />} />
+        </Route>
+
+        {/* Solo admin: gestión de usuarios de su empresa */}
+        <Route element={<GuardiaRol rolesPermitidos={['admin']} />}>
+          <Route path="/dashboard/usuarios" element={<UsuariosLista />} />
+          <Route path="/dashboard/usuarios/crear" element={<UsuarioCrear />} />
+        </Route>
+
+        {/* Solo super_admin: gestión de empresas */}
+        <Route element={<GuardiaRol rolesPermitidos={['super_admin']} />}>
+          <Route path="/dashboard/empresas" element={<EmpresasLista />} />
+          <Route path="/dashboard/empresas/crear" element={<EmpresaCrear />} />
+          <Route path="/dashboard/empresas/:id" element={<EmpresaDetalle />} />
         </Route>
 
         {/* Solo cliente */}

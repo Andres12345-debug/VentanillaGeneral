@@ -26,6 +26,15 @@ export const URLS = {
   // ─── Roles ──────────────────────────────────────────────────────────────
   ROLES: `${URL_BASE}/roles`,
 
+  // ─── Empresas (super_admin) ──────────────────────────────────────────────
+  EMPRESAS: `${URL_BASE}/empresas`,
+  EMPRESA_POR_ID: (id: number) => `${URL_BASE}/empresas/${id}`,
+  EMPRESA_CREAR_ADMIN: (id: number) => `${URL_BASE}/empresas/${id}/admin`,
+  EMPRESA_RESET_DEMO: (id: number) => `${URL_BASE}/empresas/${id}/reset-demo`,
+
+  // ─── Empresas (público: resolver link de registro) ───────────────────────
+  EMPRESA_POR_TOKEN_REGISTRO: (token: string) => `${URL_BASE}/empresas/registro/${token}`,
+
   // ─── Workflows ──────────────────────────────────────────────────────────
   WORKFLOWS: `${URL_BASE}/workflows`,
   WORKFLOW_POR_ID: (id: number) => `${URL_BASE}/workflows/${id}`,

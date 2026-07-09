@@ -7,6 +7,7 @@ interface LoginBody {
 }
 
 interface RegistrarBody {
+  tokenEmpresa: string;
   correoUsuario: string;
   nombreAcceso: string;
   claveAcceso: string;

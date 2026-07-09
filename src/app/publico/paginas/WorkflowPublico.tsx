@@ -84,15 +84,17 @@ const WorkflowPublico: React.FC = () => {
             >
               Iniciar sesión
             </Button>
-            <Button
-              component={RouterLink}
-              to="/registro"
-              state={{ from: rutaRetorno }}
-              variant="outlined"
-              fullWidth
-            >
-              Crear una cuenta
-            </Button>
+            {info.tokenRegistroEmpresa && (
+              <Button
+                component={RouterLink}
+                to={`/registro?empresa=${info.tokenRegistroEmpresa}`}
+                state={{ from: rutaRetorno }}
+                variant="outlined"
+                fullWidth
+              >
+                Crear una cuenta
+              </Button>
+            )}
           </>
         )}
       </Box>

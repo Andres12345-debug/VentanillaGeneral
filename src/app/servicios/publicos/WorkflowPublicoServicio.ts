@@ -5,6 +5,7 @@ import { ApiServicio } from '../reutilizables/ApiServicio';
 export interface WorkflowPublicoInfo {
   nombreWorkflow: string;
   descripcionWorkflow: string | null;
+  tokenRegistroEmpresa: string | null;
 }
 
 export interface ComenzarPublicoRespuesta {

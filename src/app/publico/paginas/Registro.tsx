@@ -1,10 +1,11 @@
-import React from 'react';
-import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
-import { Box, Grid, Link, Typography } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Link as RouterLink, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { Box, Grid, Link, Typography, CircularProgress, Alert } from '@mui/material';
 import HowToRegIcon from '@mui/icons-material/HowToReg';
 import { useFormulario } from '../../../app/utilidades/funciones/UsoFormulario';
 import { crearMensaje } from '../../../app/utilidades/funciones/mensaje';
 import { AccesoServicio } from '../../../app/servicios/publicos/AccesoServicio';
+import { EmpresaPublicoServicio } from '../../../app/servicios/publicos/EmpresaPublicoServicio';
 import FormCard from '../../../compartido/ui/FormCard';
 import CampoTexto from '../../../compartido/ui/CampoTexto';
 import BotonPrincipal from '../../../compartido/ui/BotonPrincipal';
@@ -20,7 +21,6 @@ interface CamposRegistro {
   telefonoUsuario: string;
   paisUsuario: string;
   ciudadUsuario: string;
-  empresaUsuario: string;
 }
 
 const validar = (campos: CamposRegistro): Partial<Record<keyof CamposRegistro, string>> => {
@@ -42,33 +42,81 @@ const validar = (campos: CamposRegistro): Partial<Record<keyof CamposRegistro, s
 const Registro: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
+  const tokenEmpresa = searchParams.get('empresa');
+
   // El registro no autologuea: si venimos de un enlace público de workflow,
   // reenviamos "from" al login para que, tras autenticarse, vuelva ahí.
   const rutaRetorno = (location.state as { from?: string } | null)?.from;
 
+  // El cliente nunca elige su empresa libremente: solo se une a la que
+  // resuelve el link de registro que le compartió su empresa.
+  const [nombreEmpresa, setNombreEmpresa] = useState<string | null>(null);
+  const [validandoEmpresa, setValidandoEmpresa] = useState(true);
+  const [empresaInvalida, setEmpresaInvalida] = useState(false);
+
+  useEffect(() => {
+    if (!tokenEmpresa) {
+      setValidandoEmpresa(false);
+      setEmpresaInvalida(true);
+      return;
+    }
+    EmpresaPublicoServicio.resolverTokenRegistro(tokenEmpresa)
+      .then((empresa) => setNombreEmpresa(empresa.nombreEmpresa))
+      .catch(() => setEmpresaInvalida(true))
+      .finally(() => setValidandoEmpresa(false));
+  }, [tokenEmpresa]);
+
   const { campos, errores, cargando, handleChange, handleSubmit } = useFormulario<CamposRegistro>(
-    { correoUsuario: '', nombreAcceso: '', claveAcceso: '', confirmarClave: '', telefonoUsuario: '', paisUsuario: '', ciudadUsuario: '', empresaUsuario: '' },
+    { correoUsuario: '', nombreAcceso: '', claveAcceso: '', confirmarClave: '', telefonoUsuario: '', paisUsuario: '', ciudadUsuario: '' },
     validar,
     async (valores) => {
+      if (!tokenEmpresa) return;
       await AccesoServicio.registrar({
+        tokenEmpresa,
         correoUsuario: valores.correoUsuario,
         nombreAcceso: valores.nombreAcceso,
         claveAcceso: valores.claveAcceso,
         telefonoUsuario: valores.telefonoUsuario,
         paisUsuario: valores.paisUsuario,
         ciudadUsuario: valores.ciudadUsuario,
-        empresaUsuario: valores.empresaUsuario || undefined,
       });
       crearMensaje('success', 'Cuenta creada. Inicia sesión para continuar.');
       navigate('/login', rutaRetorno ? { state: { from: rutaRetorno } } : undefined);
     }
   );
 
+  if (validandoEmpresa) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', py: 10 }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (empresaInvalida) {
+    return (
+      <Box sx={{ bgcolor: 'background.default' }}>
+        <FormCard titulo="Enlace de registro no válido" icono={<HowToRegIcon />} maxWidth={560}>
+          <Alert severity="error" sx={{ mb: 2 }}>
+            Este enlace de registro no es válido o la empresa ya no está activa. Pide a tu empresa el enlace correcto para registrarte.
+          </Alert>
+          <Typography variant="body2" color="text.secondary">
+            ¿Ya tienes cuenta?{' '}
+            <Link component={RouterLink} to="/login" sx={{ color: '#128C7E', fontWeight: 700 }}>
+              Inicia sesión
+            </Link>
+          </Typography>
+        </FormCard>
+      </Box>
+    );
+  }
+
   return (
     <Box sx={{ bgcolor: 'background.default' }}>
       <FormCard
         titulo="Crear cuenta"
-        subtitulo="Regístrate para empezar a gestionar tus trámites en línea."
+        subtitulo={`Te estás registrando en ${nombreEmpresa}.`}
         icono={<HowToRegIcon />}
         maxWidth={760}
         footer={(
@@ -96,9 +144,6 @@ const Registro: React.FC = () => {
             </Grid>
             <Grid size={{ xs: 12, sm: 6 }}>
               <CampoTexto nombre="telefonoUsuario" etiqueta="Teléfono" valor={campos.telefonoUsuario} onChange={handleChange} error={errores.telefonoUsuario} />
-            </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <CampoTexto nombre="empresaUsuario" etiqueta="Empresa (opcional)" valor={campos.empresaUsuario} onChange={handleChange} error={errores.empresaUsuario} />
             </Grid>
             <Grid size={{ xs: 12, sm: 6 }}>
               <CampoTexto nombre="paisUsuario" etiqueta="País" valor={campos.paisUsuario} onChange={handleChange} error={errores.paisUsuario} />
