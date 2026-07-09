@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git push *)",
+      "Bash(grep -v \"^\\\\.$\")",
+      "Bash(mkdir -p \"/c/Users/julia/AppData/Local/Temp/claude/c--Users-julia-OneDrive-Desktop-Julian-Monta-ez-Software-workflows-frontend/e911dffc-2b12-4882-9d0b-926379051e4e/scratchpad\")"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\julia\\AppData\\Local\\Temp\\claude\\c--Users-julia-OneDrive-Desktop-Julian-Monta-ez-Software-workflows-frontend\\e911dffc-2b12-4882-9d0b-926379051e4e\\scratchpad"
+    ]
+  }
+}

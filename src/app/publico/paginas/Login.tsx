@@ -59,6 +59,9 @@ const Login: React.FC = () => {
         <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
           <CampoTexto nombre="correoUsuario" etiqueta="Correo electrónico" tipo="email" valor={campos.correoUsuario} onChange={handleChange} error={errores.correoUsuario} />
           <CampoTexto nombre="claveAcceso" etiqueta="Contraseña" tipo="password" valor={campos.claveAcceso} onChange={handleChange} error={errores.claveAcceso} />
+          <Link component={RouterLink} to="/recuperar-password" sx={{ color: '#128C7E', fontWeight: 700, alignSelf: 'flex-end', fontSize: '0.875rem' }}>
+            ¿Olvidaste tu contraseña?
+          </Link>
           <BotonPrincipal type="submit" cargando={cargando}>Ingresar</BotonPrincipal>
         </Box>
       </FormCard>

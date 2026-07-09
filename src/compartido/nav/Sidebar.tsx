@@ -23,10 +23,13 @@ import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import LogoutIcon from '@mui/icons-material/Logout';
+import LightModeIcon from '@mui/icons-material/LightMode';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useUsuarioToken } from '../../app/utilidades/auth/usuarioToken';
 import { tokenHelper } from '../../app/utilidades/auth/tokenHelper';
 import { ROL_CONFIG } from '../../app/utilidades/dominios/roles';
+import { useThemeContext } from '../theme/ThemeContexto';
 
 const DRAWER_WIDTH_EXPANDED = 268;
 const DRAWER_WIDTH_COLLAPSED = 68;
@@ -62,6 +65,7 @@ const Sidebar: React.FC<SidebarProps> = ({ mobileOpen = false, onMobileClose }) 
   const navigate = useNavigate();
   const location = useLocation();
   const decoded = useUsuarioToken();
+  const { mode, toggleTheme } = useThemeContext();
 
   const width = isDesktop
     ? collapsed
@@ -74,7 +78,7 @@ const Sidebar: React.FC<SidebarProps> = ({ mobileOpen = false, onMobileClose }) 
 
   const handleLogout = () => {
     tokenHelper.remove();
-    navigate('/login', { replace: true });
+    navigate('/', { replace: true });
   };
 
   const drawerContent = (
@@ -167,6 +171,15 @@ const Sidebar: React.FC<SidebarProps> = ({ mobileOpen = false, onMobileClose }) 
               />
             )}
           </ListItemButton>
+        </Tooltip>
+      </Box>
+
+      {/* Tema */}
+      <Box sx={{ p: 1, display: 'flex', justifyContent: collapsed ? 'center' : 'flex-end' }}>
+        <Tooltip title={mode === 'light' ? 'Modo oscuro' : 'Modo claro'} placement="right">
+          <IconButton size="small" onClick={toggleTheme} sx={{ color: 'rgba(255,255,255,0.7)' }}>
+            {mode === 'light' ? <DarkModeIcon fontSize="small" /> : <LightModeIcon fontSize="small" />}
+          </IconButton>
         </Tooltip>
       </Box>
 
