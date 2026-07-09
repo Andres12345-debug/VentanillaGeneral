@@ -29,6 +29,8 @@ const RecuperarContrasenia: React.FC = () => {
     async (valores) => {
       try {
         await AccesoServicio.recuperarPassword({ correoUsuario: valores.correoUsuario });
+      } catch {
+        // No revelar si el correo existe o no: se muestra siempre el mismo mensaje.
       } finally {
         crearMensaje('info', 'Si el correo está registrado, recibirás un enlace para restablecer tu contraseña.');
         navigate('/login');

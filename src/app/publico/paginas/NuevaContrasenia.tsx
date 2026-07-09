@@ -8,15 +8,19 @@ import FormCard from '../../../compartido/ui/FormCard';
 import CampoTexto from '../../../compartido/ui/CampoTexto';
 import BotonPrincipal from '../../../compartido/ui/BotonPrincipal';
 
-const REGEX_PASSWORD = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+const REGEX_PASSWORD = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
 interface CamposNuevaClave {
   nuevaClave: string;
+  confirmarClave: string;
 }
 
 const validar = (campos: CamposNuevaClave): Partial<Record<keyof CamposNuevaClave, string>> => {
   const errores: Partial<Record<keyof CamposNuevaClave, string>> = {};
-  if (!REGEX_PASSWORD.test(campos.nuevaClave)) errores.nuevaClave = 'Mínimo 8 caracteres, una mayúscula y un número';
+  if (!REGEX_PASSWORD.test(campos.nuevaClave))
+    errores.nuevaClave = 'Mínimo 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial (@$!%*?&)';
+  if (campos.confirmarClave !== campos.nuevaClave)
+    errores.confirmarClave = 'Las contraseñas no coinciden';
   return errores;
 };
 
@@ -25,7 +29,7 @@ const NuevaContrasenia: React.FC = () => {
   const { token } = useParams<{ token: string }>();
 
   const { campos, errores, cargando, handleChange, handleSubmit } = useFormulario<CamposNuevaClave>(
-    { nuevaClave: '' },
+    { nuevaClave: '', confirmarClave: '' },
     validar,
     async (valores) => {
       if (!token) {
@@ -44,6 +48,7 @@ const NuevaContrasenia: React.FC = () => {
       <FormCard titulo="Nueva contraseña">
         <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <CampoTexto nombre="nuevaClave" etiqueta="Nueva contraseña" tipo="password" valor={campos.nuevaClave} onChange={handleChange} error={errores.nuevaClave} />
+          <CampoTexto nombre="confirmarClave" etiqueta="Confirmar contraseña" tipo="password" valor={campos.confirmarClave} onChange={handleChange} error={errores.confirmarClave} />
           <BotonPrincipal type="submit" cargando={cargando}>Guardar contraseña</BotonPrincipal>
         </Box>
       </FormCard>

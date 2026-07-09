@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, Outlet } from 'react-router-dom';
 import { tokenHelper } from '../utilidades/auth/tokenHelper';
 import { decodeToken } from '../utilidades/auth/usuarioToken';
@@ -7,30 +7,33 @@ interface VigilanteProps {
   children?: React.ReactNode;
 }
 
+function haySesionValida(): boolean {
+  const token = tokenHelper.get();
+  if (!token) return false;
+
+  const decoded = decodeToken(token);
+  if (!decoded) return false;
+
+  if (decoded.exp && decoded.exp * 1000 < Date.now()) return false;
+
+  return true;
+}
+
 const Vigilante: React.FC<VigilanteProps> = ({ children }) => {
   const navigate = useNavigate();
+  // Se evalúa de forma síncrona (antes del primer render) para no montar
+  // contenido protegido ni disparar peticiones autenticadas antes de saber
+  // si hay sesión válida.
+  const [autorizado] = useState(haySesionValida);
 
   useEffect(() => {
-    const token = tokenHelper.get();
-
-    if (!token) {
-      navigate('/login', { replace: true });
-      return;
-    }
-
-    const decoded = decodeToken(token);
-
-    if (!decoded) {
-      tokenHelper.remove();
-      navigate('/login', { replace: true });
-      return;
-    }
-
-    if (decoded.exp && decoded.exp * 1000 < Date.now()) {
+    if (!autorizado) {
       tokenHelper.remove();
       navigate('/login', { replace: true });
     }
-  }, [navigate]);
+  }, [autorizado, navigate]);
+
+  if (!autorizado) return null;
 
   return <>{children ?? <Outlet />}</>;
 };

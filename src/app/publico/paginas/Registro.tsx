@@ -8,13 +8,14 @@ import FormCard from '../../../compartido/ui/FormCard';
 import CampoTexto from '../../../compartido/ui/CampoTexto';
 import BotonPrincipal from '../../../compartido/ui/BotonPrincipal';
 
-const REGEX_PASSWORD = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+const REGEX_PASSWORD = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 const REGEX_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 interface CamposRegistro {
   correoUsuario: string;
   nombreAcceso: string;
   claveAcceso: string;
+  confirmarClave: string;
   telefonoUsuario: string;
   paisUsuario: string;
   ciudadUsuario: string;
@@ -27,7 +28,9 @@ const validar = (campos: CamposRegistro): Partial<Record<keyof CamposRegistro, s
   if (campos.nombreAcceso.length < 3 || campos.nombreAcceso.length > 50)
     errores.nombreAcceso = 'El nombre debe tener entre 3 y 50 caracteres';
   if (!REGEX_PASSWORD.test(campos.claveAcceso))
-    errores.claveAcceso = 'Mínimo 8 caracteres, una mayúscula y un número';
+    errores.claveAcceso = 'Mínimo 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial (@$!%*?&)';
+  if (campos.confirmarClave !== campos.claveAcceso)
+    errores.confirmarClave = 'Las contraseñas no coinciden';
   if (campos.telefonoUsuario.length < 7)
     errores.telefonoUsuario = 'El teléfono debe tener al menos 7 caracteres';
   if (!campos.paisUsuario.trim()) errores.paisUsuario = 'El país es obligatorio';
@@ -39,7 +42,7 @@ const Registro: React.FC = () => {
   const navigate = useNavigate();
 
   const { campos, errores, cargando, handleChange, handleSubmit } = useFormulario<CamposRegistro>(
-    { correoUsuario: '', nombreAcceso: '', claveAcceso: '', telefonoUsuario: '', paisUsuario: '', ciudadUsuario: '', empresaUsuario: '' },
+    { correoUsuario: '', nombreAcceso: '', claveAcceso: '', confirmarClave: '', telefonoUsuario: '', paisUsuario: '', ciudadUsuario: '', empresaUsuario: '' },
     validar,
     async (valores) => {
       await AccesoServicio.registrar({
@@ -63,6 +66,7 @@ const Registro: React.FC = () => {
           <CampoTexto nombre="correoUsuario" etiqueta="Correo electrónico" tipo="email" valor={campos.correoUsuario} onChange={handleChange} error={errores.correoUsuario} />
           <CampoTexto nombre="nombreAcceso" etiqueta="Nombre de usuario" valor={campos.nombreAcceso} onChange={handleChange} error={errores.nombreAcceso} />
           <CampoTexto nombre="claveAcceso" etiqueta="Contraseña" tipo="password" valor={campos.claveAcceso} onChange={handleChange} error={errores.claveAcceso} />
+          <CampoTexto nombre="confirmarClave" etiqueta="Confirmar contraseña" tipo="password" valor={campos.confirmarClave} onChange={handleChange} error={errores.confirmarClave} />
           <CampoTexto nombre="telefonoUsuario" etiqueta="Teléfono" valor={campos.telefonoUsuario} onChange={handleChange} error={errores.telefonoUsuario} />
           <CampoTexto nombre="paisUsuario" etiqueta="País" valor={campos.paisUsuario} onChange={handleChange} error={errores.paisUsuario} />
           <CampoTexto nombre="ciudadUsuario" etiqueta="Ciudad" valor={campos.ciudadUsuario} onChange={handleChange} error={errores.ciudadUsuario} />

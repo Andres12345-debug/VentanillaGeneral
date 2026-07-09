@@ -1,4 +1,11 @@
-export const URL_BASE = 'http://localhost:3550';
+// La URL del backend viene de REACT_APP_API_URL (ver .env / .env.production).
+// Nunca hardcodear el host acá: en build de producción debe apuntar a HTTPS.
+export const URL_BASE = process.env.REACT_APP_API_URL || 'http://localhost:3550';
+
+if (process.env.NODE_ENV === 'production' && !URL_BASE.startsWith('https://')) {
+  // eslint-disable-next-line no-console
+  console.warn('REACT_APP_API_URL no usa HTTPS en un build de producción.');
+}
 
 export const URLS = {
   URL_BASE,
