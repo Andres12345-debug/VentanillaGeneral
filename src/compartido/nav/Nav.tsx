@@ -10,6 +10,7 @@ const Nav: React.FC = () => {
   const { pathname } = useLocation();
   const { mode, toggleTheme } = useThemeContext();
   const isLanding = pathname === '/';
+  const isVentanillaUnica = pathname === '/ventanilla-unica';
 
   return (
     <AppBar
@@ -39,6 +40,15 @@ const Nav: React.FC = () => {
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            {!isVentanillaUnica && (
+              <Button
+                component={RouterLink}
+                to="/ventanilla-unica"
+                sx={{ color: 'white', fontWeight: 600, opacity: 0.85, '&:hover': { opacity: 1 } }}
+              >
+                Ventanilla Única
+              </Button>
+            )}
             {isLanding && (
               <Button
                 component={RouterLink}

@@ -78,6 +78,7 @@ export const ThemeContextProvider: React.FC<Props> = ({ children }) => {
       createTheme({
         typography: {
           fontFamily: [
+            'Inter',
             '-apple-system',
             'BlinkMacSystemFont',
             '"Segoe UI"',
@@ -90,6 +91,16 @@ export const ThemeContextProvider: React.FC<Props> = ({ children }) => {
             '"Helvetica Neue"',
             'sans-serif',
           ].join(','),
+          h1: {
+            fontWeight: 800,
+            lineHeight: 1.1,
+            letterSpacing: '-0.02em',
+            fontSize: 'clamp(2.6rem, 2rem + 3vw, 4rem)',
+          },
+          h3: {
+            fontWeight: 800,
+            fontSize: 'clamp(1.8rem, 1.4rem + 1.5vw, 2.4rem)',
+          },
         },
         palette: {
           mode,

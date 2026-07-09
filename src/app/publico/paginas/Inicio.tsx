@@ -1,19 +1,18 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Box, Typography, Button, Container, Grid, Paper, Chip, Divider, useTheme,
+  Box, Typography, Button, Container, Grid, Paper, Chip, useTheme,
 } from '@mui/material';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import TrackChangesIcon from '@mui/icons-material/TrackChanges';
 import SecurityIcon from '@mui/icons-material/Security';
 import HowToRegIcon from '@mui/icons-material/HowToReg';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import TuneIcon from '@mui/icons-material/Tune';
+import ShareIcon from '@mui/icons-material/Share';
 import CheckCircleOutlinedIcon from '@mui/icons-material/CheckCircleOutlined';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import DescriptionIcon from '@mui/icons-material/Description';
-import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
+import HowToVoteIcon from '@mui/icons-material/HowToVote';
 import GavelIcon from '@mui/icons-material/Gavel';
 import ShortTextIcon from '@mui/icons-material/ShortText';
 import NotesIcon from '@mui/icons-material/Notes';
@@ -23,70 +22,71 @@ import ToggleOnIcon from '@mui/icons-material/ToggleOn';
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import ChecklistIcon from '@mui/icons-material/Checklist';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
+import Tarjeta from '../../../compartido/ui/Tarjeta';
 
 // ─── Datos ───────────────────────────────────────────────────────────────────
 
 const pasos = [
   {
     numero: '01',
-    titulo: 'Crea tu cuenta',
-    descripcion: 'Regístrate con tu correo electrónico e información básica. Es gratis y toma menos de 2 minutos.',
-    icono: <PersonAddIcon sx={{ fontSize: 32 }} />,
+    titulo: 'Diseña tu flujo',
+    descripcion: 'Define las etapas y pasos que necesita tu trámite, tal como opera tu organización, sin depender de desarrollo.',
+    icono: <AccountTreeIcon sx={{ fontSize: 32 }} />,
     color: '#25D366',
   },
   {
     numero: '02',
-    titulo: 'Accede al sistema',
-    descripcion: 'Inicia sesión y accede a tu panel personal donde encontrarás todos tus trámites asignados.',
-    icono: <PlayArrowIcon sx={{ fontSize: 32 }} />,
+    titulo: 'Configura los campos',
+    descripcion: 'Añade campos dinámicos —texto, número, fecha, selección— y marca cuáles son obligatorios en cada paso.',
+    icono: <TuneIcon sx={{ fontSize: 32 }} />,
     color: '#0d9488',
   },
   {
     numero: '03',
-    titulo: 'Completa el formulario',
-    descripcion: 'Sigue el flujo de trabajo paso a paso. Cada etapa te guía con instrucciones claras y precisas.',
-    icono: <DescriptionIcon sx={{ fontSize: 32 }} />,
+    titulo: 'Publica y comparte',
+    descripcion: 'Activa el trámite y compártelo con tus usuarios mediante un enlace o acceso directo desde el sistema.',
+    icono: <ShareIcon sx={{ fontSize: 32 }} />,
     color: '#8b5cf6',
   },
   {
     numero: '04',
-    titulo: 'Recibe tu respuesta',
-    descripcion: 'El equipo revisa tu solicitud y recibirás la resolución directamente en tu panel de usuario.',
-    icono: <NotificationsActiveIcon sx={{ fontSize: 32 }} />,
+    titulo: 'Administra las solicitudes',
+    descripcion: 'Revisa cada solicitud, apruébala, recházala o delégala a tu equipo desde un único panel de control.',
+    icono: <AssignmentTurnedInIcon sx={{ fontSize: 32 }} />,
     color: '#f59e0b',
   },
 ];
 
 const caracteristicas = [
   {
-    icono: <AccountTreeIcon sx={{ fontSize: 40, color: '#25D366' }} />,
-    titulo: 'Flujos estructurados',
-    descripcion: 'Cada trámite sigue un proceso definido con etapas y pasos claros, garantizando que ningún requerimiento quede sin atender.',
+    icono: <ChecklistIcon sx={{ fontSize: 40, color: '#25D366' }} />,
+    titulo: 'Campos dinámicos sin código',
+    descripcion: 'Arma cada formulario eligiendo el tipo de campo, si es obligatorio y en qué orden aparece. Publícalo en minutos.',
   },
   {
-    icono: <TrackChangesIcon sx={{ fontSize: 40, color: '#0d9488' }} />,
-    titulo: 'Seguimiento en tiempo real',
-    descripcion: 'Consulta el estado de tu solicitud en cualquier momento. Sabrás exactamente en qué etapa se encuentra y quién la revisa.',
+    icono: <AccountTreeIcon sx={{ fontSize: 40, color: '#0d9488' }} />,
+    titulo: 'Flujos por etapas y pasos',
+    descripcion: 'Modela procesos tan simples o complejos como los necesites, con etapas y pasos claramente definidos.',
   },
   {
-    icono: <AssignmentTurnedInIcon sx={{ fontSize: 40, color: '#8b5cf6' }} />,
-    titulo: 'Gestión integral',
-    descripcion: 'Los funcionarios administran y asignan los trámites, con la posibilidad de aprobar, rechazar o delegar la revisión.',
-  },
-  {
-    icono: <SecurityIcon sx={{ fontSize: 40, color: '#f59e0b' }} />,
-    titulo: 'Seguridad garantizada',
-    descripcion: 'Tus datos están protegidos. El acceso al sistema es mediante autenticación segura y cada acción queda registrada.',
+    icono: <TrackChangesIcon sx={{ fontSize: 40, color: '#8b5cf6' }} />,
+    titulo: 'Panel de seguimiento',
+    descripcion: 'Visualiza en tiempo real en qué estado se encuentra cada solicitud y quién la tiene asignada.',
   },
   {
     icono: <HowToRegIcon sx={{ fontSize: 40, color: '#ef4444' }} />,
     titulo: 'Control de acceso por roles',
-    descripcion: 'Administradores, funcionarios y ciudadanos tienen accesos diferenciados según su función dentro del sistema.',
+    descripcion: 'Administradores y usuarios finales tienen accesos diferenciados según su función dentro del sistema.',
+  },
+  {
+    icono: <SecurityIcon sx={{ fontSize: 40, color: '#f59e0b' }} />,
+    titulo: 'Seguridad y auditoría',
+    descripcion: 'El acceso se realiza mediante autenticación segura y cada acción sobre una solicitud queda registrada.',
   },
   {
     icono: <GavelIcon sx={{ fontSize: 40, color: '#06b6d4' }} />,
-    titulo: 'Resolución ágil',
-    descripcion: 'Si tu solicitud es rechazada, puedes corregir y volver a presentarla sin perder el historial de tu proceso.',
+    titulo: 'Resolución ágil de reprocesos',
+    descripcion: 'Si una solicitud se rechaza, tus usuarios pueden corregirla y reenviarla sin perder el historial del proceso.',
   },
 ];
 
@@ -146,25 +146,16 @@ const Inicio: React.FC = () => {
           <Grid container spacing={6} sx={{ alignItems: 'center' }}>
             <Grid size={{ xs: 12, md: 7 }}>
               <Chip
-                label="Ventanilla Única Digital"
+                label="Software de gestión de trámites"
                 size="small"
                 sx={{ bgcolor: 'rgba(18,140,126,0.15)', color: '#128C7E', mb: 3, fontWeight: 700, letterSpacing: 1 }}
               />
-              <Typography
-                variant="h1"
-                sx={{
-                  fontWeight: 800,
-                  lineHeight: 1.05,
-                  mb: 3,
-                  letterSpacing: '-0.02em',
-                  fontSize: { xs: '2.6rem', sm: '3.4rem', md: '4rem' },
-                }}
-              >
-                Gestiona tus trámites
-                <Box component="span" sx={{ display: 'block', color: '#25D366' }}>en línea</Box>
+              <Typography variant="h1" sx={{ mb: 3 }}>
+                Digitaliza los trámites
+                <Box component="span" sx={{ display: 'block', color: '#25D366' }}>de tu organización</Box>
               </Typography>
               <Typography variant="h6" sx={{ color: 'text.secondary', fontWeight: 400, mb: 5, maxWidth: 560, lineHeight: 1.7 }}>
-                Realiza tus solicitudes de forma digital, sigue su progreso en tiempo real y recibe respuestas sin necesidad de desplazarte a las oficinas.
+                Crea, publica y administra formularios dinámicos para cualquier proceso, sin escribir una línea de código. Tú defines los campos, las etapas y quién los revisa.
               </Typography>
               <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
                 <Button
@@ -179,7 +170,7 @@ const Inicio: React.FC = () => {
                     boxShadow: '0 4px 24px rgba(37,211,102,0.4)',
                   }}
                 >
-                  Comenzar ahora
+                  Solicitar acceso
                 </Button>
                 <Button
                   variant="outlined"
@@ -216,10 +207,10 @@ const Inicio: React.FC = () => {
                 <Box sx={{ position: 'absolute', top: 0, left: 0, width: 6, height: '100%', bgcolor: '#25D366' }} />
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
                   {[
-                    'Sin filas ni desplazamientos físicos',
-                    'Seguimiento en tiempo real del trámite',
-                    'Historial completo de tus solicitudes',
-                    'Notificaciones de aprobación o rechazo',
+                    'Constructor de formularios sin código',
+                    'Flujos configurables por etapas y pasos',
+                    'Panel de administración de solicitudes',
+                    'Roles y permisos diferenciados',
                   ].map((item) => (
                     <Box key={item} sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                       <CheckCircleOutlinedIcon sx={{ color: '#25D366', flexShrink: 0 }} />
@@ -233,111 +224,6 @@ const Inicio: React.FC = () => {
         </Container>
       </Box>
 
-      
-      {/* ── CÓMO FUNCIONA ────────────────────────────────────────────────── */}
-      <Box sx={{ py: { xs: 7, md: 10 }, px: 2, bgcolor: 'background.paper' }}>
-        <Container maxWidth="lg">
-          <Box sx={{ textAlign: 'center', mb: 7 }}>
-            <Chip label="Guía de uso" size="small" color="primary" sx={{ mb: 2, fontWeight: 700 }} />
-            <Typography variant="h3" sx={{ fontWeight: 800, mb: 2, fontSize: { xs: '1.8rem', md: '2.4rem' } }}>
-              ¿Cómo funciona?
-            </Typography>
-            <Typography variant="h6" color="text.secondary" sx={{ fontWeight: 400, maxWidth: 550, mx: 'auto' }}>
-              En cuatro sencillos pasos, gestiona tus trámites desde cualquier dispositivo.
-            </Typography>
-          </Box>
-
-          <Grid container spacing={3}>
-            {pasos.map((paso, index) => (
-              <Grid size={{ xs: 12, sm: 6, md: 3 }} key={paso.numero}>
-                <Paper
-                  elevation={0}
-                  sx={{
-                    p: 3.5, height: '100%', borderRadius: 3,
-                    border: '1px solid',
-                    borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.07)',
-                    position: 'relative', overflow: 'hidden',
-                    transition: 'transform 0.2s, box-shadow 0.2s',
-                    '&:hover': { transform: 'translateY(-4px)', boxShadow: '0 12px 32px rgba(0,0,0,0.12)' },
-                  }}
-                >
-                  <Box
-                    sx={{
-                      width: 60, height: 60, borderRadius: 2, mb: 2,
-                      bgcolor: `${paso.color}18`,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      color: paso.color,
-                    }}
-                  >
-                    {paso.icono}
-                  </Box>
-                  <Typography
-                    sx={{ fontSize: '2.5rem', fontWeight: 900, color: `${paso.color}25`, lineHeight: 1, mb: 1 }}
-                  >
-                    {paso.numero}
-                  </Typography>
-                  <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>{paso.titulo}</Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>
-                    {paso.descripcion}
-                  </Typography>
-                  {index < pasos.length - 1 && (
-                    <ArrowForwardIcon
-                      sx={{
-                        position: 'absolute', right: -16, top: '50%',
-                        transform: 'translateY(-50%)',
-                        color: 'divider', fontSize: 28,
-                        display: { xs: 'none', md: 'block' },
-                      }}
-                    />
-                  )}
-                </Paper>
-              </Grid>
-            ))}
-          </Grid>
-        </Container>
-      </Box>
-
-      <Divider />
-
-      {/* ── CARACTERÍSTICAS ──────────────────────────────────────────────── */}
-      <Box sx={{ py: { xs: 7, md: 10 }, px: 2 }}>
-        <Container maxWidth="lg">
-          <Box sx={{ textAlign: 'center', mb: 7 }}>
-            <Chip label="Funcionalidades" size="small" color="secondary" sx={{ mb: 2, fontWeight: 700 }} />
-            <Typography variant="h3" sx={{ fontWeight: 800, mb: 2, fontSize: { xs: '1.8rem', md: '2.4rem' } }}>
-              Todo lo que necesitas
-            </Typography>
-            <Typography variant="h6" color="text.secondary" sx={{ fontWeight: 400, maxWidth: 500, mx: 'auto' }}>
-              Una plataforma completa diseñada para simplificar la gestión de trámites administrativos.
-            </Typography>
-          </Box>
-
-          <Grid container spacing={3}>
-            {caracteristicas.map((c) => (
-              <Grid size={{ xs: 12, sm: 6, md: 4 }} key={c.titulo}>
-                <Paper
-                  elevation={0}
-                  sx={{
-                    p: 3.5, height: '100%', borderRadius: 3,
-                    border: '1px solid',
-                    borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.07)',
-                    transition: 'transform 0.2s, box-shadow 0.2s',
-                    '&:hover': { transform: 'translateY(-3px)', boxShadow: '0 8px 24px rgba(0,0,0,0.1)' },
-                  }}
-                >
-                  <Box sx={{ mb: 2 }}>{c.icono}</Box>
-                  <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>{c.titulo}</Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.8 }}>
-                    {c.descripcion}
-                  </Typography>
-                </Paper>
-              </Grid>
-            ))}
-          </Grid>
-        </Container>
-      </Box>
-
-      <Divider />
 
       {/* ── FORMULARIOS DINÁMICOS ────────────────────────────────────────── */}
       <Box sx={{ py: { xs: 7, md: 10 }, px: 2, bgcolor: 'background.paper' }}>
@@ -349,7 +235,7 @@ const Inicio: React.FC = () => {
                 size="small"
                 sx={{ bgcolor: 'rgba(37,211,102,0.15)', color: '#128C7E', mb: 2, fontWeight: 700, letterSpacing: 1 }}
               />
-              <Typography variant="h3" sx={{ fontWeight: 800, mb: 2, fontSize: { xs: '1.8rem', md: '2.4rem' } }}>
+              <Typography variant="h3" sx={{ mb: 2 }}>
                 Crea formularios dinámicos sin escribir una línea de código
               </Typography>
               <Typography variant="h6" color="text.secondary" sx={{ fontWeight: 400, mb: 3, lineHeight: 1.7 }}>
@@ -435,6 +321,139 @@ const Inicio: React.FC = () => {
         </Container>
       </Box>
 
+      {/* ── CÓMO FUNCIONA ────────────────────────────────────────────────── */}
+      <Box sx={{ py: { xs: 7, md: 10 }, px: 2 }}>
+        <Container maxWidth="lg">
+          <Box sx={{ textAlign: 'center', mb: 7 }}>
+            <Chip label="Guía de uso" size="small" color="primary" sx={{ mb: 2, fontWeight: 700 }} />
+            <Typography variant="h3" sx={{ mb: 2 }}>
+              ¿Cómo funciona para tu organización?
+            </Typography>
+            <Typography variant="h6" color="text.secondary" sx={{ fontWeight: 400, maxWidth: 550, mx: 'auto' }}>
+              En cuatro pasos, pasa de un trámite manual a un proceso digital administrado desde un solo lugar.
+            </Typography>
+          </Box>
+
+          <Grid container spacing={3}>
+            {pasos.map((paso, index) => (
+              <Grid size={{ xs: 12, sm: 6, md: 3 }} key={paso.numero}>
+                <Tarjeta sx={{ position: 'relative' }}>
+                  <Box
+                    sx={{
+                      width: 60, height: 60, borderRadius: 2, mb: 2,
+                      bgcolor: `${paso.color}18`,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      color: paso.color,
+                    }}
+                  >
+                    {paso.icono}
+                  </Box>
+                  <Typography
+                    sx={{ fontSize: '2.5rem', fontWeight: 900, color: `${paso.color}25`, lineHeight: 1, mb: 1 }}
+                  >
+                    {paso.numero}
+                  </Typography>
+                  <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>{paso.titulo}</Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>
+                    {paso.descripcion}
+                  </Typography>
+                  {index < pasos.length - 1 && (
+                    <ArrowForwardIcon
+                      sx={{
+                        position: 'absolute', right: -16, top: '50%',
+                        transform: 'translateY(-50%)',
+                        color: 'divider', fontSize: 28,
+                        display: { xs: 'none', md: 'block' },
+                      }}
+                    />
+                  )}
+                </Tarjeta>
+              </Grid>
+            ))}
+          </Grid>
+        </Container>
+      </Box>
+
+      {/* ── CARACTERÍSTICAS ──────────────────────────────────────────────── */}
+      <Box sx={{ py: { xs: 7, md: 10 }, px: 2, bgcolor: 'background.paper' }}>
+        <Container maxWidth="lg">
+          <Box sx={{ textAlign: 'center', mb: 7 }}>
+            <Chip label="Funcionalidades" size="small" color="secondary" sx={{ mb: 2, fontWeight: 700 }} />
+            <Typography variant="h3" sx={{ mb: 2 }}>
+              Todo lo que necesitas para administrar
+            </Typography>
+            <Typography variant="h6" color="text.secondary" sx={{ fontWeight: 400, maxWidth: 500, mx: 'auto' }}>
+              Una plataforma completa para crear y gestionar los formularios dinámicos de tu organización.
+            </Typography>
+          </Box>
+
+          <Grid container spacing={3}>
+            {caracteristicas.map((c) => (
+              <Grid size={{ xs: 12, sm: 6, md: 4 }} key={c.titulo}>
+                <Tarjeta>
+                  <Box sx={{ mb: 2 }}>{c.icono}</Box>
+                  <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>{c.titulo}</Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.8 }}>
+                    {c.descripcion}
+                  </Typography>
+                </Tarjeta>
+              </Grid>
+            ))}
+          </Grid>
+        </Container>
+      </Box>
+
+      {/* ── PUENTE A VENTANILLA ÚNICA ────────────────────────────────────── */}
+      <Box sx={{ py: { xs: 5, md: 6 }, px: 2 }}>
+        <Container maxWidth="lg">
+          <Paper
+            elevation={0}
+            sx={{
+              p: { xs: 3, md: 4 },
+              borderRadius: 4,
+              display: 'flex',
+              flexWrap: 'wrap',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 3,
+              border: '1px solid',
+              borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.07)',
+              bgcolor: isDark ? 'rgba(37,211,102,0.06)' : 'rgba(37,211,102,0.08)',
+            }}
+          >
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Box
+                sx={{
+                  width: 52, height: 52, borderRadius: 2, flexShrink: 0,
+                  bgcolor: 'rgba(37,211,102,0.18)', color: '#128C7E',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}
+              >
+                <HowToVoteIcon sx={{ fontSize: 28 }} />
+              </Box>
+              <Box>
+                <Typography variant="h6" sx={{ fontWeight: 700 }}>¿Buscas radicar un trámite?</Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Si eres ciudadano o usuario final, conoce la Ventanilla Única para completar tus solicitudes.
+                </Typography>
+              </Box>
+            </Box>
+            <Button
+              variant="outlined"
+              endIcon={<ArrowForwardIcon />}
+              onClick={() => navigate('/ventanilla-unica')}
+              sx={{
+                borderColor: '#25D366', color: '#128C7E', borderRadius: 999,
+                px: 3, fontWeight: 700, whiteSpace: 'nowrap',
+                '&:hover': { borderColor: '#25D366', bgcolor: 'rgba(37,211,102,0.1)' },
+              }}
+            >
+              Ir a la Ventanilla Única
+            </Button>
+          </Paper>
+        </Container>
+      </Box>
+
       {/* ── CTA FINAL ────────────────────────────────────────────────────── */}
       <Box
         sx={{
@@ -443,11 +462,11 @@ const Inicio: React.FC = () => {
         }}
       >
         <Container maxWidth="sm">
-          <Typography variant="h3" sx={{ fontWeight: 800, mb: 2, fontSize: { xs: '1.8rem', md: '2.2rem' } }}>
-            ¿Listo para comenzar?
+          <Typography variant="h3" sx={{ mb: 2 }}>
+            ¿Listo para digitalizar tus trámites?
           </Typography>
           <Typography variant="h6" sx={{ color: 'rgba(255,255,255,0.75)', fontWeight: 400, mb: 5 }}>
-            Crea tu cuenta en minutos y accede a todos tus trámites desde cualquier lugar.
+            Solicita acceso para tu organización y comienza a crear formularios dinámicos en minutos.
           </Typography>
           <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
             <Button
@@ -462,7 +481,7 @@ const Inicio: React.FC = () => {
                 boxShadow: '0 4px 24px rgba(0,0,0,0.25)',
               }}
             >
-              Registrarme gratis
+              Crear cuenta
             </Button>
             <Button
               variant="outlined"
