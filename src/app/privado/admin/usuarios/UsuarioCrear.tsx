@@ -11,6 +11,10 @@ import BotonPrincipal from '../../../../compartido/ui/BotonPrincipal';
 const REGEX_PASSWORD = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
 const REGEX_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// Un admin de empresa solo puede crear usuarios 'funcionario' o 'cliente'
+// (el backend rechaza cualquier otro rol en POST /usuarios de todas formas).
+const ROLES_ASIGNABLES = ['funcionario', 'cliente'];
+
 interface CamposUsuario {
   codRol: number | '';
   correoUsuario: string;
@@ -39,10 +43,6 @@ const UsuarioCrear: React.FC = () => {
     empresaUsuario: '',
   });
   const [errores, setErrores] = useState<ErroresCampos>({});
-
-  // Un admin de empresa solo puede crear usuarios 'funcionario' o 'cliente'
-  // (el backend rechaza cualquier otro rol en POST /usuarios de todas formas).
-  const ROLES_ASIGNABLES = ['funcionario', 'cliente'];
 
   useEffect(() => {
     RolesServicio.listar()
