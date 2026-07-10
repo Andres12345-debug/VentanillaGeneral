@@ -3,13 +3,19 @@ import { useParams } from 'react-router-dom';
 import {
   Box, Typography, Chip, CircularProgress, Paper, Button,
   Dialog, DialogTitle, DialogContent, DialogActions, TextField, Divider, Alert, Accordion,
-  AccordionSummary, AccordionDetails,
+  AccordionSummary, AccordionDetails, Autocomplete,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import { crearMensaje } from '../../../../app/utilidades/funciones/mensaje';
 import { AsignacionServicio, AsignacionDetalle as AsignacionDetalleType } from '../../../../app/servicios/privados/AsignacionServicio';
+import { UsuarioServicio, Usuario } from '../../../../app/servicios/privados/UsuarioServicio';
+import { useUsuarioToken } from '../../../../app/utilidades/auth/usuarioToken';
+
+// Solo admin puede delegar (el backend rechaza a cualquier otro rol), y no
+// tiene sentido delegar una asignación que ya quedó en un estado terminal.
+const ESTADOS_DELEGABLES = ['pendiente', 'en_progreso', 'en_revision'];
 
 type ColorChip = 'default' | 'warning' | 'info' | 'success' | 'error' | 'primary' | 'secondary';
 
@@ -19,11 +25,18 @@ const colorPorEstado: Record<string, ColorChip> = {
 
 const AsignacionDetalle: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const usuario = useUsuarioToken();
+  const esAdmin = usuario?.role === 'admin';
+
   const [datos, setDatos] = useState<AsignacionDetalleType | null>(null);
   const [cargando, setCargando] = useState(true);
   const [dialogoAbierto, setDialogoAbierto] = useState(false);
   const [motivoRechazo, setMotivoRechazo] = useState('');
   const [procesando, setProcesando] = useState(false);
+
+  const [funcionarios, setFuncionarios] = useState<Usuario[]>([]);
+  const [revisorSeleccionado, setRevisorSeleccionado] = useState<Usuario | null>(null);
+  const [asignandoRevisor, setAsignandoRevisor] = useState(false);
 
   const cargar = useCallback(async () => {
     if (!id) return;
@@ -38,6 +51,29 @@ const AsignacionDetalle: React.FC = () => {
   }, [id]);
 
   useEffect(() => { cargar(); }, [cargar]);
+
+  // Solo el admin necesita la lista de funcionarios (para delegar revisión).
+  useEffect(() => {
+    if (!esAdmin) return;
+    UsuarioServicio.listar()
+      .then((lista) => setFuncionarios(lista.filter((u) => u.nombreRol === 'funcionario')))
+      .catch(() => crearMensaje('error', 'Error al cargar los funcionarios'));
+  }, [esAdmin]);
+
+  const handleAsignarRevisor = async () => {
+    if (!id || !revisorSeleccionado) return;
+    setAsignandoRevisor(true);
+    try {
+      await AsignacionServicio.asignarRevisor(Number(id), { codRevisor: revisorSeleccionado.codUsuario });
+      crearMensaje('success', 'Revisor asignado correctamente');
+      setRevisorSeleccionado(null);
+      cargar();
+    } catch (error: unknown) {
+      crearMensaje('error', error instanceof Error ? error.message : 'Error al asignar el revisor');
+    } finally {
+      setAsignandoRevisor(false);
+    }
+  };
 
   const handleAprobar = async () => {
     if (!id || !window.confirm('¿Aprobar esta asignación?')) return;
@@ -110,6 +146,30 @@ const AsignacionDetalle: React.FC = () => {
           <Typography variant="body2">Revisor asignado: {datos.nombreRevisor ?? `#${datos.codRevisor}`}</Typography>
         ) : (
           <Typography variant="body2" color="text.secondary">Sin revisor asignado (revisará el administrador)</Typography>
+        )}
+
+        {esAdmin && ESTADOS_DELEGABLES.includes(datos.estadoAsignacion) && (
+          <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', mt: 2, flexWrap: 'wrap' }}>
+            <Autocomplete
+              size="small"
+              sx={{ minWidth: 280 }}
+              options={funcionarios}
+              getOptionLabel={(opcion) => `${opcion.nombreAcceso} (${opcion.correoUsuario})`}
+              value={revisorSeleccionado}
+              onChange={(_, nuevoValor) => setRevisorSeleccionado(nuevoValor)}
+              noOptionsText="No hay funcionarios en tu empresa"
+              renderInput={(params) => (
+                <TextField {...params} label="Delegar revisión a" placeholder="Buscar funcionario..." />
+              )}
+            />
+            <Button
+              variant="outlined"
+              disabled={!revisorSeleccionado || asignandoRevisor}
+              onClick={handleAsignarRevisor}
+            >
+              {asignandoRevisor ? 'Asignando...' : (datos.codRevisor ? 'Cambiar revisor' : 'Asignar revisor')}
+            </Button>
+          </Box>
         )}
       </Paper>
 
