@@ -1,6 +1,7 @@
 import { ApiServicio } from '../reutilizables/ApiServicio';
 import { URLS } from '../../utilidades/dominios/urls';
 import { TipoCampo } from '../../utilidades/dominios/tipoCampo';
+import { EstadoWorkflow } from '../../utilidades/dominios/estados';
 
 // ─── Tipos ───────────────────────────────────────────────────────────────────
 
@@ -13,7 +14,7 @@ export interface Workflow {
   codWorkflow: number;
   nombreWorkflow: string;
   descripcionWorkflow?: string;
-  estadoWorkflow: string;
+  estadoWorkflow: EstadoWorkflow;
   esPublico?: boolean;
   tokenPublico?: string | null;
   fechaCreacion: string;
@@ -74,7 +75,7 @@ export interface CreateWorkflowDto {
 export interface UpdateWorkflowDto {
   nombreWorkflow?: string;
   descripcionWorkflow?: string;
-  estadoWorkflow?: string;
+  estadoWorkflow?: EstadoWorkflow;
   esPublico?: boolean;
 }
 

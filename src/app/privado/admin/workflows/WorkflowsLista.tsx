@@ -9,6 +9,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { crearMensaje } from '../../../../app/utilidades/funciones/mensaje';
 import { WorkflowServicio, Workflow } from '../../../../app/servicios/privados/WorkflowServicio';
+import { ESTADO_WORKFLOW } from '../../../../app/utilidades/dominios/estados';
 
 const WorkflowsLista: React.FC = () => {
   const navigate = useNavigate();
@@ -72,7 +73,11 @@ const WorkflowsLista: React.FC = () => {
                     <TableCell>{wf.codWorkflow}</TableCell>
                     <TableCell>{wf.nombreWorkflow}</TableCell>
                     <TableCell>
-                      <Chip label={wf.estadoWorkflow} color={wf.estadoWorkflow === 'borrador' ? 'default' : 'success'} size="small" />
+                      <Chip
+                        label={ESTADO_WORKFLOW[wf.estadoWorkflow]?.label ?? wf.estadoWorkflow}
+                        color={ESTADO_WORKFLOW[wf.estadoWorkflow]?.color ?? 'default'}
+                        size="small"
+                      />
                     </TableCell>
                     <TableCell>{new Date(wf.fechaCreacion).toLocaleDateString('es-CO')}</TableCell>
                     <TableCell align="center">

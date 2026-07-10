@@ -25,3 +25,14 @@ export const ESTADO_EJECUCION_PASO: Record<EstadoEjecucionPaso, { label: string;
   pendiente: { label: 'Pendiente', color: 'default' },
   completado: { label: 'Completado', color: 'success' },
 };
+
+// ─── Estado de Workflow ──────────────────────────────────────────────────────
+// 'publicado' es requisito para poder asignar el workflow a clientes (lo
+// exige el backend); 'borrador' es el estado inicial de todo workflow nuevo.
+
+export type EstadoWorkflow = 'borrador' | 'publicado';
+
+export const ESTADO_WORKFLOW: Record<EstadoWorkflow, { label: string; color: MuiColor }> = {
+  borrador: { label: 'Borrador', color: 'default' },
+  publicado: { label: 'Publicado', color: 'success' },
+};
