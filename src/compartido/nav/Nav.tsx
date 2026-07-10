@@ -52,7 +52,7 @@ const Nav: React.FC = () => {
             {isLanding && (
               <Button
                 component={RouterLink}
-                to="/registro"
+                to="/prueba-gratis"
                 sx={{ color: 'white', fontWeight: 600, opacity: 0.85, '&:hover': { opacity: 1 } }}
               >
                 Registrarse

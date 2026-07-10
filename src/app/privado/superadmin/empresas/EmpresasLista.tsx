@@ -64,7 +64,10 @@ const EmpresasLista: React.FC = () => {
                       <Chip label={empresa.estadoEmpresa ? 'Activa' : 'Inactiva'} color={empresa.estadoEmpresa ? 'success' : 'default'} size="small" />
                     </TableCell>
                     <TableCell>
-                      {empresa.esDemo && <Chip label="Demo" color="info" size="small" />}
+                      <Box sx={{ display: 'flex', gap: 0.5 }}>
+                        {empresa.esDemo && <Chip label="Demo" color="info" size="small" />}
+                        {empresa.esPruebaGratis && <Chip label="Prueba gratis" color="warning" size="small" />}
+                      </Box>
                     </TableCell>
                     <TableCell>{new Date(empresa.fechaCreacion).toLocaleDateString('es-CO')}</TableCell>
                     <TableCell align="center">

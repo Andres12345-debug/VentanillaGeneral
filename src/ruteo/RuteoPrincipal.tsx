@@ -11,6 +11,7 @@ import Error from '../compartido/Error';
 const Inicio = lazy(() => import('../app/publico/paginas/Inicio'));
 const Login = lazy(() => import('../app/publico/paginas/Login'));
 const Registro = lazy(() => import('../app/publico/paginas/Registro'));
+const PruebaGratis = lazy(() => import('../app/publico/paginas/PruebaGratis'));
 const RecuperarContrasenia = lazy(() => import('../app/publico/paginas/RecuperarContrasenia'));
 const NuevaContrasenia = lazy(() => import('../app/publico/paginas/NuevaContrasenia'));
 const WorkflowPublico = lazy(() => import('../app/publico/paginas/WorkflowPublico'));
@@ -34,6 +35,7 @@ const UsuarioCrear = lazy(() => import('../app/privado/admin/usuarios/UsuarioCre
 const EmpresasLista = lazy(() => import('../app/privado/superadmin/empresas/EmpresasLista'));
 const EmpresaCrear = lazy(() => import('../app/privado/superadmin/empresas/EmpresaCrear'));
 const EmpresaDetalle = lazy(() => import('../app/privado/superadmin/empresas/EmpresaDetalle'));
+const UsuariosGlobal = lazy(() => import('../app/privado/superadmin/usuarios/UsuariosGlobal'));
 
 // ── Cliente ───────────────────────────────────────────────────────
 const MisAsignaciones = lazy(() => import('../app/privado/cliente/MisAsignaciones'));
@@ -51,6 +53,7 @@ const RuteoPrincipal: React.FC = () => {
       <Route element={<MainLayout />}>
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Registro />} />
+        <Route path="/prueba-gratis" element={<PruebaGratis />} />
         <Route path="/recuperar-password" element={<RecuperarContrasenia />} />
         <Route path="/restablecer-password/:token" element={<NuevaContrasenia />} />
         <Route path="/tramite/:token" element={<WorkflowPublico />} />
@@ -83,6 +86,7 @@ const RuteoPrincipal: React.FC = () => {
           <Route path="/dashboard/empresas" element={<EmpresasLista />} />
           <Route path="/dashboard/empresas/crear" element={<EmpresaCrear />} />
           <Route path="/dashboard/empresas/:id" element={<EmpresaDetalle />} />
+          <Route path="/dashboard/usuarios-globales" element={<UsuariosGlobal />} />
         </Route>
 
         {/* Solo cliente */}

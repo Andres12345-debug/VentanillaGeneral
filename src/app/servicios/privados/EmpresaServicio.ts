@@ -10,6 +10,7 @@ export interface Empresa {
   nombreEmpresa: string;
   tokenRegistro: string;
   esDemo: boolean;
+  esPruebaGratis: boolean;
   estadoEmpresa: boolean;
   fechaCreacion: string;
 }

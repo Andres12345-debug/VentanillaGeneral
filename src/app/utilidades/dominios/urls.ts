@@ -15,6 +15,7 @@ export const URLS = {
 
   // ─── Registro / acceso público ──────────────────────────────────────────
   REGISTRAR_USUARIO: `${URL_BASE}/registros/user`,
+  REGISTRAR_PRUEBA_GRATIS: `${URL_BASE}/registros/prueba-gratis`,
   RECUPERAR_PASSWORD: `${URL_BASE}/registros/recuperar-password`,
   NUEVA_PASSWORD: `${URL_BASE}/registros/nueva-password`,
 

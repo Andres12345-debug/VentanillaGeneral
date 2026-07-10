@@ -98,7 +98,7 @@ const VentanillaUnica: React.FC = () => {
                   variant="contained"
                   size="large"
                   endIcon={<ArrowForwardIcon />}
-                  onClick={() => navigate('/registro')}
+                  onClick={() => navigate('/prueba-gratis')}
                   sx={{
                     bgcolor: '#25D366', color: '#0b3d2e', '&:hover': { bgcolor: '#1fb857' },
                     borderRadius: 999,
@@ -261,7 +261,7 @@ const VentanillaUnica: React.FC = () => {
               variant="contained"
               size="large"
               startIcon={<HowToRegIcon />}
-              onClick={() => navigate('/registro')}
+              onClick={() => navigate('/prueba-gratis')}
               sx={{
                 bgcolor: '#25D366', color: '#0b3d2e', '&:hover': { bgcolor: '#1fb857' },
                 borderRadius: 999,

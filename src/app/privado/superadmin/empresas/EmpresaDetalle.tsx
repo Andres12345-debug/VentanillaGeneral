@@ -117,6 +117,7 @@ const EmpresaDetalle: React.FC = () => {
           <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
             <Chip label={empresa.estadoEmpresa ? 'Activa' : 'Inactiva'} color={empresa.estadoEmpresa ? 'success' : 'default'} size="small" />
             {empresa.esDemo && <Chip label="Demo" color="info" size="small" />}
+            {empresa.esPruebaGratis && <Chip label="Prueba gratis" color="warning" size="small" />}
           </Box>
         </Box>
         <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
