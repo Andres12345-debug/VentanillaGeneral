@@ -45,6 +45,7 @@ const MENUS_POR_ROL: Record<string, MenuItem[]> = {
   super_admin: [
     { label: 'Dashboard', path: '/dashboard', icon: <DashboardIcon /> },
     { label: 'Empresas', path: '/dashboard/empresas', icon: <BusinessIcon /> },
+    { label: 'Usuarios', path: '/dashboard/usuarios-globales', icon: <PeopleIcon /> },
   ],
   admin: [
     { label: 'Dashboard', path: '/dashboard', icon: <DashboardIcon /> },

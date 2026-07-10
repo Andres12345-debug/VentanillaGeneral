@@ -37,6 +37,16 @@ const TableroPrincipal: React.FC = () => {
               <Typography variant="body2" color="text.secondary">Crea empresas, sus administradores y gestiona la demo de ventas</Typography>
             </Tarjeta>
           </Grid>
+
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+            <Tarjeta onClick={() => navigate('/dashboard/usuarios-globales')}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
+                <PeopleIcon color="secondary" fontSize="large" />
+                <Typography variant="h6" sx={{ fontWeight: 600 }}>Usuarios</Typography>
+              </Box>
+              <Typography variant="body2" color="text.secondary">Ve todos los usuarios registrados y a qué empresa pertenece cada uno</Typography>
+            </Tarjeta>
+          </Grid>
         </Grid>
       )}
 

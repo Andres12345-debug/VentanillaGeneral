@@ -11,6 +11,8 @@ export interface Usuario {
   correoUsuario: string;
   telefonoUsuario: string;
   empresaUsuario?: string;
+  codEmpresa: number | null;
+  nombreEmpresa: string | null;
   paisUsuario: string;
   ciudadUsuario: string;
   nombreRol: string;
