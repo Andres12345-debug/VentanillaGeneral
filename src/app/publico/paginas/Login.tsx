@@ -29,7 +29,15 @@ const Login: React.FC = () => {
   // Si se llegó acá desde un enlace público de workflow (o cualquier ruta
   // protegida), "from" indica a dónde volver tras loguearse en vez del
   // dashboard genérico.
-  const rutaRetorno = (location.state as { from?: string } | null)?.from ?? '/dashboard';
+  const estadoNavegacion = location.state as { from?: string; tokenRegistroEmpresa?: string } | null;
+  const rutaRetorno = estadoNavegacion?.from ?? '/dashboard';
+  // Si venimos de un workflow público, arrastramos el token de su empresa
+  // para que "Regístrate" te una a ESA empresa. Sin ese contexto (alguien
+  // que llegó al login por su cuenta), "Regístrate" significa crear una
+  // empresa propia nueva vía autoservicio, no unirse a una existente:
+  // /registro sin token siempre se rechaza a propósito.
+  const tokenRegistroEmpresa = estadoNavegacion?.tokenRegistroEmpresa;
+  const rutaRegistro = tokenRegistroEmpresa ? `/registro?empresa=${tokenRegistroEmpresa}` : '/prueba-gratis';
 
   const { campos, errores, cargando, handleChange, handleSubmit } = useFormulario<CamposLogin>(
     { correoUsuario: '', claveAcceso: '' },
@@ -50,7 +58,7 @@ const Login: React.FC = () => {
         footer={(
           <Typography variant="body2" color="text.secondary">
             ¿No tienes cuenta?{' '}
-            <Link component={RouterLink} to="/registro" sx={{ color: '#128C7E', fontWeight: 700 }}>
+            <Link component={RouterLink} to={rutaRegistro} state={{ from: rutaRetorno }} sx={{ color: '#128C7E', fontWeight: 700 }}>
               Regístrate
             </Link>
           </Typography>

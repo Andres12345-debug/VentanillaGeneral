@@ -80,7 +80,7 @@ const WorkflowPublico: React.FC = () => {
               variant="contained"
               fullWidth
               sx={{ py: 1.5 }}
-              onClick={() => navigate('/login', { state: { from: rutaRetorno } })}
+              onClick={() => navigate('/login', { state: { from: rutaRetorno, tokenRegistroEmpresa: info.tokenRegistroEmpresa } })}
             >
               Iniciar sesión
             </Button>
