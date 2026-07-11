@@ -3,6 +3,7 @@ import {
   Box, CircularProgress, Paper, Table, TableBody, TableCell,
   TableContainer, TableHead, TableRow, useTheme,
 } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 
 export interface ColumnaTabla<T> {
   id: string;
@@ -65,7 +66,7 @@ function TablaDatos<T>({
                 textTransform: 'uppercase',
                 letterSpacing: '0.03em',
                 color: 'text.secondary',
-                bgcolor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(18,140,126,0.06)',
+                bgcolor: isDark ? 'rgba(255,255,255,0.04)' : alpha(theme.palette.secondary.main, 0.06),
                 borderBottom: '1px solid',
                 borderColor: bordeColor,
               },

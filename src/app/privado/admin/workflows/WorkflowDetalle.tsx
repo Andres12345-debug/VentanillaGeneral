@@ -5,6 +5,7 @@ import {
   Chip, CircularProgress, Button, List, ListItem, ListItemText, ListItemIcon,
   IconButton, Switch, FormControlLabel, Paper,
 } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import ListAltIcon from '@mui/icons-material/ListAlt';
@@ -303,7 +304,7 @@ const WorkflowDetalle: React.FC = () => {
           variant="outlined"
           sx={{
             p: 2.5, mb: 3, borderColor: 'primary.main',
-            bgcolor: (theme) => (theme.palette.mode === 'dark' ? 'rgba(37,211,102,0.08)' : 'rgba(37,211,102,0.06)'),
+            bgcolor: (theme) => alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.08 : 0.06),
           }}
         >
           <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1 }}>Guía rápida para armar tu workflow</Typography>

@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import {
   Box, Typography, Button, Container, Grid, Paper, Chip, useTheme,
 } from '@mui/material';
+import { alpha } from '@mui/material/styles';
+import { TOKENS } from '../../../compartido/theme/ThemeContexto';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import TrackChangesIcon from '@mui/icons-material/TrackChanges';
@@ -32,14 +34,14 @@ const pasos = [
     titulo: 'Diseña tu flujo',
     descripcion: 'Define las etapas y pasos que necesita tu trámite, tal como opera tu organización, sin depender de desarrollo.',
     icono: <AccountTreeIcon sx={{ fontSize: 32 }} />,
-    color: '#25D366',
+    color: TOKENS.tealBright,
   },
   {
     numero: '02',
     titulo: 'Configura los campos',
     descripcion: 'Añade campos dinámicos —texto, número, fecha, selección— y marca cuáles son obligatorios en cada paso.',
     icono: <TuneIcon sx={{ fontSize: 32 }} />,
-    color: '#0d9488',
+    color: TOKENS.tealMid,
   },
   {
     numero: '03',
@@ -59,12 +61,12 @@ const pasos = [
 
 const caracteristicas = [
   {
-    icono: <ChecklistIcon sx={{ fontSize: 40, color: '#25D366' }} />,
+    icono: <ChecklistIcon sx={{ fontSize: 40, color: TOKENS.tealBright }} />,
     titulo: 'Campos dinámicos sin código',
     descripcion: 'Arma cada formulario eligiendo el tipo de campo, si es obligatorio y en qué orden aparece. Publícalo en minutos.',
   },
   {
-    icono: <AccountTreeIcon sx={{ fontSize: 40, color: '#0d9488' }} />,
+    icono: <AccountTreeIcon sx={{ fontSize: 40, color: TOKENS.tealMid }} />,
     titulo: 'Flujos por etapas y pasos',
     descripcion: 'Modela procesos tan simples o complejos como los necesites, con etapas y pasos claramente definidos.',
   },
@@ -134,12 +136,12 @@ const Inicio: React.FC = () => {
         <Box sx={{
           position: 'absolute', top: -80, right: -80,
           width: 400, height: 400, borderRadius: '50%',
-          background: 'rgba(37,211,102,0.18)', pointerEvents: 'none',
+          background: (t) => alpha(t.palette.primary.main, 0.18), pointerEvents: 'none',
         }} />
         <Box sx={{
           position: 'absolute', bottom: -100, left: -60,
           width: 300, height: 300, borderRadius: '50%',
-          background: 'rgba(18,140,126,0.15)', pointerEvents: 'none',
+          background: (t) => alpha(t.palette.secondary.main, 0.15), pointerEvents: 'none',
         }} />
 
         <Container maxWidth="lg">
@@ -148,11 +150,11 @@ const Inicio: React.FC = () => {
               <Chip
                 label="Software de gestión de trámites"
                 size="small"
-                sx={{ bgcolor: 'rgba(18,140,126,0.15)', color: '#128C7E', mb: 3, fontWeight: 700, letterSpacing: 1 }}
+                sx={{ bgcolor: (t) => alpha(t.palette.secondary.main, 0.15), color: 'secondary.dark', mb: 3, fontWeight: 700, letterSpacing: 1 }}
               />
               <Typography variant="h1" sx={{ mb: 3 }}>
                 Digitaliza los trámites
-                <Box component="span" sx={{ display: 'block', color: '#25D366' }}>de tu organización</Box>
+                <Box component="span" sx={{ display: 'block', color: 'primary.main' }}>de tu organización</Box>
               </Typography>
               <Typography variant="h6" sx={{ color: 'text.secondary', fontWeight: 400, mb: 5, maxWidth: 560, lineHeight: 1.7 }}>
                 Crea, publica y administra formularios dinámicos para cualquier proceso, sin escribir una línea de código. Tú defines los campos, las etapas y quién los revisa.
@@ -160,14 +162,14 @@ const Inicio: React.FC = () => {
               <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
                 <Button
                   variant="contained"
+                  color="primary"
                   size="large"
                   endIcon={<ArrowForwardIcon />}
                   onClick={() => navigate('/prueba-gratis')}
                   sx={{
-                    bgcolor: '#25D366', color: '#0b3d2e', '&:hover': { bgcolor: '#1fb857' },
                     borderRadius: 999,
                     px: 3.5, py: 1.4, fontSize: '1rem', fontWeight: 700,
-                    boxShadow: '0 4px 24px rgba(37,211,102,0.4)',
+                    boxShadow: (t) => `0 4px 24px ${alpha(t.palette.primary.main, 0.4)}`,
                   }}
                 >
                   Solicitar acceso
@@ -180,7 +182,7 @@ const Inicio: React.FC = () => {
                     borderColor: 'rgba(0,0,0,0.2)', color: 'text.primary',
                     bgcolor: 'background.paper',
                     borderRadius: 999,
-                    '&:hover': { borderColor: '#25D366', bgcolor: 'background.paper' },
+                    '&:hover': { borderColor: 'primary.main', bgcolor: 'background.paper' },
                     px: 3.5, py: 1.4, fontSize: '1rem',
                   }}
                 >
@@ -200,11 +202,11 @@ const Inicio: React.FC = () => {
                   borderRadius: 4,
                   border: '1px solid',
                   borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)',
-                  boxShadow: isDark ? '0 24px 60px rgba(0,0,0,0.45)' : '0 24px 60px rgba(18,140,126,0.16)',
+                  boxShadow: isDark ? '0 24px 60px rgba(0,0,0,0.45)' : `0 24px 60px ${alpha(theme.palette.secondary.main, 0.16)}`,
                   bgcolor: 'background.paper',
                 }}
               >
-                <Box sx={{ position: 'absolute', top: 0, left: 0, width: 6, height: '100%', bgcolor: '#25D366' }} />
+                <Box sx={{ position: 'absolute', top: 0, left: 0, width: 6, height: '100%', bgcolor: 'primary.main' }} />
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
                   {[
                     'Constructor de formularios sin código',
@@ -213,7 +215,7 @@ const Inicio: React.FC = () => {
                     'Roles y permisos diferenciados',
                   ].map((item) => (
                     <Box key={item} sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                      <CheckCircleOutlinedIcon sx={{ color: '#25D366', flexShrink: 0 }} />
+                      <CheckCircleOutlinedIcon sx={{ color: 'primary.main', flexShrink: 0 }} />
                       <Typography sx={{ color: 'text.primary', fontWeight: 500 }}>{item}</Typography>
                     </Box>
                   ))}
@@ -233,7 +235,7 @@ const Inicio: React.FC = () => {
               <Chip
                 label="Constructor de trámites"
                 size="small"
-                sx={{ bgcolor: 'rgba(37,211,102,0.15)', color: '#128C7E', mb: 2, fontWeight: 700, letterSpacing: 1 }}
+                sx={{ bgcolor: (t) => alpha(t.palette.primary.main, 0.15), color: 'secondary.dark', mb: 2, fontWeight: 700, letterSpacing: 1 }}
               />
               <Typography variant="h3" sx={{ mb: 2 }}>
                 Crea formularios dinámicos sin escribir una línea de código
@@ -255,14 +257,14 @@ const Inicio: React.FC = () => {
               </Box>
               <Button
                 variant="contained"
+                color="primary"
                 size="large"
                 endIcon={<ArrowForwardIcon />}
                 onClick={() => navigate('/prueba-gratis')}
                 sx={{
-                  bgcolor: '#25D366', color: '#0b3d2e', '&:hover': { bgcolor: '#1fb857' },
                   borderRadius: 999,
                   px: 3.5, py: 1.4, fontSize: '1rem', fontWeight: 700,
-                  boxShadow: '0 4px 24px rgba(37,211,102,0.4)',
+                  boxShadow: (t) => `0 4px 24px ${alpha(t.palette.primary.main, 0.4)}`,
                 }}
               >
                 Crear mi primer trámite
@@ -276,14 +278,14 @@ const Inicio: React.FC = () => {
                   p: 3, borderRadius: 4,
                   border: '1px solid',
                   borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)',
-                  boxShadow: isDark ? '0 24px 60px rgba(0,0,0,0.45)' : '0 24px 60px rgba(18,140,126,0.16)',
+                  boxShadow: isDark ? '0 24px 60px rgba(0,0,0,0.45)' : `0 24px 60px ${alpha(theme.palette.secondary.main, 0.16)}`,
                 }}
               >
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
                   <Typography variant="subtitle2" sx={{ fontWeight: 700, color: 'text.secondary', textTransform: 'uppercase', letterSpacing: 1 }}>
                     Paso 1 · Datos del solicitante
                   </Typography>
-                  <Chip label="Editando" size="small" sx={{ bgcolor: 'rgba(37,211,102,0.15)', color: '#128C7E', fontWeight: 700 }} />
+                  <Chip label="Editando" size="small" sx={{ bgcolor: (t) => alpha(t.palette.primary.main, 0.15), color: 'secondary.dark', fontWeight: 700 }} />
                 </Box>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
                   {camposEjemplo.map((campo) => (
@@ -299,7 +301,7 @@ const Inicio: React.FC = () => {
                       <Box
                         sx={{
                           width: 36, height: 36, borderRadius: 1.5, flexShrink: 0,
-                          bgcolor: 'rgba(37,211,102,0.15)', color: '#128C7E',
+                          bgcolor: (t) => alpha(t.palette.primary.main, 0.15), color: 'secondary.dark',
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
                         }}
                       >
@@ -418,14 +420,14 @@ const Inicio: React.FC = () => {
               gap: 3,
               border: '1px solid',
               borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.07)',
-              bgcolor: isDark ? 'rgba(37,211,102,0.06)' : 'rgba(37,211,102,0.08)',
+              bgcolor: (t) => alpha(t.palette.primary.main, isDark ? 0.06 : 0.08),
             }}
           >
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <Box
                 sx={{
                   width: 52, height: 52, borderRadius: 2, flexShrink: 0,
-                  bgcolor: 'rgba(37,211,102,0.18)', color: '#128C7E',
+                  bgcolor: (t) => alpha(t.palette.primary.main, 0.18), color: 'secondary.dark',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}
               >
@@ -443,9 +445,9 @@ const Inicio: React.FC = () => {
               endIcon={<ArrowForwardIcon />}
               onClick={() => navigate('/ventanilla-unica')}
               sx={{
-                borderColor: '#25D366', color: '#128C7E', borderRadius: 999,
+                borderColor: 'primary.main', color: 'secondary.dark', borderRadius: 999,
                 px: 3, fontWeight: 700, whiteSpace: 'nowrap',
-                '&:hover': { borderColor: '#25D366', bgcolor: 'rgba(37,211,102,0.1)' },
+                '&:hover': { borderColor: 'primary.main', bgcolor: (t) => alpha(t.palette.primary.main, 0.1) },
               }}
             >
               Ir a la Ventanilla Única
@@ -457,7 +459,7 @@ const Inicio: React.FC = () => {
       {/* ── CTA FINAL ────────────────────────────────────────────────────── */}
       <Box
         sx={{
-          background: 'linear-gradient(135deg, #075E54 0%, #128C7E 100%)',
+          background: `linear-gradient(135deg, ${TOKENS.slateBlue} 0%, ${TOKENS.tealBright} 100%)`,
           color: 'white', py: { xs: 7, md: 10 }, px: 2, textAlign: 'center',
         }}
       >
@@ -471,11 +473,11 @@ const Inicio: React.FC = () => {
           <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
             <Button
               variant="contained"
+              color="primary"
               size="large"
               startIcon={<HowToRegIcon />}
               onClick={() => navigate('/prueba-gratis')}
               sx={{
-                bgcolor: '#25D366', color: '#0b3d2e', '&:hover': { bgcolor: '#1fb857' },
                 borderRadius: 999,
                 px: 4, py: 1.5, fontSize: '1rem', fontWeight: 700,
                 boxShadow: '0 4px 24px rgba(0,0,0,0.25)',

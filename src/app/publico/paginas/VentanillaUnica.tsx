@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import {
   Box, Typography, Button, Container, Grid, Paper, Chip, useTheme,
 } from '@mui/material';
+import { alpha } from '@mui/material/styles';
+import { TOKENS } from '../../../compartido/theme/ThemeContexto';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import DescriptionIcon from '@mui/icons-material/Description';
@@ -23,14 +25,14 @@ const pasos = [
     titulo: 'Crea tu cuenta',
     descripcion: 'Regístrate con tu correo electrónico e información básica. Es gratis y toma menos de 2 minutos.',
     icono: <PersonAddIcon sx={{ fontSize: 32 }} />,
-    color: '#25D366',
+    color: TOKENS.tealBright,
   },
   {
     numero: '02',
     titulo: 'Accede al sistema',
     descripcion: 'Inicia sesión y accede a tu panel personal donde encontrarás todos tus trámites asignados.',
     icono: <PlayArrowIcon sx={{ fontSize: 32 }} />,
-    color: '#0d9488',
+    color: TOKENS.tealMid,
   },
   {
     numero: '03',
@@ -50,7 +52,7 @@ const pasos = [
 
 const beneficios = [
   {
-    icono: <TrackChangesIcon sx={{ fontSize: 40, color: '#0d9488' }} />,
+    icono: <TrackChangesIcon sx={{ fontSize: 40, color: TOKENS.tealMid }} />,
     titulo: 'Seguimiento en tiempo real',
     descripcion: 'Consulta el estado de tu solicitud en cualquier momento. Sabrás exactamente en qué etapa se encuentra.',
   },
@@ -84,11 +86,11 @@ const VentanillaUnica: React.FC = () => {
               <Chip
                 label="Ventanilla Única Digital"
                 size="small"
-                sx={{ bgcolor: 'rgba(18,140,126,0.15)', color: '#128C7E', mb: 3, fontWeight: 700, letterSpacing: 1 }}
+                sx={{ bgcolor: (t) => alpha(t.palette.secondary.main, 0.15), color: 'secondary.dark', mb: 3, fontWeight: 700, letterSpacing: 1 }}
               />
               <Typography variant="h1" sx={{ mb: 3 }}>
                 Todos tus trámites,
-                <Box component="span" sx={{ display: 'block', color: '#25D366' }}>en un solo lugar</Box>
+                <Box component="span" sx={{ display: 'block', color: 'primary.main' }}>en un solo lugar</Box>
               </Typography>
               <Typography variant="h6" sx={{ color: 'text.secondary', fontWeight: 400, mb: 5, maxWidth: 560, lineHeight: 1.7 }}>
                 Realiza tus solicitudes de forma digital, sigue su progreso en tiempo real y recibe respuestas sin necesidad de desplazarte a las oficinas.
@@ -96,14 +98,14 @@ const VentanillaUnica: React.FC = () => {
               <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
                 <Button
                   variant="contained"
+                  color="primary"
                   size="large"
                   endIcon={<ArrowForwardIcon />}
                   onClick={() => navigate('/prueba-gratis')}
                   sx={{
-                    bgcolor: '#25D366', color: '#0b3d2e', '&:hover': { bgcolor: '#1fb857' },
                     borderRadius: 999,
                     px: 3.5, py: 1.4, fontSize: '1rem', fontWeight: 700,
-                    boxShadow: '0 4px 24px rgba(37,211,102,0.4)',
+                    boxShadow: (t) => `0 4px 24px ${alpha(t.palette.primary.main, 0.4)}`,
                   }}
                 >
                   Comenzar ahora
@@ -116,7 +118,7 @@ const VentanillaUnica: React.FC = () => {
                     borderColor: 'rgba(0,0,0,0.2)', color: 'text.primary',
                     bgcolor: 'background.paper',
                     borderRadius: 999,
-                    '&:hover': { borderColor: '#25D366', bgcolor: 'background.paper' },
+                    '&:hover': { borderColor: 'primary.main', bgcolor: 'background.paper' },
                     px: 3.5, py: 1.4, fontSize: '1rem',
                   }}
                 >
@@ -136,11 +138,11 @@ const VentanillaUnica: React.FC = () => {
                   borderRadius: 4,
                   border: '1px solid',
                   borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)',
-                  boxShadow: isDark ? '0 24px 60px rgba(0,0,0,0.45)' : '0 24px 60px rgba(18,140,126,0.16)',
+                  boxShadow: isDark ? '0 24px 60px rgba(0,0,0,0.45)' : `0 24px 60px ${alpha(theme.palette.secondary.main, 0.16)}`,
                   bgcolor: 'background.paper',
                 }}
               >
-                <Box sx={{ position: 'absolute', top: 0, left: 0, width: 6, height: '100%', bgcolor: '#25D366' }} />
+                <Box sx={{ position: 'absolute', top: 0, left: 0, width: 6, height: '100%', bgcolor: 'primary.main' }} />
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
                   {[
                     'Sin filas ni desplazamientos físicos',
@@ -149,7 +151,7 @@ const VentanillaUnica: React.FC = () => {
                     'Notificaciones de aprobación o rechazo',
                   ].map((item) => (
                     <Box key={item} sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                      <CheckCircleOutlinedIcon sx={{ color: '#25D366', flexShrink: 0 }} />
+                      <CheckCircleOutlinedIcon sx={{ color: 'primary.main', flexShrink: 0 }} />
                       <Typography sx={{ color: 'text.primary', fontWeight: 500 }}>{item}</Typography>
                     </Box>
                   ))}
@@ -245,7 +247,7 @@ const VentanillaUnica: React.FC = () => {
       {/* ── CTA FINAL ────────────────────────────────────────────────────── */}
       <Box
         sx={{
-          background: 'linear-gradient(135deg, #075E54 0%, #128C7E 100%)',
+          background: `linear-gradient(135deg, ${TOKENS.slateBlue} 0%, ${TOKENS.tealBright} 100%)`,
           color: 'white', py: { xs: 7, md: 10 }, px: 2, textAlign: 'center',
         }}
       >
@@ -259,11 +261,11 @@ const VentanillaUnica: React.FC = () => {
           <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
             <Button
               variant="contained"
+              color="primary"
               size="large"
               startIcon={<HowToRegIcon />}
               onClick={() => navigate('/prueba-gratis')}
               sx={{
-                bgcolor: '#25D366', color: '#0b3d2e', '&:hover': { bgcolor: '#1fb857' },
                 borderRadius: 999,
                 px: 4, py: 1.5, fontSize: '1rem', fontWeight: 700,
                 boxShadow: '0 4px 24px rgba(0,0,0,0.25)',

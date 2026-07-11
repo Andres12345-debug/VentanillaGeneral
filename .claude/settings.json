@@ -31,7 +31,25 @@
       "Bash(timeout 15 bash -c 'until curl -sf http://localhost:3000 >/dev/null; do sleep 1; done')",
       "Bash(timeout 15 bash -c 'until curl -sf http://localhost:3550 >/dev/null 2>&1 || curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3550 | grep -q \"40[14]\"; do sleep 1; done')",
       "Bash(node \"C:\\\\Users\\\\julia\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-julia-OneDrive-Desktop-Julian-Monta-ez-Software-workflows-frontend\\\\2e0ccedd-fe95-496d-8f1d-34a45c75766f\\\\scratchpad\\\\test-flujo.js\")",
-      "Bash(export NODE_PATH=\"/c/Users/julia/AppData/Local/npm-cache/_npx/e41f203b7505f1fb/node_modules\")"
+      "Bash(export NODE_PATH=\"/c/Users/julia/AppData/Local/npm-cache/_npx/e41f203b7505f1fb/node_modules\")",
+      "Bash(grep -n \"palette\\\\|#[0-9a-fA-F]\\\\{3,6\\\\}\" src/compartido/ui/TablaDatos.tsx)",
+      "Bash(grep -n \"palette\\\\|#[0-9a-fA-F]\\\\{3,6\\\\}\" src/app/privado/admin/workflows/WorkflowDetalle.tsx)",
+      "Bash(grep -n \"#[0-9a-fA-F]\\\\{3,6\\\\}\\\\|rgba\\(37,211,102\\\\|rgba\\(18,140,126\" src/app/publico/paginas/Inicio.tsx)",
+      "Bash(grep -n \"#[0-9a-fA-F]\\\\{3,6\\\\}\\\\|rgba\\(37,211,102\\\\|rgba\\(18,140,126\" src/app/publico/paginas/VentanillaUnica.tsx)",
+      "Bash(cd \"c:/Users/julia/OneDrive/Desktop/Julian Montañez Software/workflows-frontend\" && ls .claude/skills 2>/dev/null; echo \"---\"; ls ..)",
+      "Read(//c/Users/julia/OneDrive/Desktop/Julian Montañez Software/**)",
+      "Bash(chromium-cli --help)",
+      "Bash(timeout 40 bash -c 'until curl -sf http://localhost:3000 >/dev/null; do sleep 1; done')",
+      "Bash(\"/c/Program Files \\(x86\\)/Microsoft/Edge/Application/msedge.exe\" --headless --disable-gpu --no-sandbox --window-size=1440,1600 --screenshot=\"C:/tmp/pwscratch/shots/inicio.png\" \"http://localhost:3000/\")",
+      "Bash(\"/c/Program Files \\(x86\\)/Microsoft/Edge/Application/msedge.exe\" --headless --disable-gpu --no-sandbox --window-size=1440,1600 --screenshot=\"C:/tmp/pwscratch/shots/inicio2.png\" \"http://localhost:3000/\")",
+      "Bash(\"/c/Program Files \\(x86\\)/Microsoft/Edge/Application/msedge.exe\" --headless --disable-gpu --no-sandbox --window-size=1440,1600 --virtual-time-budget=8000 --screenshot=\"C:/tmp/pwscratch/shots/inicio3.png\" \"http://localhost:3000/\")",
+      "Bash(\"/c/Program Files \\(x86\\)/Microsoft/Edge/Application/msedge.exe\" --headless --disable-gpu --no-sandbox --window-size=1440,1600 --force-color-profile=srgb --blink-settings=preferredColorScheme=1 --virtual-time-budget=8000 --screenshot=\"C:/tmp/pwscratch/shots/inicio_light.png\" \"http://localhost:3000/\")",
+      "Bash(timeout 45 bash -c 'until curl -sf http://localhost:3000 >/dev/null; do sleep 1; done')",
+      "Bash(\"/c/Program Files \\(x86\\)/Microsoft/Edge/Application/msedge.exe\" --headless --disable-gpu --no-sandbox --window-size=1440,1600 --force-color-profile=srgb --blink-settings=preferredColorScheme=1 --virtual-time-budget=8000 --screenshot=\"C:/tmp/pwscratch/shots/inicio_white.png\" \"http://localhost:3000/\")",
+      "Bash(powershell -NoProfile -Command 'Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -match '\\\\''react-scripts|npm start|node.*start'\\\\'' } | Select-Object ProcessId, CommandLine')",
+      "Bash(powershell -NoProfile -Command \"Get-NetTCPConnection -LocalPort 3000 -ErrorAction SilentlyContinue\")",
+      "Bash(powershell -NoProfile -Command \"Get-Process msedge -ErrorAction SilentlyContinue | Select-Object Id,ProcessName,StartTime\")",
+      "Bash(powershell -NoProfile -Command 'Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -match '\\\\''workflows-frontend'\\\\'' } | Select-Object ProcessId, Name, CommandLine')"
     ],
     "additionalDirectories": [
       "C:\\Users\\julia\\AppData\\Local\\Temp\\claude\\c--Users-julia-OneDrive-Desktop-Julian-Monta-ez-Software-workflows-frontend\\e911dffc-2b12-4882-9d0b-926379051e4e\\scratchpad"

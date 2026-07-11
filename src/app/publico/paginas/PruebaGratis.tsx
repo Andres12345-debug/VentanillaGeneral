@@ -78,7 +78,7 @@ const PruebaGratis: React.FC = () => {
         footer={(
           <Typography variant="body2" color="text.secondary">
             ¿Ya tienes cuenta?{' '}
-            <Link component={RouterLink} to="/login" sx={{ color: '#128C7E', fontWeight: 700 }}>
+            <Link component={RouterLink} to="/login" sx={{ color: 'secondary.dark', fontWeight: 700 }}>
               Inicia sesión
             </Link>
           </Typography>

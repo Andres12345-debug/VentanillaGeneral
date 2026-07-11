@@ -12,7 +12,10 @@ import {
   PaletteMode,
 } from '@mui/material';
 
-// ─── Paleta WhatsApp ─────────────────────────────────────────────────────────
+// ─── Paleta de marca ─────────────────────────────────────────────────────────
+// Color predominante: tealBright (#34BAAB) — menú lateral e interfaz pública.
+// El resto de la paleta se deriva de la misma familia para mantenerla general
+// y reutilizable en toda la app (ver TOKENS más abajo).
 
 declare module '@mui/material/styles' {
   interface Palette {
@@ -23,14 +26,12 @@ declare module '@mui/material/styles' {
   }
 }
 
-const TOKENS = {
-  greenBright: '#25D366', // verde de acción WhatsApp (botones, CTA)
-  greenTeal: '#00A884', // verde-teal usado en modo oscuro
-  tealDark: '#128C7E', // verde-teal secundario
-  headerTeal: '#075E54', // verde oscuro de header/sidebar, fijo en ambos modos
-  mintLight: '#e7f8e4', // fondo claro tipo landing de WhatsApp
-  bgDark: '#0b141a', // fondo oscuro estilo WhatsApp
-  paperDark: '#182229', // superficie oscura
+export const TOKENS = {
+  tealBright: '#34BAAB', // color predominante: sidebar, CTAs, marca
+  tealMid: '#459A96', // secundario: acentos, hover, texto sobre chips
+  slateBlue: '#466067', // superficie oscura alterna / gradientes
+  plumDark: '#484450', // fondo base en modo oscuro
+  greyLight: '#C4C8C5', // fondos y bordes neutros en modo claro
 };
 
 // ─── Contexto ────────────────────────────────────────────────────────────────
@@ -105,18 +106,17 @@ export const ThemeContextProvider: React.FC<Props> = ({ children }) => {
         palette: {
           mode,
           primary: {
-            main: mode === 'light' ? TOKENS.greenBright : TOKENS.greenTeal,
-            contrastText: mode === 'light' ? '#0b3d2e' : '#ffffff',
+            main: TOKENS.tealBright,
           },
           secondary: {
-            main: mode === 'light' ? TOKENS.tealDark : TOKENS.greenBright,
+            main: TOKENS.tealMid,
           },
           background: {
-            default: mode === 'light' ? TOKENS.mintLight : TOKENS.bgDark,
-            paper: mode === 'light' ? '#ffffff' : TOKENS.paperDark,
+            default: mode === 'light' ? '#ffffff' : TOKENS.plumDark,
+            paper: mode === 'light' ? '#ffffff' : TOKENS.slateBlue,
           },
           sidebar: {
-            main: TOKENS.headerTeal,
+            main: TOKENS.tealBright,
             contrastText: '#ffffff',
           },
         },

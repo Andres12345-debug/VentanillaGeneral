@@ -142,7 +142,7 @@ const Sidebar: React.FC<SidebarProps> = ({ mobileOpen = false, onMobileClose }) 
                   }}
                 >
                   <ListItemIcon
-                    sx={{ color: active ? '#25D366' : 'rgba(255,255,255,0.7)', minWidth: 40 }}
+                    sx={{ color: active ? 'white' : 'rgba(255,255,255,0.7)', minWidth: 40 }}
                   >
                     {item.icon}
                   </ListItemIcon>

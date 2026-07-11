@@ -34,7 +34,7 @@ const Nav: React.FC = () => {
             to="/"
             sx={{ display: 'flex', alignItems: 'center', gap: 1, textDecoration: 'none', color: 'inherit' }}
           >
-            <AccountTreeIcon sx={{ color: '#25D366', fontSize: 22 }} />
+            <AccountTreeIcon sx={{ color: 'white', fontSize: 22 }} />
             <Typography variant="h6" sx={{ fontWeight: 800, letterSpacing: '-0.3px', color: 'white' }}>
               Ventanilla Única
             </Typography>
