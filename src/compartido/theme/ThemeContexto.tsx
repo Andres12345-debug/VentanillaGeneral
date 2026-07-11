@@ -11,6 +11,7 @@ import {
   CssBaseline,
   PaletteMode,
 } from '@mui/material';
+import { alpha, Theme } from '@mui/material/styles';
 
 // ─── Paleta de marca ─────────────────────────────────────────────────────────
 // Color predominante: tealBright (#34BAAB) — menú lateral e interfaz pública.
@@ -30,9 +31,26 @@ export const TOKENS = {
   tealBright: '#34BAAB', // color predominante: sidebar, CTAs, marca
   tealMid: '#459A96', // secundario: acentos, hover, texto sobre chips
   slateBlue: '#466067', // superficie oscura alterna / gradientes
-  plumDark: '#484450', // fondo base en modo oscuro
+  negro: '#000000', // fondo base en modo oscuro
   greyLight: '#C4C8C5', // fondos y bordes neutros en modo claro
 };
+
+// ─── Sombras reutilizables ───────────────────────────────────────────────────
+// Antes cada componente repetía su propio `isDark ? rgba(...) : rgba(...)`.
+// Centralizarlas aquí evita que cada uno reinvente un valor ligeramente
+// distinto y facilita ajustar la elevación de toda la app desde un solo sitio.
+
+/** Sombra tipo "glow" para tarjetas/paneles destacados (hero, FormCard). */
+export const sombraDestacada = (theme: Theme): string =>
+  theme.palette.mode === 'dark'
+    ? '0 24px 60px rgba(0,0,0,0.45)'
+    : `0 24px 60px ${alpha(theme.palette.secondary.main, 0.16)}`;
+
+/** Sombra para el efecto hover de tarjetas (Tarjeta.tsx). */
+export const sombraHover = (theme: Theme): string =>
+  theme.palette.mode === 'dark'
+    ? '0 12px 32px rgba(0,0,0,0.4)'
+    : '0 12px 32px rgba(0,0,0,0.12)';
 
 // ─── Contexto ────────────────────────────────────────────────────────────────
 
@@ -112,9 +130,10 @@ export const ThemeContextProvider: React.FC<Props> = ({ children }) => {
             main: TOKENS.tealMid,
           },
           background: {
-            default: mode === 'light' ? '#ffffff' : TOKENS.plumDark,
-            paper: mode === 'light' ? '#ffffff' : TOKENS.slateBlue,
+            default: mode === 'light' ? '#ffffff' : TOKENS.negro,
+            paper: mode === 'light' ? '#ffffff' : TOKENS.negro,
           },
+          divider: mode === 'light' ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.1)',
           sidebar: {
             main: TOKENS.tealBright,
             contrastText: '#ffffff',

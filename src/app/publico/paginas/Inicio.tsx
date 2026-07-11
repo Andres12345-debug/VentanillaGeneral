@@ -4,7 +4,7 @@ import {
   Box, Typography, Button, Container, Grid, Paper, Chip, useTheme,
 } from '@mui/material';
 import { alpha } from '@mui/material/styles';
-import { TOKENS } from '../../../compartido/theme/ThemeContexto';
+import { TOKENS, sombraDestacada } from '../../../compartido/theme/ThemeContexto';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import TrackChangesIcon from '@mui/icons-material/TrackChanges';
@@ -179,7 +179,7 @@ const Inicio: React.FC = () => {
                   size="large"
                   onClick={() => navigate('/login')}
                   sx={{
-                    borderColor: 'rgba(0,0,0,0.2)', color: 'text.primary',
+                    borderColor: 'divider', color: 'text.primary',
                     bgcolor: 'background.paper',
                     borderRadius: 999,
                     '&:hover': { borderColor: 'primary.main', bgcolor: 'background.paper' },
@@ -201,8 +201,8 @@ const Inicio: React.FC = () => {
                   pl: 5,
                   borderRadius: 4,
                   border: '1px solid',
-                  borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)',
-                  boxShadow: isDark ? '0 24px 60px rgba(0,0,0,0.45)' : `0 24px 60px ${alpha(theme.palette.secondary.main, 0.16)}`,
+                  borderColor: 'divider',
+                  boxShadow: sombraDestacada(theme),
                   bgcolor: 'background.paper',
                 }}
               >
@@ -277,8 +277,8 @@ const Inicio: React.FC = () => {
                 sx={{
                   p: 3, borderRadius: 4,
                   border: '1px solid',
-                  borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)',
-                  boxShadow: isDark ? '0 24px 60px rgba(0,0,0,0.45)' : `0 24px 60px ${alpha(theme.palette.secondary.main, 0.16)}`,
+                  borderColor: 'divider',
+                  boxShadow: sombraDestacada(theme),
                 }}
               >
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
@@ -294,7 +294,7 @@ const Inicio: React.FC = () => {
                       sx={{
                         display: 'flex', alignItems: 'center', gap: 1.5, p: 1.5, borderRadius: 2,
                         border: '1px solid',
-                        borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
+                        borderColor: 'divider',
                       }}
                     >
                       <DragIndicatorIcon sx={{ color: 'text.disabled' }} />
@@ -419,7 +419,7 @@ const Inicio: React.FC = () => {
               justifyContent: 'space-between',
               gap: 3,
               border: '1px solid',
-              borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.07)',
+              borderColor: 'divider',
               bgcolor: (t) => alpha(t.palette.primary.main, isDark ? 0.06 : 0.08),
             }}
           >

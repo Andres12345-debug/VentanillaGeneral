@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
 import { Box, Paper, Typography, useTheme } from '@mui/material';
 import { alpha } from '@mui/material/styles';
+import { sombraDestacada } from '../theme/ThemeContexto';
 
 interface FormCardProps {
   titulo: string;
@@ -20,7 +21,6 @@ const FormCard: React.FC<FormCardProps> = ({
   children,
 }) => {
   const theme = useTheme();
-  const isDark = theme.palette.mode === 'dark';
 
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', px: 2, py: 6 }}>
@@ -34,8 +34,8 @@ const FormCard: React.FC<FormCardProps> = ({
           position: 'relative',
           overflow: 'hidden',
           border: '1px solid',
-          borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)',
-          boxShadow: isDark ? '0 24px 60px rgba(0,0,0,0.5)' : `0 24px 60px ${alpha(theme.palette.secondary.main, 0.16)}`,
+          borderColor: 'divider',
+          boxShadow: sombraDestacada(theme),
         }}
       >
         <Box sx={{ position: 'absolute', top: 0, left: 0, width: '100%', height: 6, background: `linear-gradient(90deg, ${theme.palette.secondary.main} 0%, ${theme.palette.primary.main} 100%)` }} />

@@ -4,7 +4,7 @@ import {
   Box, Typography, Button, Container, Grid, Paper, Chip, useTheme,
 } from '@mui/material';
 import { alpha } from '@mui/material/styles';
-import { TOKENS } from '../../../compartido/theme/ThemeContexto';
+import { TOKENS, sombraDestacada } from '../../../compartido/theme/ThemeContexto';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import DescriptionIcon from '@mui/icons-material/Description';
@@ -73,7 +73,6 @@ const beneficios = [
 const VentanillaUnica: React.FC = () => {
   const navigate = useNavigate();
   const theme = useTheme();
-  const isDark = theme.palette.mode === 'dark';
 
   return (
     <Box>
@@ -115,7 +114,7 @@ const VentanillaUnica: React.FC = () => {
                   size="large"
                   onClick={() => navigate('/login')}
                   sx={{
-                    borderColor: 'rgba(0,0,0,0.2)', color: 'text.primary',
+                    borderColor: 'divider', color: 'text.primary',
                     bgcolor: 'background.paper',
                     borderRadius: 999,
                     '&:hover': { borderColor: 'primary.main', bgcolor: 'background.paper' },
@@ -137,8 +136,8 @@ const VentanillaUnica: React.FC = () => {
                   pl: 5,
                   borderRadius: 4,
                   border: '1px solid',
-                  borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)',
-                  boxShadow: isDark ? '0 24px 60px rgba(0,0,0,0.45)' : `0 24px 60px ${alpha(theme.palette.secondary.main, 0.16)}`,
+                  borderColor: 'divider',
+                  boxShadow: sombraDestacada(theme),
                   bgcolor: 'background.paper',
                 }}
               >

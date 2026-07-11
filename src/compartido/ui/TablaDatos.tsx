@@ -35,7 +35,6 @@ function TablaDatos<T>({
 }: TablaDatosProps<T>) {
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
-  const bordeColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.07)';
 
   if (cargando) {
     return (
@@ -52,7 +51,7 @@ function TablaDatos<T>({
       sx={{
         borderRadius: 3,
         border: '1px solid',
-        borderColor: bordeColor,
+        borderColor: 'divider',
         overflow: 'hidden',
       }}
     >
@@ -68,7 +67,7 @@ function TablaDatos<T>({
                 color: 'text.secondary',
                 bgcolor: isDark ? 'rgba(255,255,255,0.04)' : alpha(theme.palette.secondary.main, 0.06),
                 borderBottom: '1px solid',
-                borderColor: bordeColor,
+                borderColor: 'divider',
               },
             }}
           >
@@ -95,7 +94,7 @@ function TablaDatos<T>({
                 sx={{
                   cursor: onRowClick ? 'pointer' : 'default',
                   '&:last-of-type td': { borderBottom: 0 },
-                  '& td': { borderColor: bordeColor },
+                  '& td': { borderColor: 'divider' },
                 }}
               >
                 {columnas.map((col) => (

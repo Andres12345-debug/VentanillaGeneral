@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import {
+  Avatar,
   Box,
   Drawer,
   List,
@@ -30,7 +31,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useUsuarioToken } from '../../app/utilidades/auth/usuarioToken';
 import { tokenHelper } from '../../app/utilidades/auth/tokenHelper';
 import { ROL_CONFIG } from '../../app/utilidades/dominios/roles';
-import { useThemeContext } from '../theme/ThemeContexto';
+import { useThemeContext, TOKENS } from '../theme/ThemeContexto';
 
 const DRAWER_WIDTH_EXPANDED = 268;
 const DRAWER_WIDTH_COLLAPSED = 68;
@@ -64,6 +65,11 @@ const MENUS_POR_ROL: Record<string, MenuItem[]> = {
   ],
 };
 
+function iniciales(nombre: string): string {
+  const partes = nombre.trim().split(/\s+/);
+  return partes.slice(0, 2).map((p) => p[0]?.toUpperCase() ?? '').join('');
+}
+
 interface SidebarProps {
   mobileOpen?: boolean;
   onMobileClose?: () => void;
@@ -77,6 +83,16 @@ const Sidebar: React.FC<SidebarProps> = ({ mobileOpen = false, onMobileClose }) 
   const location = useLocation();
   const decoded = useUsuarioToken();
   const { mode, toggleTheme } = useThemeContext();
+
+  // En claro, el sidebar va en negro; en oscuro, en blanco.
+  const fondoSidebar = mode === 'light' ? TOKENS.negro : '#ffffff';
+  const textoPrimario = mode === 'light' ? '#ffffff' : 'rgba(0,0,0,0.87)';
+  const textoSecundario = mode === 'light' ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.6)';
+  const textoTerciario = mode === 'light' ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.4)';
+  const bordeSidebar = mode === 'light' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.12)';
+  const hoverSidebar = mode === 'light' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)';
+  const activoSidebar = mode === 'light' ? 'rgba(255,255,255,0.14)' : 'rgba(0,0,0,0.08)';
+  const avatarFondo = mode === 'light' ? 'rgba(255,255,255,0.18)' : 'rgba(0,0,0,0.08)';
 
   const width = isDesktop
     ? collapsed
@@ -97,8 +113,8 @@ const Sidebar: React.FC<SidebarProps> = ({ mobileOpen = false, onMobileClose }) 
       sx={{
         width,
         height: '100%',
-        backgroundColor: 'sidebar.main',
-        color: 'white',
+        backgroundColor: fondoSidebar,
+        color: textoPrimario,
         display: 'flex',
         flexDirection: 'column',
         transition: 'width 0.2s ease',
@@ -106,50 +122,79 @@ const Sidebar: React.FC<SidebarProps> = ({ mobileOpen = false, onMobileClose }) 
       }}
     >
       {/* Perfil */}
-      <Box sx={{ p: collapsed ? 1 : 2, pt: 2 }}>
-        {!collapsed && decoded && (
-          <>
-            <Typography variant="subtitle2" sx={{ fontWeight: 700 }} noWrap>
-              {decoded.name}
-            </Typography>
-            <Chip
-              label={ROL_CONFIG[decoded.role]?.label ?? decoded.role}
-              color={ROL_CONFIG[decoded.role]?.color ?? 'default'}
-              size="small"
-              sx={{ mt: 0.5 }}
-            />
-          </>
-        )}
-      </Box>
+      {decoded && (
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1.25,
+            p: 1.5,
+            justifyContent: collapsed ? 'center' : 'flex-start',
+          }}
+        >
+          <Tooltip title={collapsed ? decoded.name : ''} placement="right">
+            <Avatar
+              sx={{
+                width: 34,
+                height: 34,
+                fontSize: 14,
+                fontWeight: 700,
+                bgcolor: avatarFondo,
+                color: textoPrimario,
+                flexShrink: 0,
+              }}
+            >
+              {iniciales(decoded.name)}
+            </Avatar>
+          </Tooltip>
+          {!collapsed && (
+            <Box sx={{ minWidth: 0 }}>
+              <Typography variant="subtitle2" sx={{ fontWeight: 700, lineHeight: 1.3 }} noWrap>
+                {decoded.name}
+              </Typography>
+              <Chip
+                label={ROL_CONFIG[decoded.role]?.label ?? decoded.role}
+                color={ROL_CONFIG[decoded.role]?.color ?? 'default'}
+                size="small"
+                sx={{ mt: 0.4, height: 20, fontSize: 11 }}
+              />
+            </Box>
+          )}
+        </Box>
+      )}
 
-      <Divider sx={{ borderColor: 'rgba(255,255,255,0.1)' }} />
+      <Divider sx={{ borderColor: bordeSidebar }} />
 
       {/* Menú */}
-      <List sx={{ flex: 1, pt: 1 }}>
+      <List dense sx={{ flex: 1, py: 1, px: 1 }}>
         {menus.map((item) => {
           const active = location.pathname === item.path;
           return (
-            <ListItem key={item.path} disablePadding>
+            <ListItem key={item.path} disablePadding sx={{ mb: 0.25 }}>
               <Tooltip title={collapsed ? item.label : ''} placement="right">
                 <ListItemButton
                   onClick={() => navigate(item.path)}
                   sx={{
-                    px: 2,
-                    borderRadius: 1,
-                    mx: 0.5,
-                    backgroundColor: active ? 'rgba(255,255,255,0.12)' : 'transparent',
-                    '&:hover': { backgroundColor: 'rgba(255,255,255,0.08)' },
+                    px: 1.5,
+                    py: 0.75,
+                    borderRadius: 1.5,
+                    backgroundColor: active ? activoSidebar : 'transparent',
+                    '&:hover': { backgroundColor: hoverSidebar },
                   }}
                 >
                   <ListItemIcon
-                    sx={{ color: active ? 'white' : 'rgba(255,255,255,0.7)', minWidth: 40 }}
+                    sx={{
+                      color: active ? textoPrimario : textoSecundario,
+                      minWidth: 34,
+                      '& svg': { fontSize: 20 },
+                    }}
                   >
                     {item.icon}
                   </ListItemIcon>
                   {!collapsed && (
                     <ListItemText
                       primary={item.label}
-                      slotProps={{ primary: { sx: { fontSize: 14, fontWeight: active ? 700 : 400, color: active ? 'white' : 'rgba(255,255,255,0.7)' } } }}
+                      slotProps={{ primary: { sx: { fontSize: 14, fontWeight: active ? 600 : 400, color: active ? textoPrimario : textoSecundario } } }}
                     />
                   )}
                 </ListItemButton>
@@ -159,7 +204,7 @@ const Sidebar: React.FC<SidebarProps> = ({ mobileOpen = false, onMobileClose }) 
         })}
       </List>
 
-      <Divider sx={{ borderColor: 'rgba(255,255,255,0.1)' }} />
+      <Divider sx={{ borderColor: bordeSidebar }} />
 
       {/* Logout */}
       <Box sx={{ p: 1 }}>
@@ -167,18 +212,19 @@ const Sidebar: React.FC<SidebarProps> = ({ mobileOpen = false, onMobileClose }) 
           <ListItemButton
             onClick={handleLogout}
             sx={{
-              borderRadius: 1,
-              px: 2,
-              '&:hover': { backgroundColor: 'rgba(255,255,255,0.08)' },
+              borderRadius: 1.5,
+              px: 1.5,
+              py: 0.75,
+              '&:hover': { backgroundColor: hoverSidebar },
             }}
           >
-            <ListItemIcon sx={{ color: 'rgba(255,255,255,0.7)', minWidth: 40 }}>
+            <ListItemIcon sx={{ color: textoSecundario, minWidth: 34, '& svg': { fontSize: 20 } }}>
               <LogoutIcon />
             </ListItemIcon>
             {!collapsed && (
               <ListItemText
                 primary="Cerrar sesión"
-                slotProps={{ primary: { sx: { fontSize: 14, color: 'rgba(255,255,255,0.7)' } } }}
+                slotProps={{ primary: { sx: { fontSize: 14, color: textoSecundario } } }}
               />
             )}
           </ListItemButton>
@@ -188,7 +234,7 @@ const Sidebar: React.FC<SidebarProps> = ({ mobileOpen = false, onMobileClose }) 
       {/* Tema */}
       <Box sx={{ p: 1, display: 'flex', justifyContent: collapsed ? 'center' : 'flex-end' }}>
         <Tooltip title={mode === 'light' ? 'Modo oscuro' : 'Modo claro'} placement="right">
-          <IconButton size="small" onClick={toggleTheme} sx={{ color: 'rgba(255,255,255,0.7)' }}>
+          <IconButton size="small" onClick={toggleTheme} sx={{ color: textoSecundario }}>
             {mode === 'light' ? <DarkModeIcon fontSize="small" /> : <LightModeIcon fontSize="small" />}
           </IconButton>
         </Tooltip>
@@ -200,7 +246,7 @@ const Sidebar: React.FC<SidebarProps> = ({ mobileOpen = false, onMobileClose }) 
           <IconButton
             size="small"
             onClick={() => setCollapsed((v) => !v)}
-            sx={{ color: 'rgba(255,255,255,0.5)' }}
+            sx={{ color: textoTerciario }}
           >
             {collapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
           </IconButton>
@@ -219,7 +265,7 @@ const Sidebar: React.FC<SidebarProps> = ({ mobileOpen = false, onMobileClose }) 
           '& .MuiDrawer-paper': {
             width,
             boxSizing: 'border-box',
-            backgroundColor: 'sidebar.main',
+            backgroundColor: fondoSidebar,
             border: 'none',
             transition: 'width 0.2s ease',
             overflow: 'hidden',
@@ -239,7 +285,7 @@ const Sidebar: React.FC<SidebarProps> = ({ mobileOpen = false, onMobileClose }) 
       sx={{
         '& .MuiDrawer-paper': {
           width: DRAWER_WIDTH_EXPANDED,
-          backgroundColor: 'sidebar.main',
+          backgroundColor: fondoSidebar,
           border: 'none',
         },
       }}

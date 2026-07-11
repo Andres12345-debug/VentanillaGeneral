@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react';
 import { Card, CardActionArea, CardActions, CardContent, SxProps, Theme, useTheme } from '@mui/material';
+import { sombraHover } from '../theme/ThemeContexto';
 
 interface TarjetaProps {
   children: ReactNode;
@@ -12,7 +13,6 @@ interface TarjetaProps {
 
 const Tarjeta: React.FC<TarjetaProps> = ({ children, pie, onClick, hoverable = true, padding = 3.5, sx }) => {
   const theme = useTheme();
-  const isDark = theme.palette.mode === 'dark';
 
   const contenido = (
     <CardContent sx={{ flex: 1, p: padding, '&:last-child': { pb: padding } }}>
@@ -29,12 +29,12 @@ const Tarjeta: React.FC<TarjetaProps> = ({ children, pie, onClick, hoverable = t
         flexDirection: 'column',
         borderRadius: 3,
         border: '1px solid',
-        borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.07)',
+        borderColor: 'divider',
         transition: 'transform 0.2s, box-shadow 0.2s',
         ...(hoverable && {
           '&:hover': {
             transform: 'translateY(-4px)',
-            boxShadow: isDark ? '0 12px 32px rgba(0,0,0,0.4)' : '0 12px 32px rgba(0,0,0,0.12)',
+            boxShadow: sombraHover(theme),
           },
         }),
         ...sx,
