@@ -14,7 +14,24 @@
       "Bash(find src *)",
       "Bash(grep -n \"Typography\" src/compartido/ui/Tarjeta.tsx)",
       "Bash(grep -n \"Typography\" src/compartido/ui/FormCard.tsx)",
-      "Bash(grep -n \"Typography\\\\|fontSize\\\\|fontWeight\" src/compartido/ui/TablaDatos.tsx)"
+      "Bash(grep -n \"Typography\\\\|fontSize\\\\|fontWeight\" src/compartido/ui/TablaDatos.tsx)",
+      "Bash(python3 -c ' *)",
+      "Bash(python3)",
+      "Bash(npm start *)",
+      "Bash(powershell -Command \"Get-Process -Id 21732 | Select-Object Id,ProcessName,StartTime,Path\")",
+      "Bash(powershell -Command \"\\(Get-CimInstance Win32_Process -Filter 'ProcessId=21732'\\).CommandLine\")",
+      "Bash(powershell -Command '$p = Get-CimInstance Win32_Process -Filter '\\\\''ProcessId=21732'\\\\''; Get-CimInstance Win32_Process -Filter \\(\"ProcessId=$\\($p.ParentProcessId\\)\"\\) | Select-Object ProcessId,Name,CommandLine')",
+      "Bash(powershell -Command \"Stop-Process -Id 21732 -Force -ErrorAction SilentlyContinue; Stop-Process -Id 25040 -Force -ErrorAction SilentlyContinue; Start-Sleep -Seconds 1; netstat -ano | Select-String ':3550'\")",
+      "Bash(powershell -Command \"\\(Get-CimInstance Win32_Process -Filter 'ProcessId=12408'\\).CommandLine\")",
+      "Bash(powershell -Command \"Get-Process -Id 12408 | Select-Object Id,ProcessName,StartTime\")",
+      "Bash(export PGPASSWORD=andres527)",
+      "Bash(psql -h localhost -p 5432 -U andres -d workflows_db -c ' *)",
+      "Bash(node -e ' *)",
+      "Bash(chromium-cli --version)",
+      "Bash(timeout 15 bash -c 'until curl -sf http://localhost:3000 >/dev/null; do sleep 1; done')",
+      "Bash(timeout 15 bash -c 'until curl -sf http://localhost:3550 >/dev/null 2>&1 || curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3550 | grep -q \"40[14]\"; do sleep 1; done')",
+      "Bash(node \"C:\\\\Users\\\\julia\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-julia-OneDrive-Desktop-Julian-Monta-ez-Software-workflows-frontend\\\\2e0ccedd-fe95-496d-8f1d-34a45c75766f\\\\scratchpad\\\\test-flujo.js\")",
+      "Bash(export NODE_PATH=\"/c/Users/julia/AppData/Local/npm-cache/_npx/e41f203b7505f1fb/node_modules\")"
     ],
     "additionalDirectories": [
       "C:\\Users\\julia\\AppData\\Local\\Temp\\claude\\c--Users-julia-OneDrive-Desktop-Julian-Monta-ez-Software-workflows-frontend\\e911dffc-2b12-4882-9d0b-926379051e4e\\scratchpad"
