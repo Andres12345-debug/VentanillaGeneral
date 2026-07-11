@@ -49,7 +49,18 @@
       "Bash(powershell -NoProfile -Command 'Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -match '\\\\''react-scripts|npm start|node.*start'\\\\'' } | Select-Object ProcessId, CommandLine')",
       "Bash(powershell -NoProfile -Command \"Get-NetTCPConnection -LocalPort 3000 -ErrorAction SilentlyContinue\")",
       "Bash(powershell -NoProfile -Command \"Get-Process msedge -ErrorAction SilentlyContinue | Select-Object Id,ProcessName,StartTime\")",
-      "Bash(powershell -NoProfile -Command 'Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -match '\\\\''workflows-frontend'\\\\'' } | Select-Object ProcessId, Name, CommandLine')"
+      "Bash(powershell -NoProfile -Command 'Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -match '\\\\''workflows-frontend'\\\\'' } | Select-Object ProcessId, Name, CommandLine')",
+      "Bash(\"/c/Program Files \\(x86\\)/Microsoft/Edge/Application/msedge.exe\" --headless --disable-gpu --no-sandbox --window-size=1440,1600 --force-color-profile=srgb --blink-settings=preferredColorScheme=2 --virtual-time-budget=8000 --screenshot=\"C:/tmp/pwscratch/shots/inicio_dark_unified.png\" \"http://localhost:3000/\")",
+      "Bash(\"/c/Program Files \\(x86\\)/Microsoft/Edge/Application/msedge.exe\" --headless --disable-gpu --no-sandbox --window-size=1440,1600 --force-color-profile=srgb --blink-settings=preferredColorScheme=2 --virtual-time-budget=8000 --screenshot=\"C:/tmp/pwscratch/shots/ventanilla_dark_unified.png\" \"http://localhost:3000/ventanilla-unica\")",
+      "Bash(\"/c/Program Files \\(x86\\)/Microsoft/Edge/Application/msedge.exe\" --headless --disable-gpu --no-sandbox --window-size=1440,1600 --virtual-time-budget=8000 --screenshot=\"C:/tmp/pwscratch/shots/inicio_dark2.png\" \"http://localhost:3000/\")",
+      "Bash(\"/c/Program Files \\(x86\\)/Microsoft/Edge/Application/msedge.exe\" --headless --disable-gpu --no-sandbox --window-size=1440,1900 --virtual-time-budget=8000 --screenshot=\"C:/tmp/pwscratch/shots/ventanilla_dark2.png\" \"http://localhost:3000/ventanilla-unica\")",
+      "Bash(\"/c/Program Files \\(x86\\)/Microsoft/Edge/Application/msedge.exe\" --headless --disable-gpu --no-sandbox --window-size=900,900 --virtual-time-budget=8000 --screenshot=\"C:/tmp/pwscratch/shots/login_dark.png\" \"http://localhost:3000/login\")",
+      "Bash(\"/c/Program Files \\(x86\\)/Microsoft/Edge/Application/msedge.exe\" --headless --disable-gpu --no-sandbox --window-size=1440,1600 --virtual-time-budget=8000 --screenshot=\"C:/tmp/pwscratch/shots/inicio_black.png\" \"http://localhost:3000/\")",
+      "Bash(grep -rniE \"#[0-9a-fA-F]{3,6}\" src --include=\"*.tsx\" --include=\"*.ts\" -l)",
+      "Bash(python3 -)",
+      "Bash(\"/c/Program Files \\(x86\\)/Microsoft/Edge/Application/msedge.exe\" --headless --disable-gpu --no-sandbox --window-size=1440,1600 --blink-settings=preferredColorScheme=1 --virtual-time-budget=8000 --screenshot=\"C:/tmp/pwscratch/shots/refactor_light.png\" \"http://localhost:3000/\")",
+      "Bash(\"/c/Program Files \\(x86\\)/Microsoft/Edge/Application/msedge.exe\" --headless --disable-gpu --no-sandbox --window-size=1440,1600 --blink-settings=preferredColorScheme=2 --virtual-time-budget=8000 --screenshot=\"C:/tmp/pwscratch/shots/refactor_dark.png\" \"http://localhost:3000/login\")",
+      "Bash(\"/c/Program Files \\(x86\\)/Microsoft/Edge/Application/msedge.exe\" --headless --disable-gpu --no-sandbox --window-size=900,900 --virtual-time-budget=8000 --screenshot=\"C:/tmp/pwscratch/shots/refactor_dark2.png\" \"http://localhost:3000/login\")"
     ],
     "additionalDirectories": [
       "C:\\Users\\julia\\AppData\\Local\\Temp\\claude\\c--Users-julia-OneDrive-Desktop-Julian-Monta-ez-Software-workflows-frontend\\e911dffc-2b12-4882-9d0b-926379051e4e\\scratchpad"
