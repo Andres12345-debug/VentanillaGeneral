@@ -84,15 +84,15 @@ const Sidebar: React.FC<SidebarProps> = ({ mobileOpen = false, onMobileClose }) 
   const decoded = useUsuarioToken();
   const { mode, toggleTheme } = useThemeContext();
 
-  // En claro, el sidebar va en negro; en oscuro, en blanco.
-  const fondoSidebar = mode === 'light' ? TOKENS.negro : '#ffffff';
-  const textoPrimario = mode === 'light' ? '#ffffff' : 'rgba(0,0,0,0.87)';
-  const textoSecundario = mode === 'light' ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.6)';
-  const textoTerciario = mode === 'light' ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.4)';
-  const bordeSidebar = mode === 'light' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.12)';
-  const hoverSidebar = mode === 'light' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)';
-  const activoSidebar = mode === 'light' ? 'rgba(255,255,255,0.14)' : 'rgba(0,0,0,0.08)';
-  const avatarFondo = mode === 'light' ? 'rgba(255,255,255,0.18)' : 'rgba(0,0,0,0.08)';
+  // Fondo del sidebar siempre negro, sin importar claro/oscuro.
+  const fondoSidebar = TOKENS.negro;
+  const textoPrimario = '#ffffff';
+  const textoSecundario = 'rgba(255,255,255,0.7)';
+  const textoTerciario = 'rgba(255,255,255,0.5)';
+  const bordeSidebar = 'rgba(255,255,255,0.1)';
+  const hoverSidebar = 'rgba(255,255,255,0.08)';
+  const activoSidebar = 'rgba(255,255,255,0.14)';
+  const avatarFondo = 'rgba(255,255,255,0.18)';
 
   const width = isDesktop
     ? collapsed
