@@ -26,15 +26,18 @@ const WorkflowCrear: React.FC = () => {
     { nombreWorkflow: '', descripcionWorkflow: '' },
     validar,
     async (valores) => {
-      await WorkflowServicio.crear(valores);
-      crearMensaje('success', 'Workflow creado correctamente');
-      navigate('/dashboard/workflows');
+      const { codWorkflow } = await WorkflowServicio.crear(valores);
+      crearMensaje('success', '¡Workflow creado! Ahora agreguemos sus etapas y pasos.');
+      navigate(`/dashboard/workflows/${codWorkflow}`);
     }
   );
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center', p: 4 }}>
-      <FormCard titulo="Nuevo Workflow">
+      <FormCard
+        titulo="Nuevo Workflow"
+        subtitulo="Empecemos por lo básico: el nombre de tu proceso. Después vas a poder agregar las etapas, pasos y formularios que lo componen, paso a paso."
+      >
         <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <CampoTexto nombre="nombreWorkflow" etiqueta="Nombre del workflow" valor={campos.nombreWorkflow} onChange={handleChange} error={errores.nombreWorkflow} />
           <CampoTexto nombre="descripcionWorkflow" etiqueta="Descripción (opcional)" valor={campos.descripcionWorkflow} onChange={handleChange} error={errores.descripcionWorkflow} multiline rows={3} />

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Typography } from '@mui/material';
 import { crearMensaje } from '../../../../../app/utilidades/funciones/mensaje';
 import { WorkflowServicio, Formulario } from '../../../../../app/servicios/privados/WorkflowServicio';
 
@@ -55,8 +55,11 @@ const FormularioDialogo: React.FC<FormularioDialogoProps> = ({ abierto, editando
     <Dialog open={abierto} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>{editando ? 'Editar formulario' : 'Nuevo formulario'}</DialogTitle>
       <DialogContent>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
-          <TextField label="Nombre del formulario" value={nombreFormulario} onChange={(e) => setNombreFormulario(e.target.value)} fullWidth />
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          El formulario define qué le vas a pedir al cliente en este paso. Ponle un nombre y después agregá los campos que necesités.
+        </Typography>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <TextField label="Nombre del formulario" placeholder="Ej: Datos personales" value={nombreFormulario} onChange={(e) => setNombreFormulario(e.target.value)} fullWidth />
           <TextField label="Descripción (opcional)" value={descripcionFormulario} onChange={(e) => setDescripcionFormulario(e.target.value)} fullWidth multiline rows={2} />
         </Box>
       </DialogContent>

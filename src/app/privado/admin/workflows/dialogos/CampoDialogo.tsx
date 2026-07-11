@@ -12,23 +12,33 @@ interface CampoDialogoProps {
   abierto: boolean;
   editando: Campo | null;
   codFormulario: number | null;
+  siguienteOrden: number;
   onClose: () => void;
   onGuardado: () => void;
 }
 
 const CAMPO_VACIO = {
-  nombreCampo: '', etiquetaCampo: '', tipoCampo: 'texto' as TipoCampo,
-  requeridoCampo: false, ordenCampo: '', placeholderCampo: '', opcionesCampo: [] as string[],
+  etiquetaCampo: '', tipoCampo: 'texto' as TipoCampo,
+  requeridoCampo: false, placeholderCampo: '', opcionesCampo: [] as string[],
 };
 
-// codFormulario solo se usa al crear (editando === null); al editar, el
-// backend ya sabe a qué formulario pertenece por el id del campo.
-const CampoDialogo: React.FC<CampoDialogoProps> = ({ abierto, editando, codFormulario, onClose, onGuardado }) => {
-  const [nombreCampo, setNombreCampo] = useState(CAMPO_VACIO.nombreCampo);
+// El nombre interno del campo no se le pide al usuario: se genera a partir
+// de la etiqueta (ej. "Fecha de nacimiento" -> "fecha_de_nacimiento").
+const generarNombreCampo = (etiqueta: string): string =>
+  etiqueta
+    .trim()
+    .toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '') || 'campo';
+
+// codFormulario y siguienteOrden solo se usan al crear (editando === null);
+// al editar, el backend ya sabe a qué formulario pertenece y conserva el
+// orden actual por el id del campo.
+const CampoDialogo: React.FC<CampoDialogoProps> = ({ abierto, editando, codFormulario, siguienteOrden, onClose, onGuardado }) => {
   const [etiquetaCampo, setEtiquetaCampo] = useState(CAMPO_VACIO.etiquetaCampo);
   const [tipoCampo, setTipoCampo] = useState<TipoCampo>(CAMPO_VACIO.tipoCampo);
   const [requeridoCampo, setRequeridoCampo] = useState(CAMPO_VACIO.requeridoCampo);
-  const [ordenCampo, setOrdenCampo] = useState(CAMPO_VACIO.ordenCampo);
   const [placeholderCampo, setPlaceholderCampo] = useState(CAMPO_VACIO.placeholderCampo);
   const [opcionesCampo, setOpcionesCampo] = useState<string[]>(CAMPO_VACIO.opcionesCampo);
   const [opcionNueva, setOpcionNueva] = useState('');
@@ -36,11 +46,9 @@ const CampoDialogo: React.FC<CampoDialogoProps> = ({ abierto, editando, codFormu
 
   useEffect(() => {
     if (!abierto) return;
-    setNombreCampo(editando?.nombreCampo ?? CAMPO_VACIO.nombreCampo);
     setEtiquetaCampo(editando?.etiquetaCampo ?? CAMPO_VACIO.etiquetaCampo);
     setTipoCampo(editando?.tipoCampo ?? CAMPO_VACIO.tipoCampo);
     setRequeridoCampo(editando?.requeridoCampo ?? CAMPO_VACIO.requeridoCampo);
-    setOrdenCampo(editando ? String(editando.ordenCampo) : CAMPO_VACIO.ordenCampo);
     setPlaceholderCampo(editando?.placeholderCampo ?? CAMPO_VACIO.placeholderCampo);
     setOpcionesCampo(editando?.opcionesCampo ?? CAMPO_VACIO.opcionesCampo);
     setOpcionNueva('');
@@ -59,8 +67,8 @@ const CampoDialogo: React.FC<CampoDialogoProps> = ({ abierto, editando, codFormu
 
   const guardar = async () => {
     if (!codFormulario && !editando) return;
-    if (!nombreCampo.trim() || !etiquetaCampo.trim()) {
-      crearMensaje('error', 'Nombre y etiqueta del campo son obligatorios');
+    if (!etiquetaCampo.trim()) {
+      crearMensaje('error', 'La etiqueta del campo es obligatoria');
       return;
     }
     if (TIPOS_CON_OPCIONES.includes(tipoCampo) && opcionesCampo.length === 0) {
@@ -70,11 +78,11 @@ const CampoDialogo: React.FC<CampoDialogoProps> = ({ abierto, editando, codFormu
     setGuardando(true);
     try {
       const body = {
-        nombreCampo,
+        nombreCampo: editando?.nombreCampo ?? generarNombreCampo(etiquetaCampo),
         etiquetaCampo,
         tipoCampo,
         requeridoCampo,
-        ordenCampo: ordenCampo ? Number(ordenCampo) : undefined,
+        ordenCampo: editando ? undefined : siguienteOrden,
         placeholderCampo: placeholderCampo || undefined,
         opcionesCampo: TIPOS_CON_OPCIONES.includes(tipoCampo) ? opcionesCampo : undefined,
       };
@@ -97,9 +105,11 @@ const CampoDialogo: React.FC<CampoDialogoProps> = ({ abierto, editando, codFormu
     <Dialog open={abierto} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>{editando ? 'Editar campo' : 'Nuevo campo'}</DialogTitle>
       <DialogContent>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
-          <TextField label="Nombre interno" value={nombreCampo} onChange={(e) => setNombreCampo(e.target.value)} fullWidth />
-          <TextField label="Etiqueta (visible al cliente)" value={etiquetaCampo} onChange={(e) => setEtiquetaCampo(e.target.value)} fullWidth />
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          Un campo es cada dato que le pedís al cliente en este formulario. Elegí cómo se llama, qué tipo de dato es y si es obligatorio.
+        </Typography>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <TextField label="Etiqueta (lo que ve el cliente)" placeholder="Ej: Fecha de nacimiento" value={etiquetaCampo} onChange={(e) => setEtiquetaCampo(e.target.value)} fullWidth />
           <FormControl fullWidth>
             <InputLabel>Tipo de campo</InputLabel>
             <Select
@@ -112,8 +122,14 @@ const CampoDialogo: React.FC<CampoDialogoProps> = ({ abierto, editando, codFormu
               ))}
             </Select>
           </FormControl>
-          <TextField label="Placeholder (opcional)" value={placeholderCampo} onChange={(e) => setPlaceholderCampo(e.target.value)} fullWidth />
-          <TextField label="Orden" type="number" value={ordenCampo} onChange={(e) => setOrdenCampo(e.target.value)} fullWidth />
+          <TextField
+            label="Placeholder (opcional)"
+            placeholder="Ej: DD/MM/AAAA"
+            helperText="Un ejemplo del dato que se muestra vacío en el campo, para guiar al cliente"
+            value={placeholderCampo}
+            onChange={(e) => setPlaceholderCampo(e.target.value)}
+            fullWidth
+          />
           <FormControlLabel
             control={<Switch checked={requeridoCampo} onChange={(e) => setRequeridoCampo(e.target.checked)} />}
             label="Campo obligatorio"

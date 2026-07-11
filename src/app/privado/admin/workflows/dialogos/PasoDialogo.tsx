@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Typography } from '@mui/material';
 import { crearMensaje } from '../../../../../app/utilidades/funciones/mensaje';
 import { WorkflowServicio, Paso } from '../../../../../app/servicios/privados/WorkflowServicio';
 
@@ -7,23 +7,23 @@ interface PasoDialogoProps {
   abierto: boolean;
   editando: Paso | null;
   codEtapa: number | null;
+  siguienteOrden: number;
   onClose: () => void;
   onGuardado: () => void;
 }
 
-// codEtapa solo se usa al crear (editando === null); al editar, el backend
-// ya sabe a qué etapa pertenece por el id del paso.
-const PasoDialogo: React.FC<PasoDialogoProps> = ({ abierto, editando, codEtapa, onClose, onGuardado }) => {
+// codEtapa y siguienteOrden solo se usan al crear (editando === null); al
+// editar, el backend ya sabe a qué etapa pertenece y conserva el orden
+// actual por el id del paso.
+const PasoDialogo: React.FC<PasoDialogoProps> = ({ abierto, editando, codEtapa, siguienteOrden, onClose, onGuardado }) => {
   const [nombrePaso, setNombrePaso] = useState('');
   const [descripcionPaso, setDescripcionPaso] = useState('');
-  const [ordenPaso, setOrdenPaso] = useState('');
   const [guardando, setGuardando] = useState(false);
 
   useEffect(() => {
     if (!abierto) return;
     setNombrePaso(editando?.nombrePaso ?? '');
     setDescripcionPaso(editando?.descripcionPaso ?? '');
-    setOrdenPaso(editando ? String(editando.ordenPaso) : '');
   }, [abierto, editando]);
 
   const guardar = async () => {
@@ -37,7 +37,7 @@ const PasoDialogo: React.FC<PasoDialogoProps> = ({ abierto, editando, codEtapa, 
       const body = {
         nombrePaso,
         descripcionPaso: descripcionPaso || undefined,
-        ordenPaso: ordenPaso ? Number(ordenPaso) : undefined,
+        ordenPaso: editando ? undefined : siguienteOrden,
       };
       if (editando) {
         await WorkflowServicio.actualizarPaso(editando.codPaso, body);
@@ -58,10 +58,12 @@ const PasoDialogo: React.FC<PasoDialogoProps> = ({ abierto, editando, codEtapa, 
     <Dialog open={abierto} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>{editando ? 'Editar paso' : 'Nuevo paso'}</DialogTitle>
       <DialogContent>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
-          <TextField label="Nombre del paso" value={nombrePaso} onChange={(e) => setNombrePaso(e.target.value)} fullWidth />
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          Un paso es una acción concreta dentro de la etapa. Cada paso puede tener su propio formulario para pedirle información al cliente.
+        </Typography>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <TextField label="Nombre del paso" placeholder="Ej: Cargar documento de identidad" value={nombrePaso} onChange={(e) => setNombrePaso(e.target.value)} fullWidth />
           <TextField label="Descripción (opcional)" value={descripcionPaso} onChange={(e) => setDescripcionPaso(e.target.value)} fullWidth multiline rows={2} />
-          <TextField label="Orden" type="number" value={ordenPaso} onChange={(e) => setOrdenPaso(e.target.value)} fullWidth />
         </Box>
       </DialogContent>
       <DialogActions>

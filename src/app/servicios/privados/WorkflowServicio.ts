@@ -9,6 +9,12 @@ export interface Mensaje {
   mensaje: string;
 }
 
+export interface WorkflowCreado extends Mensaje { codWorkflow: number }
+export interface EtapaCreada extends Mensaje { codEtapa: number }
+export interface PasoCreado extends Mensaje { codPaso: number }
+export interface FormularioCreado extends Mensaje { codFormulario: number }
+export interface CampoCreado extends Mensaje { codCampo: number }
+
 // Resumen tal como lo devuelve GET /workflows (listar)
 export interface Workflow {
   codWorkflow: number;
@@ -136,8 +142,8 @@ export interface UpdateCampoDto {
 // ─── Workflows ───────────────────────────────────────────────────────────────
 
 export const WorkflowServicio = {
-  crear(body: CreateWorkflowDto): Promise<Mensaje> {
-    return ApiServicio.post<Mensaje>(URLS.WORKFLOWS, body);
+  crear(body: CreateWorkflowDto): Promise<WorkflowCreado> {
+    return ApiServicio.post<WorkflowCreado>(URLS.WORKFLOWS, body);
   },
 
   listar(): Promise<Workflow[]> {
@@ -158,8 +164,8 @@ export const WorkflowServicio = {
 
   // ─── Etapas ───────────────────────────────────────────────────────────
 
-  crearEtapa(workflowId: number, body: CreateEtapaDto): Promise<Mensaje> {
-    return ApiServicio.post<Mensaje>(URLS.ETAPAS_POR_WORKFLOW(workflowId), body);
+  crearEtapa(workflowId: number, body: CreateEtapaDto): Promise<EtapaCreada> {
+    return ApiServicio.post<EtapaCreada>(URLS.ETAPAS_POR_WORKFLOW(workflowId), body);
   },
 
   listarEtapas(workflowId: number): Promise<Etapa[]> {
@@ -176,8 +182,8 @@ export const WorkflowServicio = {
 
   // ─── Pasos ────────────────────────────────────────────────────────────
 
-  crearPaso(etapaId: number, body: CreatePasoDto): Promise<Mensaje> {
-    return ApiServicio.post<Mensaje>(URLS.PASOS_POR_ETAPA(etapaId), body);
+  crearPaso(etapaId: number, body: CreatePasoDto): Promise<PasoCreado> {
+    return ApiServicio.post<PasoCreado>(URLS.PASOS_POR_ETAPA(etapaId), body);
   },
 
   listarPasos(etapaId: number): Promise<Paso[]> {
@@ -194,8 +200,8 @@ export const WorkflowServicio = {
 
   // ─── Formularios ──────────────────────────────────────────────────────
 
-  crearFormulario(pasoId: number, body: CreateFormularioDto): Promise<Mensaje> {
-    return ApiServicio.post<Mensaje>(URLS.FORMULARIO_POR_PASO(pasoId), body);
+  crearFormulario(pasoId: number, body: CreateFormularioDto): Promise<FormularioCreado> {
+    return ApiServicio.post<FormularioCreado>(URLS.FORMULARIO_POR_PASO(pasoId), body);
   },
 
   obtenerFormulario(pasoId: number): Promise<Formulario> {
@@ -212,8 +218,8 @@ export const WorkflowServicio = {
 
   // ─── Campos ───────────────────────────────────────────────────────────
 
-  crearCampo(formularioId: number, body: CreateCampoDto): Promise<Mensaje> {
-    return ApiServicio.post<Mensaje>(URLS.CAMPOS_POR_FORMULARIO(formularioId), body);
+  crearCampo(formularioId: number, body: CreateCampoDto): Promise<CampoCreado> {
+    return ApiServicio.post<CampoCreado>(URLS.CAMPOS_POR_FORMULARIO(formularioId), body);
   },
 
   listarCampos(formularioId: number): Promise<Campo[]> {
