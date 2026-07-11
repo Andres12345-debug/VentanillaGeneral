@@ -18,6 +18,7 @@ import {
 } from '../../../../app/servicios/privados/WorkflowServicio';
 import { TIPO_CAMPO } from '../../../../app/utilidades/dominios/tipoCampo';
 import { ESTADO_WORKFLOW } from '../../../../app/utilidades/dominios/estados';
+import TituloPagina from '../../../../compartido/ui/TituloPagina';
 import EtapaDialogo from './dialogos/EtapaDialogo';
 import PasoDialogo from './dialogos/PasoDialogo';
 import FormularioDialogo from './dialogos/FormularioDialogo';
@@ -163,7 +164,7 @@ const WorkflowDetalle: React.FC = () => {
     <Box sx={{ p: 4 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3, flexWrap: 'wrap', gap: 2 }}>
         <Box>
-          <Typography variant="h5" sx={{ fontWeight: 600 }}>{workflow.nombreWorkflow}</Typography>
+          <TituloPagina>{workflow.nombreWorkflow}</TituloPagina>
           {workflow.descripcionWorkflow && (
             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>{workflow.descripcionWorkflow}</Typography>
           )}

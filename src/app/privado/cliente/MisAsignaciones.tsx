@@ -6,6 +6,7 @@ import {
 import { crearMensaje } from '../../../app/utilidades/funciones/mensaje';
 import { AsignacionServicio, AsignacionResumen } from '../../../app/servicios/privados/AsignacionServicio';
 import Tarjeta from '../../../compartido/ui/Tarjeta';
+import TituloPagina from '../../../compartido/ui/TituloPagina';
 
 type ColorChip = 'default' | 'warning' | 'info' | 'success' | 'error' | 'primary' | 'secondary';
 
@@ -36,7 +37,7 @@ const MisAsignaciones: React.FC = () => {
 
   return (
     <Box sx={{ p: 4 }}>
-      <Typography variant="h5" sx={{ fontWeight: 600, mb: 3 }}>Mis trámites</Typography>
+      <TituloPagina sx={{ mb: 3 }}>Mis trámites</TituloPagina>
 
       {asignaciones.length === 0 ? (
         <Typography color="text.secondary">No tienes trámites asignados aún.</Typography>

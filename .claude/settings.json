@@ -4,7 +4,17 @@
       "Bash(git push *)",
       "Bash(grep -v \"^\\\\.$\")",
       "Bash(mkdir -p \"/c/Users/julia/AppData/Local/Temp/claude/c--Users-julia-OneDrive-Desktop-Julian-Monta-ez-Software-workflows-frontend/e911dffc-2b12-4882-9d0b-926379051e4e/scratchpad\")",
-      "Bash(git commit -m ' *)"
+      "Bash(git commit -m ' *)",
+      "Bash(grep -Hm1 ^description: 'c:/Users/julia/OneDrive/Desktop/Julian Montañez Software/workflows-frontend/.claude/skills/*/SKILL.md')",
+      "Bash(pg_isready -h localhost -p 5432)",
+      "PowerShell(Test-NetConnection -ComputerName localhost -Port 5432 -WarningAction SilentlyContinue)",
+      "Bash(xargs grep -ln \"Card\\\\|Paper\")",
+      "Bash(grep -i \"fontsource\\\\|inter\" package.json)",
+      "Bash(find . -maxdepth 2 -iname \"*.woff*\" -not -path \"./node_modules/*\")",
+      "Bash(find src *)",
+      "Bash(grep -n \"Typography\" src/compartido/ui/Tarjeta.tsx)",
+      "Bash(grep -n \"Typography\" src/compartido/ui/FormCard.tsx)",
+      "Bash(grep -n \"Typography\\\\|fontSize\\\\|fontWeight\" src/compartido/ui/TablaDatos.tsx)"
     ],
     "additionalDirectories": [
       "C:\\Users\\julia\\AppData\\Local\\Temp\\claude\\c--Users-julia-OneDrive-Desktop-Julian-Monta-ez-Software-workflows-frontend\\e911dffc-2b12-4882-9d0b-926379051e4e\\scratchpad"

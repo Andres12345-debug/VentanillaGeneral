@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
-  Box, Typography, Chip, CircularProgress, Paper, Button,
+  Box, Typography, Chip, CircularProgress, Button,
   Dialog, DialogTitle, DialogContent, DialogActions, TextField, Divider, Alert, Accordion,
   AccordionSummary, AccordionDetails, Autocomplete,
 } from '@mui/material';
@@ -12,6 +12,8 @@ import { crearMensaje } from '../../../../app/utilidades/funciones/mensaje';
 import { AsignacionServicio, AsignacionDetalle as AsignacionDetalleType } from '../../../../app/servicios/privados/AsignacionServicio';
 import { UsuarioServicio, Usuario } from '../../../../app/servicios/privados/UsuarioServicio';
 import { useUsuarioToken } from '../../../../app/utilidades/auth/usuarioToken';
+import Tarjeta from '../../../../compartido/ui/Tarjeta';
+import TituloPagina from '../../../../compartido/ui/TituloPagina';
 
 // Solo admin puede delegar (el backend rechaza a cualquier otro rol), y no
 // tiene sentido delegar una asignación que ya quedó en un estado terminal.
@@ -114,9 +116,9 @@ const AsignacionDetalle: React.FC = () => {
     <Box sx={{ p: 4 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3, flexWrap: 'wrap', gap: 2 }}>
         <Box>
-          <Typography variant="h5" sx={{ fontWeight: 600 }} gutterBottom>
+          <TituloPagina sx={{ mb: 1 }}>
             Asignación #{datos.codAsignacion}
-          </Typography>
+          </TituloPagina>
           <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
             <Chip label={datos.estadoAsignacion.replace('_', ' ')} color={colorPorEstado[datos.estadoAsignacion] ?? 'default'} />
             <Chip label={`Cliente: ${datos.nombreCliente}`} variant="outlined" />
@@ -140,7 +142,7 @@ const AsignacionDetalle: React.FC = () => {
         </Alert>
       )}
 
-      <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
+      <Tarjeta hoverable={false} padding={3} sx={{ mb: 3 }}>
         <Typography variant="subtitle1" sx={{ fontWeight: 600 }} gutterBottom>Información del revisor</Typography>
         {datos.codRevisor ? (
           <Typography variant="body2">Revisor asignado: {datos.nombreRevisor ?? `#${datos.codRevisor}`}</Typography>
@@ -171,7 +173,7 @@ const AsignacionDetalle: React.FC = () => {
             </Button>
           </Box>
         )}
-      </Paper>
+      </Tarjeta>
 
       <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>Progreso de pasos</Typography>
 

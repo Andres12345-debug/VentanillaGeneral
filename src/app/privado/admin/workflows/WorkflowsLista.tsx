@@ -1,15 +1,14 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead,
-  TableRow, Paper, Button, IconButton, Chip, CircularProgress,
-} from '@mui/material';
+import { Box, Button, IconButton, Chip } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { crearMensaje } from '../../../../app/utilidades/funciones/mensaje';
 import { WorkflowServicio, Workflow } from '../../../../app/servicios/privados/WorkflowServicio';
 import { ESTADO_WORKFLOW } from '../../../../app/utilidades/dominios/estados';
+import TablaDatos, { ColumnaTabla } from '../../../../compartido/ui/TablaDatos';
+import TituloPagina from '../../../../compartido/ui/TituloPagina';
 
 const WorkflowsLista: React.FC = () => {
   const navigate = useNavigate();
@@ -41,60 +40,54 @@ const WorkflowsLista: React.FC = () => {
     }
   };
 
+  const columnas: ColumnaTabla<Workflow>[] = [
+    { id: 'id', etiqueta: 'ID', render: (wf) => wf.codWorkflow },
+    { id: 'nombre', etiqueta: 'Nombre', render: (wf) => wf.nombreWorkflow },
+    {
+      id: 'estado',
+      etiqueta: 'Estado',
+      render: (wf) => (
+        <Chip
+          label={ESTADO_WORKFLOW[wf.estadoWorkflow]?.label ?? wf.estadoWorkflow}
+          color={ESTADO_WORKFLOW[wf.estadoWorkflow]?.color ?? 'default'}
+          size="small"
+        />
+      ),
+    },
+    { id: 'fecha', etiqueta: 'Fecha de creación', render: (wf) => new Date(wf.fechaCreacion).toLocaleDateString('es-CO') },
+    {
+      id: 'acciones',
+      etiqueta: 'Acciones',
+      align: 'center',
+      render: (wf) => (
+        <>
+          <IconButton size="small" color="primary" onClick={() => navigate(`/dashboard/workflows/${wf.codWorkflow}`)} title="Ver detalle">
+            <VisibilityIcon />
+          </IconButton>
+          <IconButton size="small" color="error" onClick={() => handleEliminar(wf.codWorkflow)} title="Eliminar">
+            <DeleteIcon />
+          </IconButton>
+        </>
+      ),
+    },
+  ];
+
   return (
     <Box sx={{ p: 4 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h5" sx={{ fontWeight: 600 }}>Workflows</Typography>
+        <TituloPagina>Workflows</TituloPagina>
         <Button variant="contained" startIcon={<AddIcon />} onClick={() => navigate('/dashboard/workflows/crear')}>
           Nuevo Workflow
         </Button>
       </Box>
 
-      {cargando ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 6 }}><CircularProgress /></Box>
-      ) : (
-        <TableContainer component={Paper} elevation={2}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>ID</TableCell>
-                <TableCell>Nombre</TableCell>
-                <TableCell>Estado</TableCell>
-                <TableCell>Fecha de creación</TableCell>
-                <TableCell align="center">Acciones</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {workflows.length === 0 ? (
-                <TableRow><TableCell colSpan={5} align="center">No hay workflows registrados</TableCell></TableRow>
-              ) : (
-                workflows.map((wf) => (
-                  <TableRow key={wf.codWorkflow} hover>
-                    <TableCell>{wf.codWorkflow}</TableCell>
-                    <TableCell>{wf.nombreWorkflow}</TableCell>
-                    <TableCell>
-                      <Chip
-                        label={ESTADO_WORKFLOW[wf.estadoWorkflow]?.label ?? wf.estadoWorkflow}
-                        color={ESTADO_WORKFLOW[wf.estadoWorkflow]?.color ?? 'default'}
-                        size="small"
-                      />
-                    </TableCell>
-                    <TableCell>{new Date(wf.fechaCreacion).toLocaleDateString('es-CO')}</TableCell>
-                    <TableCell align="center">
-                      <IconButton size="small" color="primary" onClick={() => navigate(`/dashboard/workflows/${wf.codWorkflow}`)} title="Ver detalle">
-                        <VisibilityIcon />
-                      </IconButton>
-                      <IconButton size="small" color="error" onClick={() => handleEliminar(wf.codWorkflow)} title="Eliminar">
-                        <DeleteIcon />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      )}
+      <TablaDatos
+        columnas={columnas}
+        filas={workflows}
+        claveFila={(wf) => wf.codWorkflow}
+        cargando={cargando}
+        mensajeVacio="No hay workflows registrados"
+      />
     </Box>
   );
 };

@@ -1,12 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead,
-  TableRow, Paper, Chip, CircularProgress, TextField, InputAdornment,
-} from '@mui/material';
+import { Box, Typography, Chip, TextField, InputAdornment } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { crearMensaje } from '../../../utilidades/funciones/mensaje';
 import { UsuarioServicio, Usuario } from '../../../servicios/privados/UsuarioServicio';
 import { ROL_CONFIG, Rol } from '../../../utilidades/dominios/roles';
+import TablaDatos, { ColumnaTabla } from '../../../../compartido/ui/TablaDatos';
+import TituloPagina from '../../../../compartido/ui/TituloPagina';
 
 // Vista de solo lectura: super_admin ve TODOS los usuarios de TODAS las
 // empresas (el backend no filtra por empresa cuando el rol es super_admin).
@@ -40,10 +39,35 @@ const UsuariosGlobal: React.FC = () => {
     );
   }, [usuarios, busqueda]);
 
+  const columnas: ColumnaTabla<Usuario>[] = [
+    { id: 'id', etiqueta: 'ID', render: (usuario) => usuario.codUsuario },
+    { id: 'nombre', etiqueta: 'Nombre', render: (usuario) => usuario.nombreAcceso },
+    { id: 'correo', etiqueta: 'Correo', render: (usuario) => usuario.correoUsuario },
+    {
+      id: 'rol',
+      etiqueta: 'Rol',
+      render: (usuario) => (
+        <Chip
+          label={ROL_CONFIG[usuario.nombreRol as Rol]?.label ?? usuario.nombreRol}
+          color={ROL_CONFIG[usuario.nombreRol as Rol]?.color ?? 'default'}
+          size="small"
+          variant="outlined"
+        />
+      ),
+    },
+    {
+      id: 'empresa',
+      etiqueta: 'Empresa',
+      render: (usuario) => usuario.nombreEmpresa ?? (
+        <Typography variant="body2" color="text.secondary">— (plataforma)</Typography>
+      ),
+    },
+  ];
+
   return (
     <Box sx={{ p: 4 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, flexWrap: 'wrap', gap: 2 }}>
-        <Typography variant="h5" sx={{ fontWeight: 600 }}>Usuarios registrados</Typography>
+        <TituloPagina>Usuarios registrados</TituloPagina>
         <TextField
           size="small"
           placeholder="Buscar por nombre, correo o empresa..."
@@ -56,49 +80,13 @@ const UsuariosGlobal: React.FC = () => {
         />
       </Box>
 
-      {cargando ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 6 }}><CircularProgress /></Box>
-      ) : (
-        <TableContainer component={Paper} elevation={2}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>ID</TableCell>
-                <TableCell>Nombre</TableCell>
-                <TableCell>Correo</TableCell>
-                <TableCell>Rol</TableCell>
-                <TableCell>Empresa</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filtrados.length === 0 ? (
-                <TableRow><TableCell colSpan={5} align="center">No hay usuarios que coincidan</TableCell></TableRow>
-              ) : (
-                filtrados.map((usuario) => (
-                  <TableRow key={usuario.codUsuario} hover>
-                    <TableCell>{usuario.codUsuario}</TableCell>
-                    <TableCell>{usuario.nombreAcceso}</TableCell>
-                    <TableCell>{usuario.correoUsuario}</TableCell>
-                    <TableCell>
-                      <Chip
-                        label={ROL_CONFIG[usuario.nombreRol as Rol]?.label ?? usuario.nombreRol}
-                        color={ROL_CONFIG[usuario.nombreRol as Rol]?.color ?? 'default'}
-                        size="small"
-                        variant="outlined"
-                      />
-                    </TableCell>
-                    <TableCell>
-                      {usuario.nombreEmpresa ?? (
-                        <Typography variant="body2" color="text.secondary">— (plataforma)</Typography>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      )}
+      <TablaDatos
+        columnas={columnas}
+        filas={filtrados}
+        claveFila={(usuario) => usuario.codUsuario}
+        cargando={cargando}
+        mensajeVacio="No hay usuarios que coincidan"
+      />
     </Box>
   );
 };

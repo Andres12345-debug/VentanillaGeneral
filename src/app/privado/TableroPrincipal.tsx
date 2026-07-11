@@ -8,6 +8,7 @@ import BusinessIcon from '@mui/icons-material/Business';
 import { useUsuarioToken } from '../../app/utilidades/auth/usuarioToken';
 import { ROL_CONFIG, Rol } from '../../app/utilidades/dominios/roles';
 import Tarjeta from '../../compartido/ui/Tarjeta';
+import TituloPagina from '../../compartido/ui/TituloPagina';
 
 const TableroPrincipal: React.FC = () => {
   const navigate = useNavigate();
@@ -16,9 +17,9 @@ const TableroPrincipal: React.FC = () => {
   return (
     <Box sx={{ p: 4 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 4 }}>
-        <Typography variant="h4" sx={{ fontWeight: 600 }}>
+        <TituloPagina>
           Bienvenido, {usuario?.name}
-        </Typography>
+        </TituloPagina>
         <Chip
           label={usuario ? ROL_CONFIG[usuario.role as Rol]?.label ?? usuario.role : ''}
           color={usuario ? ROL_CONFIG[usuario.role as Rol]?.color ?? 'default' : 'default'}

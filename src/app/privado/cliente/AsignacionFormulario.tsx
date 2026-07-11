@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   Box, Typography, Stepper, Step, StepLabel, CircularProgress, TextField,
-  Button, Alert, Paper, Divider, Switch, FormControlLabel, FormControl,
+  Button, Alert, Divider, Switch, FormControlLabel, FormControl,
   InputLabel, Select, MenuItem, FormHelperText,
 } from '@mui/material';
 import { crearMensaje } from '../../../app/utilidades/funciones/mensaje';
@@ -10,6 +10,8 @@ import {
   AsignacionServicio, AsignacionDetalle as AsignacionDetalleType, PasoConProgreso, RespuestaEnviar,
 } from '../../../app/servicios/privados/AsignacionServicio';
 import { Campo } from '../../../app/servicios/privados/WorkflowServicio';
+import Tarjeta from '../../../compartido/ui/Tarjeta';
+import TituloPagina from '../../../compartido/ui/TituloPagina';
 
 type ValorCampo = string | boolean | string[];
 type Valores = Record<number, ValorCampo>;
@@ -124,10 +126,10 @@ const AsignacionFormulario: React.FC = () => {
   if (datos.estadoAsignacion === 'aprobado') {
     return (
       <Box sx={{ p: 4, display: 'flex', justifyContent: 'center' }}>
-        <Paper elevation={2} sx={{ p: 4, maxWidth: 500, textAlign: 'center' }}>
+        <Tarjeta hoverable={false} padding={4} sx={{ maxWidth: 500, textAlign: 'center' }}>
           <Typography variant="h5" color="success.main" sx={{ fontWeight: 700 }} gutterBottom>¡Solicitud aprobada!</Typography>
           <Typography variant="body1" color="text.secondary">Tu trámite ha sido revisado y aprobado exitosamente.</Typography>
-        </Paper>
+        </Tarjeta>
       </Box>
     );
   }
@@ -161,7 +163,7 @@ const AsignacionFormulario: React.FC = () => {
 
   return (
     <Box sx={{ p: 4 }}>
-      <Typography variant="h5" sx={{ fontWeight: 600, mb: 3 }}>{datos.nombreWorkflow}</Typography>
+      <TituloPagina sx={{ mb: 3 }}>{datos.nombreWorkflow}</TituloPagina>
 
       {pasos.length > 0 && (
         <Stepper activeStep={pasoActivoIndex === -1 ? pasos.length : pasoActivoIndex} alternativeLabel sx={{ mb: 4 }}>
@@ -174,7 +176,7 @@ const AsignacionFormulario: React.FC = () => {
       )}
 
       {pasoActual ? (
-        <Paper elevation={2} sx={{ p: 3 }}>
+        <Tarjeta hoverable={false} padding={3}>
           <Typography variant="h6" sx={{ fontWeight: 600 }} gutterBottom>{pasoActual.nombrePaso}</Typography>
           <Divider sx={{ mb: 3 }} />
           {pasoActual.campos.length === 0 ? (
@@ -196,21 +198,21 @@ const AsignacionFormulario: React.FC = () => {
               </Box>
             </Box>
           )}
-        </Paper>
+        </Tarjeta>
       ) : (
-        <Paper elevation={2} sx={{ p: 4, textAlign: 'center' }}>
+        <Tarjeta hoverable={false} padding={4} sx={{ textAlign: 'center' }}>
           <Typography variant="h6" color="info.main" sx={{ fontWeight: 600 }}>Todos los pasos completados</Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
             Tu solicitud está siendo revisada. Te notificaremos cuando haya una respuesta.
           </Typography>
-        </Paper>
+        </Tarjeta>
       )}
 
       {completados.length > 0 && (
         <Box sx={{ mt: 4 }}>
           <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2 }}>Pasos completados</Typography>
           {completados.map((p) => (
-            <Paper key={p.codPaso} elevation={1} sx={{ p: 2, mb: 1 }}>
+            <Tarjeta key={p.codPaso} hoverable={false} padding={2} sx={{ mb: 1 }}>
               <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>{p.nombrePaso}</Typography>
               {p.respuestas.length > 0 && p.respuestas.map((r) => {
                 const campo = p.campos.find((c) => c.codCampo === r.codCampo);
@@ -220,7 +222,7 @@ const AsignacionFormulario: React.FC = () => {
                   </Typography>
                 );
               })}
-            </Paper>
+            </Tarjeta>
           ))}
         </Box>
       )}

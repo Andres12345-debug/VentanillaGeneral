@@ -1,14 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead,
-  TableRow, Paper, Button, IconButton, Chip, CircularProgress,
-} from '@mui/material';
+import { Box, Button, IconButton, Chip } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { crearMensaje } from '../../../../app/utilidades/funciones/mensaje';
 import { UsuarioServicio, Usuario } from '../../../../app/servicios/privados/UsuarioServicio';
 import { ROL_CONFIG, Rol } from '../../../../app/utilidades/dominios/roles';
+import TablaDatos, { ColumnaTabla } from '../../../../compartido/ui/TablaDatos';
+import TituloPagina from '../../../../compartido/ui/TituloPagina';
 
 const UsuariosLista: React.FC = () => {
   const navigate = useNavigate();
@@ -39,58 +38,50 @@ const UsuariosLista: React.FC = () => {
     }
   };
 
+  const columnas: ColumnaTabla<Usuario>[] = [
+    { id: 'id', etiqueta: 'ID', render: (usuario) => usuario.codUsuario },
+    { id: 'nombre', etiqueta: 'Nombre', render: (usuario) => usuario.nombreAcceso },
+    { id: 'correo', etiqueta: 'Correo', render: (usuario) => usuario.correoUsuario },
+    {
+      id: 'rol',
+      etiqueta: 'Rol',
+      render: (usuario) => (
+        <Chip
+          label={ROL_CONFIG[usuario.nombreRol as Rol]?.label ?? usuario.nombreRol}
+          color={ROL_CONFIG[usuario.nombreRol as Rol]?.color ?? 'default'}
+          size="small"
+          variant="outlined"
+        />
+      ),
+    },
+    {
+      id: 'acciones',
+      etiqueta: 'Acciones',
+      align: 'center',
+      render: (usuario) => (
+        <IconButton size="small" color="error" onClick={() => handleEliminar(usuario.codUsuario)} title="Eliminar">
+          <DeleteIcon />
+        </IconButton>
+      ),
+    },
+  ];
+
   return (
     <Box sx={{ p: 4 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h5" sx={{ fontWeight: 600 }}>Usuarios</Typography>
+        <TituloPagina>Usuarios</TituloPagina>
         <Button variant="contained" startIcon={<AddIcon />} onClick={() => navigate('/dashboard/usuarios/crear')}>
           Nuevo Usuario
         </Button>
       </Box>
 
-      {cargando ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 6 }}><CircularProgress /></Box>
-      ) : (
-        <TableContainer component={Paper} elevation={2}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>ID</TableCell>
-                <TableCell>Nombre</TableCell>
-                <TableCell>Correo</TableCell>
-                <TableCell>Rol</TableCell>
-                <TableCell align="center">Acciones</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {usuarios.length === 0 ? (
-                <TableRow><TableCell colSpan={5} align="center">No hay usuarios registrados</TableCell></TableRow>
-              ) : (
-                usuarios.map((usuario) => (
-                  <TableRow key={usuario.codUsuario} hover>
-                    <TableCell>{usuario.codUsuario}</TableCell>
-                    <TableCell>{usuario.nombreAcceso}</TableCell>
-                    <TableCell>{usuario.correoUsuario}</TableCell>
-                    <TableCell>
-                      <Chip
-                        label={ROL_CONFIG[usuario.nombreRol as Rol]?.label ?? usuario.nombreRol}
-                        color={ROL_CONFIG[usuario.nombreRol as Rol]?.color ?? 'default'}
-                        size="small"
-                        variant="outlined"
-                      />
-                    </TableCell>
-                    <TableCell align="center">
-                      <IconButton size="small" color="error" onClick={() => handleEliminar(usuario.codUsuario)} title="Eliminar">
-                        <DeleteIcon />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      )}
+      <TablaDatos
+        columnas={columnas}
+        filas={usuarios}
+        claveFila={(usuario) => usuario.codUsuario}
+        cargando={cargando}
+        mensajeVacio="No hay usuarios registrados"
+      />
     </Box>
   );
 };

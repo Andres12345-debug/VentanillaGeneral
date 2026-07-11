@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
-  Box, Typography, Paper, Chip, Button, CircularProgress, Divider, Grid,
+  Box, Typography, Chip, Button, CircularProgress, Divider, Grid,
 } from '@mui/material';
 import LinkIcon from '@mui/icons-material/Link';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
@@ -11,6 +11,8 @@ import { useFormulario } from '../../../utilidades/funciones/UsoFormulario';
 import { EmpresaServicio, Empresa } from '../../../servicios/privados/EmpresaServicio';
 import CampoTexto from '../../../../compartido/ui/CampoTexto';
 import BotonPrincipal from '../../../../compartido/ui/BotonPrincipal';
+import Tarjeta from '../../../../compartido/ui/Tarjeta';
+import TituloPagina from '../../../../compartido/ui/TituloPagina';
 
 const REGEX_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -113,7 +115,7 @@ const EmpresaDetalle: React.FC = () => {
     <Box sx={{ p: 4 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, flexWrap: 'wrap', gap: 2 }}>
         <Box>
-          <Typography variant="h5" sx={{ fontWeight: 600 }}>{empresa.nombreEmpresa}</Typography>
+          <TituloPagina>{empresa.nombreEmpresa}</TituloPagina>
           <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
             <Chip label={empresa.estadoEmpresa ? 'Activa' : 'Inactiva'} color={empresa.estadoEmpresa ? 'success' : 'default'} size="small" />
             {empresa.esDemo && <Chip label="Demo" color="info" size="small" />}
@@ -135,7 +137,7 @@ const EmpresaDetalle: React.FC = () => {
         </Box>
       </Box>
 
-      <Paper elevation={2} sx={{ p: 3, maxWidth: 640 }}>
+      <Tarjeta hoverable={false} padding={3} sx={{ maxWidth: 640 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
           <PersonAddIcon color="primary" />
           <Typography variant="h6" sx={{ fontWeight: 600 }}>Crear admin de la empresa</Typography>
@@ -169,7 +171,7 @@ const EmpresaDetalle: React.FC = () => {
           </Grid>
           <BotonPrincipal type="submit" cargando={creandoAdmin}>Crear admin</BotonPrincipal>
         </Box>
-      </Paper>
+      </Tarjeta>
     </Box>
   );
 };

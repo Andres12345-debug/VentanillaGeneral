@@ -1,13 +1,14 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
-  Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead,
-  TableRow, Paper, Chip, CircularProgress, Select, MenuItem, FormControl,
+  Box, Chip, Select, MenuItem, FormControl,
   InputLabel, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField,
 } from '@mui/material';
 import { crearMensaje } from '../../../../app/utilidades/funciones/mensaje';
 import { AsignacionServicio, AsignacionResumen } from '../../../../app/servicios/privados/AsignacionServicio';
 import { ESTADO_ASIGNACION } from '../../../../app/utilidades/dominios/estados';
+import TablaDatos, { ColumnaTabla } from '../../../../compartido/ui/TablaDatos';
+import TituloPagina from '../../../../compartido/ui/TituloPagina';
 
 const TODOS = 'todos';
 
@@ -74,12 +75,39 @@ const AsignacionesLista: React.FC = () => {
     }
   };
 
+  const columnas: ColumnaTabla<AsignacionResumen>[] = [
+    { id: 'id', etiqueta: 'ID', render: (a) => a.codAsignacion },
+    { id: 'cliente', etiqueta: 'Cliente', render: (a) => a.nombreCliente },
+    { id: 'workflow', etiqueta: 'Workflow', render: (a) => a.nombreWorkflow },
+    {
+      id: 'estado',
+      etiqueta: 'Estado',
+      render: (a) => {
+        const estadoConf = ESTADO_ASIGNACION[a.estadoAsignacion];
+        return <Chip label={estadoConf?.label ?? a.estadoAsignacion} color={estadoConf?.color ?? 'default'} size="small" />;
+      },
+    },
+    { id: 'fecha', etiqueta: 'Fecha', render: (a) => new Date(a.fechaAsignacion).toLocaleDateString('es-CO') },
+    {
+      id: 'acciones',
+      etiqueta: 'Acciones',
+      align: 'center',
+      detenerClick: true,
+      render: (a) => a.estadoAsignacion === 'en_revision' && (
+        <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}>
+          <Button size="small" variant="contained" color="success" disabled={procesando} onClick={() => handleAprobar(a)}>Aprobar</Button>
+          <Button size="small" variant="outlined" color="error" disabled={procesando} onClick={() => { setAsignacionActiva(a); setMotivoRechazo(''); setDialogoAbierto(true); }}>Rechazar</Button>
+        </Box>
+      ),
+    },
+  ];
+
   return (
     <Box sx={{ p: 4 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, flexWrap: 'wrap', gap: 2 }}>
-        <Typography variant="h5" sx={{ fontWeight: 600 }}>
+        <TituloPagina>
           Asignaciones {workflowId ? `— Workflow #${workflowId}` : ''}
-        </Typography>
+        </TituloPagina>
         <FormControl size="small" sx={{ minWidth: 160 }}>
           <InputLabel>Filtrar por estado</InputLabel>
           <Select value={filtroEstado} label="Filtrar por estado" onChange={(e) => setFiltroEstado(e.target.value)}>
@@ -91,52 +119,14 @@ const AsignacionesLista: React.FC = () => {
         </FormControl>
       </Box>
 
-      {cargando ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 6 }}><CircularProgress /></Box>
-      ) : (
-        <TableContainer component={Paper} elevation={2}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>ID</TableCell>
-                <TableCell>Cliente</TableCell>
-                <TableCell>Workflow</TableCell>
-                <TableCell>Estado</TableCell>
-                <TableCell>Fecha</TableCell>
-                <TableCell align="center">Acciones</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filtradas.length === 0 ? (
-                <TableRow><TableCell colSpan={6} align="center">No hay asignaciones</TableCell></TableRow>
-              ) : (
-                filtradas.map((a) => {
-                  const estadoConf = ESTADO_ASIGNACION[a.estadoAsignacion];
-                  return (
-                    <TableRow key={a.codAsignacion} hover sx={{ cursor: 'pointer' }} onClick={() => navigate(`/dashboard/asignaciones/${a.codAsignacion}`)}>
-                      <TableCell>{a.codAsignacion}</TableCell>
-                      <TableCell>{a.nombreCliente}</TableCell>
-                      <TableCell>{a.nombreWorkflow}</TableCell>
-                      <TableCell>
-                        <Chip label={estadoConf?.label ?? a.estadoAsignacion} color={estadoConf?.color ?? 'default'} size="small" />
-                      </TableCell>
-                      <TableCell>{new Date(a.fechaAsignacion).toLocaleDateString('es-CO')}</TableCell>
-                      <TableCell align="center" onClick={(e) => e.stopPropagation()}>
-                        {a.estadoAsignacion === 'en_revision' && (
-                          <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}>
-                            <Button size="small" variant="contained" color="success" disabled={procesando} onClick={() => handleAprobar(a)}>Aprobar</Button>
-                            <Button size="small" variant="outlined" color="error" disabled={procesando} onClick={() => { setAsignacionActiva(a); setMotivoRechazo(''); setDialogoAbierto(true); }}>Rechazar</Button>
-                          </Box>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  );
-                })
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      )}
+      <TablaDatos
+        columnas={columnas}
+        filas={filtradas}
+        claveFila={(a) => a.codAsignacion}
+        cargando={cargando}
+        mensajeVacio="No hay asignaciones"
+        onRowClick={(a) => navigate(`/dashboard/asignaciones/${a.codAsignacion}`)}
+      />
 
       <Dialog open={dialogoAbierto} onClose={() => setDialogoAbierto(false)} maxWidth="sm" fullWidth>
         <DialogTitle>Rechazar asignación</DialogTitle>

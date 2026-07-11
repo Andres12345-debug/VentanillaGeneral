@@ -6,15 +6,16 @@ interface TarjetaProps {
   pie?: ReactNode;
   onClick?: () => void;
   hoverable?: boolean;
+  padding?: number;
   sx?: SxProps<Theme>;
 }
 
-const Tarjeta: React.FC<TarjetaProps> = ({ children, pie, onClick, hoverable = true, sx }) => {
+const Tarjeta: React.FC<TarjetaProps> = ({ children, pie, onClick, hoverable = true, padding = 3.5, sx }) => {
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
 
   const contenido = (
-    <CardContent sx={{ flex: 1, p: 3.5, '&:last-child': { pb: 3.5 } }}>
+    <CardContent sx={{ flex: 1, p: padding, '&:last-child': { pb: padding } }}>
       {children}
     </CardContent>
   );
