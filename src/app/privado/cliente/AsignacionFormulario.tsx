@@ -3,8 +3,13 @@ import { useParams } from 'react-router-dom';
 import {
   Box, Typography, Stepper, Step, StepLabel, CircularProgress, TextField,
   Button, Alert, Divider, Switch, FormControlLabel, FormControl,
-  InputLabel, Select, MenuItem, FormHelperText,
+  InputLabel, Select, MenuItem, FormHelperText, InputAdornment, OutlinedInput, Chip,
 } from '@mui/material';
+import { alpha } from '@mui/material/styles';
+import {
+  ShortTextRounded, NotesRounded, NumbersRounded, CalendarTodayRounded,
+  ToggleOnRounded, RadioButtonCheckedRounded, PlaylistAddCheckRounded,
+} from '@mui/icons-material';
 import { crearMensaje } from '../../../app/utilidades/funciones/mensaje';
 import {
   AsignacionServicio, AsignacionDetalle as AsignacionDetalleType, PasoConProgreso, RespuestaEnviar,
@@ -236,8 +241,42 @@ interface CampoDinamicoProps {
   onChange: (valor: ValorCampo) => void;
 }
 
+/** Ícono por tipo de campo: da una pista visual inmediata de qué tipo de dato se espera. */
+const IconoCampo: React.FC<{ tipo: Campo['tipoCampo'] }> = ({ tipo }) => {
+  const props = { fontSize: 'small' as const, sx: { color: 'text.disabled' } };
+  switch (tipo) {
+    case 'area_texto': return <NotesRounded {...props} />;
+    case 'numero': return <NumbersRounded {...props} />;
+    case 'fecha': return <CalendarTodayRounded {...props} />;
+    case 'booleano': return <ToggleOnRounded {...props} />;
+    case 'texto':
+    default: return <ShortTextRounded {...props} />;
+  }
+};
+
+/**
+ * Los campos de selección se envuelven con un acento de color + ícono propio
+ * (distinto al de los campos de texto libre) para que sea evidente, de un
+ * vistazo, que se trata de una lista de opciones y no de un campo para escribir.
+ */
+const ContenedorSeleccion: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <Box
+    sx={{
+      borderLeft: '3px solid',
+      borderColor: 'secondary.main',
+      borderRadius: '4px',
+      pl: 2,
+      py: 0.5,
+      bgcolor: (theme) => alpha(theme.palette.secondary.main, theme.palette.mode === 'dark' ? 0.08 : 0.05),
+    }}
+  >
+    {children}
+  </Box>
+);
+
 const CampoDinamico: React.FC<CampoDinamicoProps> = ({ campo, valor, onChange }) => {
   const etiqueta = `${campo.etiquetaCampo}${campo.requeridoCampo ? ' *' : ''}`;
+  const sinOpciones = (campo.opcionesCampo ?? []).length === 0;
 
   switch (campo.tipoCampo) {
     case 'area_texto':
@@ -245,6 +284,15 @@ const CampoDinamico: React.FC<CampoDinamicoProps> = ({ campo, valor, onChange })
         <TextField
           fullWidth multiline rows={4} label={etiqueta} placeholder={campo.placeholderCampo}
           value={(valor as string) ?? ''} onChange={(e) => onChange(e.target.value)}
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start" sx={{ alignSelf: 'flex-start', mt: 1.5 }}>
+                  <IconoCampo tipo="area_texto" />
+                </InputAdornment>
+              ),
+            },
+          }}
         />
       );
 
@@ -253,13 +301,23 @@ const CampoDinamico: React.FC<CampoDinamicoProps> = ({ campo, valor, onChange })
         <TextField
           fullWidth type="number" label={etiqueta} placeholder={campo.placeholderCampo}
           value={(valor as string) ?? ''} onChange={(e) => onChange(e.target.value)}
+          slotProps={{
+            input: {
+              startAdornment: <InputAdornment position="start"><IconoCampo tipo="numero" /></InputAdornment>,
+            },
+          }}
         />
       );
 
     case 'fecha':
       return (
         <TextField
-          fullWidth type="date" label={etiqueta} slotProps={{ inputLabel: { shrink: true } }}
+          fullWidth type="date" label={etiqueta} slotProps={{
+            inputLabel: { shrink: true },
+            input: {
+              startAdornment: <InputAdornment position="start"><IconoCampo tipo="fecha" /></InputAdornment>,
+            },
+          }}
           value={(valor as string) ?? ''} onChange={(e) => onChange(e.target.value)}
         />
       );
@@ -268,38 +326,94 @@ const CampoDinamico: React.FC<CampoDinamicoProps> = ({ campo, valor, onChange })
       return (
         <FormControlLabel
           control={<Switch checked={Boolean(valor)} onChange={(e) => onChange(e.target.checked)} />}
-          label={etiqueta}
+          label={(
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+              <IconoCampo tipo="booleano" />
+              <Typography variant="body2">{etiqueta}</Typography>
+            </Box>
+          )}
         />
       );
 
     case 'seleccion_unica':
       return (
-        <FormControl fullWidth>
-          <InputLabel>{etiqueta}</InputLabel>
-          <Select label={etiqueta} value={(valor as string) ?? ''} onChange={(e) => onChange(e.target.value)}>
-            {(campo.opcionesCampo ?? []).map((opcion) => (
-              <MenuItem key={opcion} value={opcion}>{opcion}</MenuItem>
-            ))}
-          </Select>
-          {campo.placeholderCampo && <FormHelperText>{campo.placeholderCampo}</FormHelperText>}
-        </FormControl>
+        <ContenedorSeleccion>
+          <FormControl fullWidth disabled={sinOpciones}>
+            <InputLabel>{etiqueta}</InputLabel>
+            <Select
+              value={(valor as string) ?? ''}
+              onChange={(e) => onChange(e.target.value)}
+              displayEmpty
+              input={(
+                <OutlinedInput
+                  label={etiqueta}
+                  startAdornment={(
+                    <InputAdornment position="start">
+                      <RadioButtonCheckedRounded fontSize="small" sx={{ color: 'secondary.main' }} />
+                    </InputAdornment>
+                  )}
+                />
+              )}
+              renderValue={(seleccionado) => (
+                (seleccionado as string) || (
+                  <Typography component="span" color="text.disabled">Selecciona una opción</Typography>
+                )
+              )}
+            >
+              {(campo.opcionesCampo ?? []).map((opcion) => (
+                <MenuItem key={opcion} value={opcion}>{opcion}</MenuItem>
+              ))}
+            </Select>
+            <FormHelperText>
+              {sinOpciones ? 'Este campo aún no tiene opciones configuradas' : (campo.placeholderCampo || 'Elige una opción de la lista')}
+            </FormHelperText>
+          </FormControl>
+        </ContenedorSeleccion>
       );
 
     case 'seleccion_multiple':
       return (
-        <FormControl fullWidth>
-          <InputLabel>{etiqueta}</InputLabel>
-          <Select
-            multiple
-            label={etiqueta}
-            value={(valor as string[]) ?? []}
-            onChange={(e) => onChange(typeof e.target.value === 'string' ? e.target.value.split(',') : e.target.value)}
-          >
-            {(campo.opcionesCampo ?? []).map((opcion) => (
-              <MenuItem key={opcion} value={opcion}>{opcion}</MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <ContenedorSeleccion>
+          <FormControl fullWidth disabled={sinOpciones}>
+            <InputLabel>{etiqueta}</InputLabel>
+            <Select
+              multiple
+              displayEmpty
+              value={(valor as string[]) ?? []}
+              onChange={(e) => onChange(typeof e.target.value === 'string' ? e.target.value.split(',') : e.target.value)}
+              input={(
+                <OutlinedInput
+                  label={etiqueta}
+                  startAdornment={(
+                    <InputAdornment position="start">
+                      <PlaylistAddCheckRounded fontSize="small" sx={{ color: 'secondary.main' }} />
+                    </InputAdornment>
+                  )}
+                />
+              )}
+              renderValue={(seleccionado) => {
+                const seleccionArray = seleccionado as string[];
+                if (seleccionArray.length === 0) {
+                  return <Typography component="span" color="text.disabled">Selecciona una o varias opciones</Typography>;
+                }
+                return (
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                    {seleccionArray.map((opcion) => (
+                      <Chip key={opcion} label={opcion} size="small" color="secondary" variant="outlined" />
+                    ))}
+                  </Box>
+                );
+              }}
+            >
+              {(campo.opcionesCampo ?? []).map((opcion) => (
+                <MenuItem key={opcion} value={opcion}>{opcion}</MenuItem>
+              ))}
+            </Select>
+            <FormHelperText>
+              {sinOpciones ? 'Este campo aún no tiene opciones configuradas' : (campo.placeholderCampo || 'Puedes seleccionar varias opciones')}
+            </FormHelperText>
+          </FormControl>
+        </ContenedorSeleccion>
       );
 
     case 'texto':
@@ -308,6 +422,11 @@ const CampoDinamico: React.FC<CampoDinamicoProps> = ({ campo, valor, onChange })
         <TextField
           fullWidth label={etiqueta} placeholder={campo.placeholderCampo}
           value={(valor as string) ?? ''} onChange={(e) => onChange(e.target.value)}
+          slotProps={{
+            input: {
+              startAdornment: <InputAdornment position="start"><IconoCampo tipo="texto" /></InputAdornment>,
+            },
+          }}
         />
       );
   }
