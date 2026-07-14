@@ -18,15 +18,6 @@ import { alpha, Theme } from '@mui/material/styles';
 // El resto de la paleta se deriva de la misma familia para mantenerla general
 // y reutilizable en toda la app (ver TOKENS más abajo).
 
-declare module '@mui/material/styles' {
-  interface Palette {
-    sidebar: { main: string; contrastText: string };
-  }
-  interface PaletteOptions {
-    sidebar?: { main: string; contrastText: string };
-  }
-}
-
 export const TOKENS = {
   tealBright: '#34BAAB', // color predominante: sidebar, CTAs, marca
   tealMid: '#459A96', // secundario: acentos, hover, texto sobre chips
@@ -134,10 +125,6 @@ export const ThemeContextProvider: React.FC<Props> = ({ children }) => {
             paper: mode === 'light' ? '#ffffff' : TOKENS.negro,
           },
           divider: mode === 'light' ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.1)',
-          sidebar: {
-            main: TOKENS.tealBright,
-            contrastText: '#ffffff',
-          },
         },
         shape: {
           borderRadius: 10,

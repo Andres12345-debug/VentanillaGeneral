@@ -4,7 +4,7 @@ import { Link as RouterLink, useLocation } from 'react-router-dom';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
-import { useThemeContext } from '../theme/ThemeContexto';
+import { useThemeContext, TOKENS } from '../theme/ThemeContexto';
 
 const Nav: React.FC = () => {
   const { pathname } = useLocation();
@@ -19,7 +19,7 @@ const Nav: React.FC = () => {
       sx={{
         height: 64,
         justifyContent: 'center',
-        bgcolor: 'sidebar.main',
+        bgcolor: TOKENS.negro,
         zIndex: (theme) => theme.zIndex.drawer + 1,
       }}
     >

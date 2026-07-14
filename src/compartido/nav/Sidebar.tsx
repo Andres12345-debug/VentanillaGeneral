@@ -173,7 +173,10 @@ const Sidebar: React.FC<SidebarProps> = ({ mobileOpen = false, onMobileClose }) 
             <ListItem key={item.path} disablePadding sx={{ mb: 0.25 }}>
               <Tooltip title={collapsed ? item.label : ''} placement="right">
                 <ListItemButton
-                  onClick={() => navigate(item.path)}
+                  onClick={() => {
+                    navigate(item.path);
+                    if (!isDesktop) onMobileClose?.();
+                  }}
                   sx={{
                     px: 1.5,
                     py: 0.75,
