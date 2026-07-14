@@ -60,7 +60,15 @@
       "Bash(python3 -)",
       "Bash(\"/c/Program Files \\(x86\\)/Microsoft/Edge/Application/msedge.exe\" --headless --disable-gpu --no-sandbox --window-size=1440,1600 --blink-settings=preferredColorScheme=1 --virtual-time-budget=8000 --screenshot=\"C:/tmp/pwscratch/shots/refactor_light.png\" \"http://localhost:3000/\")",
       "Bash(\"/c/Program Files \\(x86\\)/Microsoft/Edge/Application/msedge.exe\" --headless --disable-gpu --no-sandbox --window-size=1440,1600 --blink-settings=preferredColorScheme=2 --virtual-time-budget=8000 --screenshot=\"C:/tmp/pwscratch/shots/refactor_dark.png\" \"http://localhost:3000/login\")",
-      "Bash(\"/c/Program Files \\(x86\\)/Microsoft/Edge/Application/msedge.exe\" --headless --disable-gpu --no-sandbox --window-size=900,900 --virtual-time-budget=8000 --screenshot=\"C:/tmp/pwscratch/shots/refactor_dark2.png\" \"http://localhost:3000/login\")"
+      "Bash(\"/c/Program Files \\(x86\\)/Microsoft/Edge/Application/msedge.exe\" --headless --disable-gpu --no-sandbox --window-size=900,900 --virtual-time-budget=8000 --screenshot=\"C:/tmp/pwscratch/shots/refactor_dark2.png\" \"http://localhost:3000/login\")",
+      "Bash(node -e \"console.log\\(require\\('./node_modules/multer/package.json'\\).version\\)\")",
+      "Bash(node -e \"const p=require\\('./node_modules/multer/package.json'\\); console.log\\(p.types||p.typings||'none'\\)\")",
+      "Bash(npx nest *)",
+      "PowerShell(Get-NetTCPConnection -LocalPort 3550 -State Listen -ErrorAction SilentlyContinue | Select-Object -Property LocalPort, OwningProcess | ForEach-Object { $_.OwningProcess } | ForEach-Object { Get-Process -Id $_ -ErrorAction SilentlyContinue | Select-Object Id, ProcessName, Path })",
+      "PowerShell(Stop-Process -Id 21840 -Force -ErrorAction Stop)",
+      "PowerShell(Get-NetTCPConnection -LocalPort 3550 -State Listen -ErrorAction SilentlyContinue)",
+      "PowerShell(Get-Process -Id 21840 -ErrorAction SilentlyContinue)",
+      "PowerShell(Get-NetTCPConnection -LocalPort 3550 -ErrorAction SilentlyContinue)"
     ],
     "additionalDirectories": [
       "C:\\Users\\julia\\AppData\\Local\\Temp\\claude\\c--Users-julia-OneDrive-Desktop-Julian-Monta-ez-Software-workflows-frontend\\e911dffc-2b12-4882-9d0b-926379051e4e\\scratchpad"

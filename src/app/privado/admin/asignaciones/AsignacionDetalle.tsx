@@ -8,13 +8,16 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
+import { DownloadRounded, VisibilityRounded } from '@mui/icons-material';
 import { crearMensaje } from '../../../../app/utilidades/funciones/mensaje';
 import { AsignacionServicio, AsignacionDetalle as AsignacionDetalleType } from '../../../../app/servicios/privados/AsignacionServicio';
 import { UsuarioServicio, Usuario } from '../../../../app/servicios/privados/UsuarioServicio';
 import { useUsuarioToken } from '../../../../app/utilidades/auth/usuarioToken';
 import { ESTADO_ASIGNACION } from '../../../../app/utilidades/dominios/estados';
+import { DocumentoValor, esDocumentoValor, descargarArchivo, previsualizarArchivo } from '../../../../app/utilidades/dominios/documentos';
 import Tarjeta from '../../../../compartido/ui/Tarjeta';
 import TituloPagina from '../../../../compartido/ui/TituloPagina';
+import VisorDocumentoDialog from '../../../../compartido/ui/VisorDocumentoDialog';
 
 // Solo admin puede delegar (el backend rechaza a cualquier otro rol), y no
 // tiene sentido delegar una asignación que ya quedó en un estado terminal.
@@ -34,6 +37,8 @@ const AsignacionDetalle: React.FC = () => {
   const [funcionarios, setFuncionarios] = useState<Usuario[]>([]);
   const [revisorSeleccionado, setRevisorSeleccionado] = useState<Usuario | null>(null);
   const [asignandoRevisor, setAsignandoRevisor] = useState(false);
+
+  const [preview, setPreview] = useState<{ url: string; mimeType: string; nombre: string; codDocumento: number } | null>(null);
 
   const cargar = useCallback(async () => {
     if (!id) return;
@@ -70,6 +75,20 @@ const AsignacionDetalle: React.FC = () => {
     } finally {
       setAsignandoRevisor(false);
     }
+  };
+
+  const handleVerDocumento = async (documento: DocumentoValor) => {
+    try {
+      const { url, mimeType } = await previsualizarArchivo(documento.codDocumento);
+      setPreview({ url, mimeType, nombre: documento.nombreOriginal, codDocumento: documento.codDocumento });
+    } catch (error: unknown) {
+      crearMensaje('error', error instanceof Error ? error.message : 'Error al abrir el documento');
+    }
+  };
+
+  const handleCerrarPreview = () => {
+    if (preview) URL.revokeObjectURL(preview.url);
+    setPreview(null);
   };
 
   const handleAprobar = async () => {
@@ -197,12 +216,34 @@ const AsignacionDetalle: React.FC = () => {
                   <Divider sx={{ mb: 1 }} />
                   {paso.respuestas.map((r) => {
                     const campo = paso.campos.find((c) => c.codCampo === r.codCampo);
+                    const documento = campo?.tipoCampo === 'documento' && esDocumentoValor(r.valorRespuesta)
+                      ? r.valorRespuesta
+                      : null;
                     return (
-                      <Box key={r.codCampo} sx={{ display: 'flex', gap: 1, mb: 0.5 }}>
+                      <Box key={r.codCampo} sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
                         <Typography variant="body2" color="text.secondary" sx={{ minWidth: 140 }}>
                           {campo?.etiquetaCampo ?? `Campo #${r.codCampo}`}:
                         </Typography>
-                        <Typography variant="body2">{String(r.valorRespuesta)}</Typography>
+                        {documento ? (
+                          <>
+                            <Button
+                              size="small"
+                              startIcon={<VisibilityRounded fontSize="small" />}
+                              onClick={() => handleVerDocumento(documento)}
+                            >
+                              Ver
+                            </Button>
+                            <Button
+                              size="small"
+                              startIcon={<DownloadRounded fontSize="small" />}
+                              onClick={() => descargarArchivo(documento.codDocumento, documento.nombreOriginal)}
+                            >
+                              {documento.nombreOriginal}
+                            </Button>
+                          </>
+                        ) : (
+                          <Typography variant="body2">{String(r.valorRespuesta)}</Typography>
+                        )}
                       </Box>
                     );
                   })}
@@ -229,6 +270,15 @@ const AsignacionDetalle: React.FC = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <VisorDocumentoDialog
+        abierto={!!preview}
+        onCerrar={handleCerrarPreview}
+        url={preview?.url ?? null}
+        mimeType={preview?.mimeType ?? null}
+        nombreArchivo={preview?.nombre ?? null}
+        onDescargar={preview ? () => descargarArchivo(preview.codDocumento, preview.nombre) : undefined}
+      />
     </Box>
   );
 };

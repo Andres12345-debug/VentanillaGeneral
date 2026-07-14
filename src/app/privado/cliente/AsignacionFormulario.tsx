@@ -9,47 +9,22 @@ import { alpha } from '@mui/material/styles';
 import {
   ShortTextRounded, NotesRounded, NumbersRounded, CalendarTodayRounded,
   ToggleOnRounded, RadioButtonCheckedRounded, PlaylistAddCheckRounded,
-  UploadFileRounded, DownloadRounded,
+  UploadFileRounded, DownloadRounded, VisibilityRounded,
 } from '@mui/icons-material';
 import { crearMensaje } from '../../../app/utilidades/funciones/mensaje';
 import {
   AsignacionServicio, AsignacionDetalle as AsignacionDetalleType, PasoConProgreso, RespuestaEnviar,
 } from '../../../app/servicios/privados/AsignacionServicio';
 import { Campo } from '../../../app/servicios/privados/WorkflowServicio';
+import { DocumentoValor, esDocumentoValor, descargarArchivo, previsualizarArchivo } from '../../../app/utilidades/dominios/documentos';
 import Tarjeta from '../../../compartido/ui/Tarjeta';
 import TituloPagina from '../../../compartido/ui/TituloPagina';
-
-interface DocumentoValor {
-  codDocumento: number;
-  nombreOriginal: string;
-}
+import VisorDocumentoDialog from '../../../compartido/ui/VisorDocumentoDialog';
 
 type ValorCampo = string | boolean | string[] | DocumentoValor;
 type Valores = Record<number, ValorCampo>;
 
 const MAX_TAMANO_DOCUMENTO_BYTES = 10 * 1024 * 1024;
-
-const esDocumentoValor = (valor: unknown): valor is DocumentoValor =>
-  typeof valor === 'object' && valor !== null && typeof (valor as { codDocumento?: unknown }).codDocumento === 'number';
-
-// Descarga autenticada: no se puede usar un <a href> plano porque el
-// endpoint exige el token Bearer, así que se trae el blob y se dispara
-// la descarga del navegador manualmente.
-const descargarArchivo = async (codDocumento: number, nombreOriginal: string) => {
-  try {
-    const blob = await AsignacionServicio.descargarDocumento(codDocumento);
-    const url = URL.createObjectURL(blob);
-    const enlace = document.createElement('a');
-    enlace.href = url;
-    enlace.download = nombreOriginal;
-    document.body.appendChild(enlace);
-    enlace.click();
-    enlace.remove();
-    URL.revokeObjectURL(url);
-  } catch (error: unknown) {
-    crearMensaje('error', error instanceof Error ? error.message : 'Error al descargar el archivo');
-  }
-};
 
 const valorInicialPorTipo = (campo: Campo): ValorCampo => {
   if (campo.tipoCampo === 'booleano') return false;
@@ -71,6 +46,7 @@ const AsignacionFormulario: React.FC = () => {
   const [valores, setValores] = useState<Valores>({});
   const [enviando, setEnviando] = useState(false);
   const [reabriendo, setReabriendo] = useState(false);
+  const [preview, setPreview] = useState<{ url: string; mimeType: string; nombre: string; codDocumento: number } | null>(null);
 
   const cargar = useCallback(async () => {
     if (!id) return;
@@ -140,6 +116,20 @@ const AsignacionFormulario: React.FC = () => {
     } finally {
       setEnviando(false);
     }
+  };
+
+  const handleVerDocumento = async (documento: DocumentoValor) => {
+    try {
+      const { url, mimeType } = await previsualizarArchivo(documento.codDocumento);
+      setPreview({ url, mimeType, nombre: documento.nombreOriginal, codDocumento: documento.codDocumento });
+    } catch (error: unknown) {
+      crearMensaje('error', error instanceof Error ? error.message : 'Error al abrir el documento');
+    }
+  };
+
+  const handleCerrarPreview = () => {
+    if (preview) URL.revokeObjectURL(preview.url);
+    setPreview(null);
   };
 
   const handleReabrir = async () => {
@@ -261,13 +251,22 @@ const AsignacionFormulario: React.FC = () => {
                   <Typography key={r.codCampo} variant="body2" color="text.secondary">
                     {campo?.etiquetaCampo ?? `Campo #${r.codCampo}`}:{' '}
                     {documento ? (
-                      <Button
-                        size="small"
-                        startIcon={<DownloadRounded fontSize="small" />}
-                        onClick={() => descargarArchivo(documento.codDocumento, documento.nombreOriginal)}
-                      >
-                        {documento.nombreOriginal}
-                      </Button>
+                      <>
+                        <Button
+                          size="small"
+                          startIcon={<VisibilityRounded fontSize="small" />}
+                          onClick={() => handleVerDocumento(documento)}
+                        >
+                          Ver
+                        </Button>
+                        <Button
+                          size="small"
+                          startIcon={<DownloadRounded fontSize="small" />}
+                          onClick={() => descargarArchivo(documento.codDocumento, documento.nombreOriginal)}
+                        >
+                          {documento.nombreOriginal}
+                        </Button>
+                      </>
                     ) : String(r.valorRespuesta)}
                   </Typography>
                 );
@@ -276,6 +275,15 @@ const AsignacionFormulario: React.FC = () => {
           ))}
         </Box>
       )}
+
+      <VisorDocumentoDialog
+        abierto={!!preview}
+        onCerrar={handleCerrarPreview}
+        url={preview?.url ?? null}
+        mimeType={preview?.mimeType ?? null}
+        nombreArchivo={preview?.nombre ?? null}
+        onDescargar={preview ? () => descargarArchivo(preview.codDocumento, preview.nombre) : undefined}
+      />
     </Box>
   );
 };
@@ -317,8 +325,23 @@ interface CampoDocumentoProps {
  */
 const CampoDocumento: React.FC<CampoDocumentoProps> = ({ campo, valor, codAsignacion, codPaso, onChange }) => {
   const [subiendo, setSubiendo] = useState(false);
+  const [preview, setPreview] = useState<{ url: string; mimeType: string; nombre: string; codDocumento: number } | null>(null);
   const documentoActual = esDocumentoValor(valor) ? valor : null;
   const etiqueta = `${campo.etiquetaCampo}${campo.requeridoCampo ? ' *' : ''}`;
+
+  const handleVer = async (documento: DocumentoValor) => {
+    try {
+      const { url, mimeType } = await previsualizarArchivo(documento.codDocumento);
+      setPreview({ url, mimeType, nombre: documento.nombreOriginal, codDocumento: documento.codDocumento });
+    } catch (error: unknown) {
+      crearMensaje('error', error instanceof Error ? error.message : 'Error al abrir el documento');
+    }
+  };
+
+  const handleCerrarPreview = () => {
+    if (preview) URL.revokeObjectURL(preview.url);
+    setPreview(null);
+  };
 
   const handleSeleccionar = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const archivo = e.target.files?.[0];
@@ -360,15 +383,33 @@ const CampoDocumento: React.FC<CampoDocumentoProps> = ({ campo, valor, codAsigna
           <input type="file" hidden onChange={handleSeleccionar} />
         </Button>
         {documentoActual && (
-          <Button
-            size="small"
-            startIcon={<DownloadRounded fontSize="small" />}
-            onClick={() => descargarArchivo(documentoActual.codDocumento, documentoActual.nombreOriginal)}
-          >
-            {documentoActual.nombreOriginal}
-          </Button>
+          <>
+            <Button
+              size="small"
+              startIcon={<VisibilityRounded fontSize="small" />}
+              onClick={() => handleVer(documentoActual)}
+            >
+              Ver
+            </Button>
+            <Button
+              size="small"
+              startIcon={<DownloadRounded fontSize="small" />}
+              onClick={() => descargarArchivo(documentoActual.codDocumento, documentoActual.nombreOriginal)}
+            >
+              {documentoActual.nombreOriginal}
+            </Button>
+          </>
         )}
       </Box>
+
+      <VisorDocumentoDialog
+        abierto={!!preview}
+        onCerrar={handleCerrarPreview}
+        url={preview?.url ?? null}
+        mimeType={preview?.mimeType ?? null}
+        nombreArchivo={preview?.nombre ?? null}
+        onDescargar={preview ? () => descargarArchivo(preview.codDocumento, preview.nombre) : undefined}
+      />
       <FormHelperText>Cualquier tipo de archivo, tamaño máximo 10 MB.</FormHelperText>
     </Box>
   );
