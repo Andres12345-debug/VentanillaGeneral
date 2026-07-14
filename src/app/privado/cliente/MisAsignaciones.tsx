@@ -5,14 +5,9 @@ import {
 } from '@mui/material';
 import { crearMensaje } from '../../../app/utilidades/funciones/mensaje';
 import { AsignacionServicio, AsignacionResumen } from '../../../app/servicios/privados/AsignacionServicio';
+import { ESTADO_ASIGNACION } from '../../../app/utilidades/dominios/estados';
 import Tarjeta from '../../../compartido/ui/Tarjeta';
 import TituloPagina from '../../../compartido/ui/TituloPagina';
-
-type ColorChip = 'default' | 'warning' | 'info' | 'success' | 'error' | 'primary' | 'secondary';
-
-const colorPorEstado: Record<string, ColorChip> = {
-  pendiente: 'warning', en_progreso: 'info', en_revision: 'primary', aprobado: 'success', rechazado: 'error',
-};
 
 const MisAsignaciones: React.FC = () => {
   const navigate = useNavigate();
@@ -71,7 +66,11 @@ const MisAsignaciones: React.FC = () => {
                   {a.nombreWorkflow ?? `Trámite #${a.codAsignacion}`}
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 1 }}>
-                  <Chip label={a.estadoAsignacion.replace('_', ' ')} color={colorPorEstado[a.estadoAsignacion] ?? 'default'} size="small" />
+                  <Chip
+                    label={ESTADO_ASIGNACION[a.estadoAsignacion]?.label ?? a.estadoAsignacion}
+                    color={ESTADO_ASIGNACION[a.estadoAsignacion]?.color ?? 'default'}
+                    size="small"
+                  />
                 </Box>
                 <Typography variant="body2" color="text.secondary">
                   Fecha: {new Date(a.fechaAsignacion).toLocaleDateString('es-CO')}

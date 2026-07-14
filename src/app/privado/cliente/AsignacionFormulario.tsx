@@ -9,6 +9,7 @@ import { alpha } from '@mui/material/styles';
 import {
   ShortTextRounded, NotesRounded, NumbersRounded, CalendarTodayRounded,
   ToggleOnRounded, RadioButtonCheckedRounded, PlaylistAddCheckRounded,
+  UploadFileRounded, DownloadRounded,
 } from '@mui/icons-material';
 import { crearMensaje } from '../../../app/utilidades/funciones/mensaje';
 import {
@@ -18,8 +19,37 @@ import { Campo } from '../../../app/servicios/privados/WorkflowServicio';
 import Tarjeta from '../../../compartido/ui/Tarjeta';
 import TituloPagina from '../../../compartido/ui/TituloPagina';
 
-type ValorCampo = string | boolean | string[];
+interface DocumentoValor {
+  codDocumento: number;
+  nombreOriginal: string;
+}
+
+type ValorCampo = string | boolean | string[] | DocumentoValor;
 type Valores = Record<number, ValorCampo>;
+
+const MAX_TAMANO_DOCUMENTO_BYTES = 10 * 1024 * 1024;
+
+const esDocumentoValor = (valor: unknown): valor is DocumentoValor =>
+  typeof valor === 'object' && valor !== null && typeof (valor as { codDocumento?: unknown }).codDocumento === 'number';
+
+// Descarga autenticada: no se puede usar un <a href> plano porque el
+// endpoint exige el token Bearer, así que se trae el blob y se dispara
+// la descarga del navegador manualmente.
+const descargarArchivo = async (codDocumento: number, nombreOriginal: string) => {
+  try {
+    const blob = await AsignacionServicio.descargarDocumento(codDocumento);
+    const url = URL.createObjectURL(blob);
+    const enlace = document.createElement('a');
+    enlace.href = url;
+    enlace.download = nombreOriginal;
+    document.body.appendChild(enlace);
+    enlace.click();
+    enlace.remove();
+    URL.revokeObjectURL(url);
+  } catch (error: unknown) {
+    crearMensaje('error', error instanceof Error ? error.message : 'Error al descargar el archivo');
+  }
+};
 
 const valorInicialPorTipo = (campo: Campo): ValorCampo => {
   if (campo.tipoCampo === 'booleano') return false;
@@ -30,6 +60,7 @@ const valorInicialPorTipo = (campo: Campo): ValorCampo => {
 const tieneValor = (campo: Campo, valor: ValorCampo | undefined): boolean => {
   if (campo.tipoCampo === 'booleano') return typeof valor === 'boolean';
   if (campo.tipoCampo === 'seleccion_multiple') return Array.isArray(valor) && valor.length > 0;
+  if (campo.tipoCampo === 'documento') return esDocumentoValor(valor);
   return typeof valor === 'string' && valor.trim() !== '';
 };
 
@@ -193,6 +224,8 @@ const AsignacionFormulario: React.FC = () => {
                   key={campo.codCampo}
                   campo={campo}
                   valor={valores[campo.codCampo]}
+                  codAsignacion={Number(id)}
+                  codPaso={pasoActual.codPaso}
                   onChange={(valor) => handleValorChange(campo.codCampo, valor)}
                 />
               ))}
@@ -221,9 +254,21 @@ const AsignacionFormulario: React.FC = () => {
               <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>{p.nombrePaso}</Typography>
               {p.respuestas.length > 0 && p.respuestas.map((r) => {
                 const campo = p.campos.find((c) => c.codCampo === r.codCampo);
+                const documento = campo?.tipoCampo === 'documento' && esDocumentoValor(r.valorRespuesta)
+                  ? r.valorRespuesta
+                  : null;
                 return (
                   <Typography key={r.codCampo} variant="body2" color="text.secondary">
-                    {campo?.etiquetaCampo ?? `Campo #${r.codCampo}`}: {String(r.valorRespuesta)}
+                    {campo?.etiquetaCampo ?? `Campo #${r.codCampo}`}:{' '}
+                    {documento ? (
+                      <Button
+                        size="small"
+                        startIcon={<DownloadRounded fontSize="small" />}
+                        onClick={() => descargarArchivo(documento.codDocumento, documento.nombreOriginal)}
+                      >
+                        {documento.nombreOriginal}
+                      </Button>
+                    ) : String(r.valorRespuesta)}
                   </Typography>
                 );
               })}
@@ -238,6 +283,8 @@ const AsignacionFormulario: React.FC = () => {
 interface CampoDinamicoProps {
   campo: Campo;
   valor: ValorCampo | undefined;
+  codAsignacion: number;
+  codPaso: number;
   onChange: (valor: ValorCampo) => void;
 }
 
@@ -249,9 +296,82 @@ const IconoCampo: React.FC<{ tipo: Campo['tipoCampo'] }> = ({ tipo }) => {
     case 'numero': return <NumbersRounded {...props} />;
     case 'fecha': return <CalendarTodayRounded {...props} />;
     case 'booleano': return <ToggleOnRounded {...props} />;
+    case 'documento': return <UploadFileRounded {...props} />;
     case 'texto':
     default: return <ShortTextRounded {...props} />;
   }
+};
+
+interface CampoDocumentoProps {
+  campo: Campo;
+  valor: ValorCampo | undefined;
+  codAsignacion: number;
+  codPaso: number;
+  onChange: (valor: ValorCampo) => void;
+}
+
+/**
+ * Sube el archivo apenas se selecciona (no espera al "Enviar y continuar"
+ * del paso): así el usuario ve de inmediato si falló por tamaño o por
+ * estado del paso, en vez de perder el archivo al enviar todo el formulario.
+ */
+const CampoDocumento: React.FC<CampoDocumentoProps> = ({ campo, valor, codAsignacion, codPaso, onChange }) => {
+  const [subiendo, setSubiendo] = useState(false);
+  const documentoActual = esDocumentoValor(valor) ? valor : null;
+  const etiqueta = `${campo.etiquetaCampo}${campo.requeridoCampo ? ' *' : ''}`;
+
+  const handleSeleccionar = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const archivo = e.target.files?.[0];
+    e.target.value = '';
+    if (!archivo) return;
+
+    if (archivo.size > MAX_TAMANO_DOCUMENTO_BYTES) {
+      crearMensaje('error', 'El archivo supera el tamaño máximo permitido (10 MB)');
+      return;
+    }
+
+    setSubiendo(true);
+    try {
+      const subido = await AsignacionServicio.subirDocumento(codAsignacion, codPaso, campo.codCampo, archivo);
+      onChange({ codDocumento: subido.codDocumento, nombreOriginal: subido.nombreOriginal });
+      crearMensaje('success', 'Archivo subido correctamente');
+    } catch (error: unknown) {
+      crearMensaje('error', error instanceof Error ? error.message : 'Error al subir el archivo');
+    } finally {
+      setSubiendo(false);
+    }
+  };
+
+  return (
+    <Box>
+      <Typography variant="body2" sx={{ mb: 1, display: 'flex', alignItems: 'center', gap: 0.75 }}>
+        <IconoCampo tipo="documento" />
+        {etiqueta}
+      </Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap' }}>
+        <Button
+          variant="outlined"
+          component="label"
+          size="small"
+          disabled={subiendo}
+          startIcon={subiendo ? <CircularProgress size={16} /> : <UploadFileRounded fontSize="small" />}
+        >
+          {documentoActual ? 'Reemplazar archivo' : 'Seleccionar archivo'}
+          <input type="file" hidden onChange={handleSeleccionar} />
+        </Button>
+        {documentoActual && (
+          <Button
+            size="small"
+            startIcon={<DownloadRounded fontSize="small" />}
+            onClick={() => descargarArchivo(documentoActual.codDocumento, documentoActual.nombreOriginal)}
+          >
+            {documentoActual.nombreOriginal}
+          </Button>
+        )}
+      </Box>
+      <FormHelperText>Cualquier tipo de archivo, tamaño máximo 10 MB.</FormHelperText>
+    </Box>
+  );
 };
 
 /**
@@ -274,11 +394,22 @@ const ContenedorSeleccion: React.FC<{ children: React.ReactNode }> = ({ children
   </Box>
 );
 
-const CampoDinamico: React.FC<CampoDinamicoProps> = ({ campo, valor, onChange }) => {
+const CampoDinamico: React.FC<CampoDinamicoProps> = ({ campo, valor, codAsignacion, codPaso, onChange }) => {
   const etiqueta = `${campo.etiquetaCampo}${campo.requeridoCampo ? ' *' : ''}`;
   const sinOpciones = (campo.opcionesCampo ?? []).length === 0;
 
   switch (campo.tipoCampo) {
+    case 'documento':
+      return (
+        <CampoDocumento
+          campo={campo}
+          valor={valor}
+          codAsignacion={codAsignacion}
+          codPaso={codPaso}
+          onChange={onChange}
+        />
+      );
+
     case 'area_texto':
       return (
         <TextField

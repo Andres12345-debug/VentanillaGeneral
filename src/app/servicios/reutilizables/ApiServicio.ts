@@ -49,9 +49,38 @@ async function request<T>(
   return response.json() as Promise<T>;
 }
 
+// Descarga binaria autenticada (ej. documentos adjuntos). Separado de
+// request() porque ese siempre asume una respuesta JSON.
+async function requestBlob(url: string): Promise<Blob> {
+  const token = tokenHelper.get();
+
+  const headers: HeadersInit = {};
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  const response = await fetch(url, { headers });
+
+  if (!response.ok) {
+    let errorMessage = `Error ${response.status}: ${response.statusText}`;
+    try {
+      const errorBody = await response.json();
+      errorMessage = errorBody?.message ?? errorMessage;
+    } catch {
+      // no-op: usar mensaje de status
+    }
+    throw new Error(errorMessage);
+  }
+
+  return response.blob();
+}
+
 export const ApiServicio = {
   get<T>(url: string): Promise<T> {
     return request<T>('GET', url);
+  },
+  getBlob(url: string): Promise<Blob> {
+    return requestBlob(url);
   },
   post<T>(url: string, body?: unknown): Promise<T> {
     return request<T>('POST', url, body);

@@ -89,6 +89,11 @@ export interface EnviarRespuestasBody {
   respuestas: RespuestaEnviar[];
 }
 
+export interface DocumentoSubido {
+  codDocumento: number;
+  nombreOriginal: string;
+}
+
 // ─── Servicio ────────────────────────────────────────────────────────────────
 
 export const AsignacionServicio = {
@@ -125,6 +130,22 @@ export const AsignacionServicio = {
     body: EnviarRespuestasBody
   ): Promise<Mensaje> {
     return ApiServicio.post<Mensaje>(URLS.RESPUESTAS_PASO(id, codPaso), body);
+  },
+
+  subirDocumento(
+    id: number,
+    codPaso: number,
+    codCampo: number,
+    archivo: File
+  ): Promise<DocumentoSubido> {
+    const formData = new FormData();
+    formData.append('archivo', archivo);
+    formData.append('codCampo', String(codCampo));
+    return ApiServicio.post<DocumentoSubido>(URLS.SUBIR_DOCUMENTO(id, codPaso), formData);
+  },
+
+  descargarDocumento(codDocumento: number): Promise<Blob> {
+    return ApiServicio.getBlob(URLS.DESCARGAR_DOCUMENTO(codDocumento));
   },
 
   asignarRevisor(id: number, body: AsignarRevisorBody): Promise<Mensaje> {

@@ -6,7 +6,8 @@ export type TipoCampo =
   | 'fecha'
   | 'booleano'
   | 'seleccion_unica'
-  | 'seleccion_multiple';
+  | 'seleccion_multiple'
+  | 'documento';
 
 export const TIPO_CAMPO: Record<TipoCampo, { label: string }> = {
   texto: { label: 'Texto corto' },
@@ -16,6 +17,7 @@ export const TIPO_CAMPO: Record<TipoCampo, { label: string }> = {
   booleano: { label: 'Sí / No' },
   seleccion_unica: { label: 'Selección única' },
   seleccion_multiple: { label: 'Selección múltiple' },
+  documento: { label: 'Documento adjunto' },
 };
 
 export const TIPOS_CON_OPCIONES: TipoCampo[] = ['seleccion_unica', 'seleccion_multiple'];

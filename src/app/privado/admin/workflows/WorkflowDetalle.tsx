@@ -23,6 +23,7 @@ import {
 } from '../../../../app/servicios/privados/WorkflowServicio';
 import { TIPO_CAMPO } from '../../../../app/utilidades/dominios/tipoCampo';
 import { ESTADO_WORKFLOW } from '../../../../app/utilidades/dominios/estados';
+import { useUsuarioToken } from '../../../../app/utilidades/auth/usuarioToken';
 import TituloPagina from '../../../../compartido/ui/TituloPagina';
 import EtapaDialogo from './dialogos/EtapaDialogo';
 import PasoDialogo from './dialogos/PasoDialogo';
@@ -41,9 +42,47 @@ interface CampoDialogoTarget { abierto: boolean; codFormulario: number | null; e
 
 const CERRADO = { abierto: false, editando: null } as const;
 
+// Reordenar "mueve un elemento con su vecino adyacente" es la misma lógica
+// para etapas/pasos/campos (ordenar, ubicar al vecino, intercambiar el
+// campo de orden) — antes estaba copiada 3 veces en moverEtapa/moverPaso/
+// moverCampo. Como el backend no ofrece un endpoint transaccional de swap,
+// las dos actualizaciones siguen siendo 2 requests independientes, pero acá
+// van secuenciales (no Promise.all) y si la segunda falla se intenta
+// revertir la primera, para no dejar dos elementos con el mismo orden.
+async function moverPorOrden<T>(
+  lista: T[],
+  elemento: T,
+  direccion: -1 | 1,
+  obtenerId: (item: T) => number,
+  obtenerOrden: (item: T) => number,
+  actualizarOrden: (id: number, orden: number) => Promise<unknown>,
+): Promise<boolean> {
+  const ordenados = [...lista].sort((a, b) => obtenerOrden(a) - obtenerOrden(b));
+  const indice = ordenados.findIndex((item) => obtenerId(item) === obtenerId(elemento));
+  const vecino = ordenados[indice + direccion];
+  if (!vecino) return false;
+
+  const ordenOriginal = obtenerOrden(elemento);
+  const ordenVecino = obtenerOrden(vecino);
+
+  await actualizarOrden(obtenerId(elemento), ordenVecino);
+  try {
+    await actualizarOrden(obtenerId(vecino), ordenOriginal);
+  } catch (error) {
+    await actualizarOrden(obtenerId(elemento), ordenOriginal).catch(() => {});
+    throw error;
+  }
+  return true;
+}
+
 const WorkflowDetalle: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  // Asignar workflows a clientes es exclusivo de admin (el backend rechaza
+  // a funcionario con 403) — sin este chequeo, un funcionario podía abrir
+  // el diálogo, elegir clientes y recién ahí enterarse de que no puede.
+  const usuario = useUsuarioToken();
+  const esAdmin = usuario?.role === 'admin';
   const [workflow, setWorkflow] = useState<WorkflowDetalleType | null>(null);
   const [cargando, setCargando] = useState(true);
   const [actualizandoPublico, setActualizandoPublico] = useState(false);
@@ -165,15 +204,13 @@ const WorkflowDetalle: React.FC = () => {
   // ─── Reordenar (intercambia el orden con el hermano adyacente) ─────────
 
   const moverEtapa = async (etapa: Etapa, direccion: -1 | 1) => {
-    const lista = [...(workflow?.etapas ?? [])].sort((a, b) => a.ordenEtapa - b.ordenEtapa);
-    const vecino = lista[lista.findIndex((e) => e.codEtapa === etapa.codEtapa) + direccion];
-    if (!vecino) return;
     try {
-      await Promise.all([
-        WorkflowServicio.actualizarEtapa(etapa.codEtapa, { ordenEtapa: vecino.ordenEtapa }),
-        WorkflowServicio.actualizarEtapa(vecino.codEtapa, { ordenEtapa: etapa.ordenEtapa }),
-      ]);
-      cargarDatos();
+      const movido = await moverPorOrden(
+        workflow?.etapas ?? [], etapa, direccion,
+        (e) => e.codEtapa, (e) => e.ordenEtapa,
+        (id, orden) => WorkflowServicio.actualizarEtapa(id, { ordenEtapa: orden }),
+      );
+      if (movido) cargarDatos();
     } catch (error: unknown) {
       crearMensaje('error', error instanceof Error ? error.message : 'Error al reordenar la etapa');
     }
@@ -181,15 +218,13 @@ const WorkflowDetalle: React.FC = () => {
 
   const moverPaso = async (paso: Paso, direccion: -1 | 1) => {
     const etapa = (workflow?.etapas ?? []).find((e) => e.codEtapa === paso.codEtapa);
-    const lista = [...(etapa?.pasos ?? [])].sort((a, b) => a.ordenPaso - b.ordenPaso);
-    const vecino = lista[lista.findIndex((p) => p.codPaso === paso.codPaso) + direccion];
-    if (!vecino) return;
     try {
-      await Promise.all([
-        WorkflowServicio.actualizarPaso(paso.codPaso, { ordenPaso: vecino.ordenPaso }),
-        WorkflowServicio.actualizarPaso(vecino.codPaso, { ordenPaso: paso.ordenPaso }),
-      ]);
-      cargarDatos();
+      const movido = await moverPorOrden(
+        etapa?.pasos ?? [], paso, direccion,
+        (p) => p.codPaso, (p) => p.ordenPaso,
+        (id, orden) => WorkflowServicio.actualizarPaso(id, { ordenPaso: orden }),
+      );
+      if (movido) cargarDatos();
     } catch (error: unknown) {
       crearMensaje('error', error instanceof Error ? error.message : 'Error al reordenar el paso');
     }
@@ -204,15 +239,13 @@ const WorkflowDetalle: React.FC = () => {
         }
       }
     }
-    const lista = [...hermanos].sort((a, b) => a.ordenCampo - b.ordenCampo);
-    const vecino = lista[lista.findIndex((c) => c.codCampo === campo.codCampo) + direccion];
-    if (!vecino) return;
     try {
-      await Promise.all([
-        WorkflowServicio.actualizarCampo(campo.codCampo, { ordenCampo: vecino.ordenCampo }),
-        WorkflowServicio.actualizarCampo(vecino.codCampo, { ordenCampo: campo.ordenCampo }),
-      ]);
-      cargarDatos();
+      const movido = await moverPorOrden(
+        hermanos, campo, direccion,
+        (c) => c.codCampo, (c) => c.ordenCampo,
+        (id, orden) => WorkflowServicio.actualizarCampo(id, { ordenCampo: orden }),
+      );
+      if (movido) cargarDatos();
     } catch (error: unknown) {
       crearMensaje('error', error instanceof Error ? error.message : 'Error al reordenar el campo');
     }
@@ -290,9 +323,11 @@ const WorkflowDetalle: React.FC = () => {
           </Box>
         </Box>
         <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-          <Button variant="contained" startIcon={<AssignmentIcon />} onClick={() => setDialogoAsignarAbierto(true)}>
-            Asignar a clientes
-          </Button>
+          {esAdmin && (
+            <Button variant="contained" startIcon={<AssignmentIcon />} onClick={() => setDialogoAsignarAbierto(true)}>
+              Asignar a clientes
+            </Button>
+          )}
           <Button variant="outlined" startIcon={<ListAltIcon />} onClick={() => navigate(`/dashboard/asignaciones?workflow=${id}`)}>
             Ver asignaciones
           </Button>

@@ -12,18 +12,13 @@ import { crearMensaje } from '../../../../app/utilidades/funciones/mensaje';
 import { AsignacionServicio, AsignacionDetalle as AsignacionDetalleType } from '../../../../app/servicios/privados/AsignacionServicio';
 import { UsuarioServicio, Usuario } from '../../../../app/servicios/privados/UsuarioServicio';
 import { useUsuarioToken } from '../../../../app/utilidades/auth/usuarioToken';
+import { ESTADO_ASIGNACION } from '../../../../app/utilidades/dominios/estados';
 import Tarjeta from '../../../../compartido/ui/Tarjeta';
 import TituloPagina from '../../../../compartido/ui/TituloPagina';
 
 // Solo admin puede delegar (el backend rechaza a cualquier otro rol), y no
 // tiene sentido delegar una asignación que ya quedó en un estado terminal.
 const ESTADOS_DELEGABLES = ['pendiente', 'en_progreso', 'en_revision'];
-
-type ColorChip = 'default' | 'warning' | 'info' | 'success' | 'error' | 'primary' | 'secondary';
-
-const colorPorEstado: Record<string, ColorChip> = {
-  pendiente: 'warning', en_progreso: 'info', en_revision: 'primary', aprobado: 'success', rechazado: 'error',
-};
 
 const AsignacionDetalle: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -120,7 +115,10 @@ const AsignacionDetalle: React.FC = () => {
             Asignación #{datos.codAsignacion}
           </TituloPagina>
           <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-            <Chip label={datos.estadoAsignacion.replace('_', ' ')} color={colorPorEstado[datos.estadoAsignacion] ?? 'default'} />
+            <Chip
+              label={ESTADO_ASIGNACION[datos.estadoAsignacion]?.label ?? datos.estadoAsignacion}
+              color={ESTADO_ASIGNACION[datos.estadoAsignacion]?.color ?? 'default'}
+            />
             <Chip label={`Cliente: ${datos.nombreCliente}`} variant="outlined" />
             <Chip label={`Workflow: ${datos.nombreWorkflow}`} variant="outlined" />
             <Chip label={`Fecha: ${new Date(datos.fechaAsignacion).toLocaleDateString('es-CO')}`} variant="outlined" />
