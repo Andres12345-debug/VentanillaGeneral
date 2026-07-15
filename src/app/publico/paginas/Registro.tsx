@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link as RouterLink, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { Box, Grid, Link, Typography, CircularProgress, Alert } from '@mui/material';
 import HowToRegIcon from '@mui/icons-material/HowToReg';
+import { tokenHelper } from '../../../app/utilidades/auth/tokenHelper';
 import { useFormulario } from '../../../app/utilidades/funciones/UsoFormulario';
 import { crearMensaje } from '../../../app/utilidades/funciones/mensaje';
 import { AccesoServicio } from '../../../app/servicios/publicos/AccesoServicio';
@@ -45,9 +46,10 @@ const Registro: React.FC = () => {
   const [searchParams] = useSearchParams();
   const tokenEmpresa = searchParams.get('empresa');
 
-  // El registro no autologuea: si venimos de un enlace público de workflow,
-  // reenviamos "from" al login para que, tras autenticarse, vuelva ahí.
-  const rutaRetorno = (location.state as { from?: string } | null)?.from;
+  // Tras el registro autologueamos con el token que devuelve el backend; si
+  // venimos de un enlace público de workflow, "from" indica a dónde volver
+  // en vez del dashboard genérico.
+  const rutaRetorno = (location.state as { from?: string } | null)?.from ?? '/dashboard';
 
   // El cliente nunca elige su empresa libremente: solo se une a la que
   // resuelve el link de registro que le compartió su empresa.
@@ -72,7 +74,7 @@ const Registro: React.FC = () => {
     validar,
     async (valores) => {
       if (!tokenEmpresa) return;
-      await AccesoServicio.registrar({
+      const respuesta = await AccesoServicio.registrar({
         tokenEmpresa,
         correoUsuario: valores.correoUsuario,
         nombreAcceso: valores.nombreAcceso,
@@ -81,8 +83,9 @@ const Registro: React.FC = () => {
         paisUsuario: valores.paisUsuario,
         ciudadUsuario: valores.ciudadUsuario,
       });
-      crearMensaje('success', 'Cuenta creada. Inicia sesión para continuar.');
-      navigate('/login', rutaRetorno ? { state: { from: rutaRetorno } } : undefined);
+      tokenHelper.set(respuesta.token);
+      crearMensaje('success', 'Cuenta creada correctamente.');
+      navigate(rutaRetorno);
     }
   );
 
