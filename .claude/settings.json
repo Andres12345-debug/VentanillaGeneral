@@ -70,7 +70,8 @@
       "PowerShell(Get-Process -Id 21840 -ErrorAction SilentlyContinue)",
       "PowerShell(Get-NetTCPConnection -LocalPort 3550 -ErrorAction SilentlyContinue)",
       "Bash(node -e \"const p=require\\('./package.json'\\); console.log\\(JSON.stringify\\(p.dependencies,null,2\\)\\)\")",
-      "Bash(node -pe \"require\\('./package.json'\\).dependencies.next\")"
+      "Bash(node -pe \"require\\('./package.json'\\).dependencies.next\")",
+      "Bash(git commit *)"
     ],
     "additionalDirectories": [
       "C:\\Users\\julia\\AppData\\Local\\Temp\\claude\\c--Users-julia-OneDrive-Desktop-Julian-Monta-ez-Software-workflows-frontend\\e911dffc-2b12-4882-9d0b-926379051e4e\\scratchpad"
