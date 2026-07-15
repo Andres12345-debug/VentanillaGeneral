@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Typography } from '@mui/material';
 import { crearMensaje } from '../../../../../app/utilidades/funciones/mensaje';
 import { WorkflowServicio, Etapa } from '../../../../../app/servicios/privados/WorkflowServicio';
+import NivelDialogoBase from './NivelDialogoBase';
 
 interface EtapaDialogoProps {
   abierto: boolean;
@@ -54,22 +54,21 @@ const EtapaDialogo: React.FC<EtapaDialogoProps> = ({ abierto, editando, codWorkf
   };
 
   return (
-    <Dialog open={abierto} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>{editando ? 'Editar etapa' : 'Nueva etapa'}</DialogTitle>
-      <DialogContent>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          Una etapa agrupa los pasos de una parte de tu proceso. Por ejemplo: "Documentación inicial", "Revisión" o "Aprobación".
-        </Typography>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <TextField label="Nombre de la etapa" placeholder="Ej: Documentación inicial" value={nombreEtapa} onChange={(e) => setNombreEtapa(e.target.value)} fullWidth />
-          <TextField label="Descripción (opcional)" value={descripcionEtapa} onChange={(e) => setDescripcionEtapa(e.target.value)} fullWidth multiline rows={2} />
-        </Box>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose}>Cancelar</Button>
-        <Button variant="contained" onClick={guardar} disabled={guardando}>Guardar</Button>
-      </DialogActions>
-    </Dialog>
+    <NivelDialogoBase
+      nivel="etapa"
+      abierto={abierto}
+      titulo={editando ? 'Editar etapa' : 'Nueva etapa'}
+      descripcionAyuda='Una etapa agrupa los pasos de una parte de tu proceso. Por ejemplo: "Documentación inicial", "Revisión" o "Aprobación".'
+      nombreLabel="Nombre de la etapa"
+      nombrePlaceholder="Ej: Documentación inicial"
+      nombreValor={nombreEtapa}
+      onNombreChange={setNombreEtapa}
+      descripcionValor={descripcionEtapa}
+      onDescripcionChange={setDescripcionEtapa}
+      guardando={guardando}
+      onGuardar={guardar}
+      onClose={onClose}
+    />
   );
 };
 

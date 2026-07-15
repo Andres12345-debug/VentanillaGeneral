@@ -7,6 +7,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { crearMensaje } from '../../../../../app/utilidades/funciones/mensaje';
 import { WorkflowServicio, Campo } from '../../../../../app/servicios/privados/WorkflowServicio';
 import { TipoCampo, TIPO_CAMPO, TIPOS_CON_OPCIONES } from '../../../../../app/utilidades/dominios/tipoCampo';
+import IconoTipoCampo from '../../../../../app/utilidades/dominios/iconoTipoCampo';
 
 interface CampoDialogoProps {
   abierto: boolean;
@@ -116,9 +117,20 @@ const CampoDialogo: React.FC<CampoDialogoProps> = ({ abierto, editando, codFormu
               label="Tipo de campo"
               value={tipoCampo}
               onChange={(e) => setTipoCampo(e.target.value as TipoCampo)}
+              renderValue={(valor) => (
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <IconoTipoCampo tipo={valor as TipoCampo} fontSize="small" sx={{ color: 'text.secondary' }} />
+                  {TIPO_CAMPO[valor as TipoCampo].label}
+                </Box>
+              )}
             >
               {(Object.keys(TIPO_CAMPO) as TipoCampo[]).map((tipo) => (
-                <MenuItem key={tipo} value={tipo}>{TIPO_CAMPO[tipo].label}</MenuItem>
+                <MenuItem key={tipo} value={tipo}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <IconoTipoCampo tipo={tipo} fontSize="small" sx={{ color: 'text.secondary' }} />
+                    {TIPO_CAMPO[tipo].label}
+                  </Box>
+                </MenuItem>
               ))}
             </Select>
           </FormControl>

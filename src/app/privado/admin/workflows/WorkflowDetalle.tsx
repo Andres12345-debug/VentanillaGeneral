@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import {
   Box, Typography, Accordion, AccordionSummary, AccordionDetails,
   Chip, CircularProgress, Button, List, ListItem, ListItemText, ListItemIcon,
-  IconButton, Switch, FormControlLabel, Paper,
+  IconButton, Switch, FormControlLabel, Paper, Stepper, Step, StepButton,
 } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -13,15 +13,15 @@ import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import LinkIcon from '@mui/icons-material/Link';
+import QrCode2Icon from '@mui/icons-material/QrCode2';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import { crearMensaje } from '../../../../app/utilidades/funciones/mensaje';
 import {
   WorkflowServicio, WorkflowDetalle as WorkflowDetalleType, Etapa, Paso, Formulario, Campo,
 } from '../../../../app/servicios/privados/WorkflowServicio';
 import { TIPO_CAMPO } from '../../../../app/utilidades/dominios/tipoCampo';
+import IconoTipoCampo from '../../../../app/utilidades/dominios/iconoTipoCampo';
 import { ESTADO_WORKFLOW } from '../../../../app/utilidades/dominios/estados';
 import { useUsuarioToken } from '../../../../app/utilidades/auth/usuarioToken';
 import TituloPagina from '../../../../compartido/ui/TituloPagina';
@@ -30,6 +30,7 @@ import PasoDialogo from './dialogos/PasoDialogo';
 import FormularioDialogo from './dialogos/FormularioDialogo';
 import CampoDialogo from './dialogos/CampoDialogo';
 import AsignarClientesDialogo from './dialogos/AsignarClientesDialogo';
+import EnlaceQrDialogo from './dialogos/EnlaceQrDialogo';
 
 // Cada diálogo (Etapa/Paso/Formulario/Campo/Asignar clientes) es dueño de su
 // propio formulario y su propia llamada al backend — este componente solo
@@ -89,6 +90,7 @@ const WorkflowDetalle: React.FC = () => {
   const [actualizandoEstado, setActualizandoEstado] = useState(false);
 
   const [dialogoAsignarAbierto, setDialogoAsignarAbierto] = useState(false);
+  const [dialogoQrAbierto, setDialogoQrAbierto] = useState(false);
   const [etapaDialogo, setEtapaDialogo] = useState<EtapaDialogoTarget>(CERRADO);
   const [pasoDialogo, setPasoDialogo] = useState<PasoDialogoTarget>({ ...CERRADO, codEtapa: null });
   const [formularioDialogo, setFormularioDialogo] = useState<FormularioDialogoTarget>({ ...CERRADO, codPaso: null });
@@ -144,11 +146,14 @@ const WorkflowDetalle: React.FC = () => {
     }
   };
 
+  const enlacePublico = workflow?.tokenPublico
+    ? `${window.location.origin}/tramite/${workflow.tokenPublico}`
+    : null;
+
   const copiarEnlacePublico = async () => {
-    if (!workflow?.tokenPublico) return;
-    const enlace = `${window.location.origin}/tramite/${workflow.tokenPublico}`;
+    if (!enlacePublico) return;
     try {
-      await navigator.clipboard.writeText(enlace);
+      await navigator.clipboard.writeText(enlacePublico);
       crearMensaje('success', 'Enlace copiado al portapapeles');
     } catch {
       crearMensaje('error', 'No se pudo copiar el enlace');
@@ -274,14 +279,48 @@ const WorkflowDetalle: React.FC = () => {
     return (formulario?.campos ?? []).reduce((max, c) => Math.max(max, c.ordenCampo), 0) + 1;
   };
 
+  // Cada paso de la guía, además de decir "qué falta", te lleva directo al
+  // diálogo correspondiente (primer elemento pendiente de ese nivel) — deja
+  // de ser una checklist decorativa y pasa a ser la forma más rápida de
+  // seguir armando el workflow.
+  const primeraEtapaSinPasos = etapasOrdenadas.find((e) => (e.pasos ?? []).length === 0) ?? etapasOrdenadas[0];
+  const primerPasoSinFormulario = todosPasos.find((p) => !p.formulario) ?? todosPasos[0];
+  const primerFormularioSinCampos = todosFormularios.find((f) => (f.campos ?? []).length === 0) ?? todosFormularios[0];
+
   const guia = [
-    { etiqueta: 'Agrega al menos una etapa', hecho: etapasOrdenadas.length > 0 },
-    { etiqueta: 'Agrega pasos dentro de tus etapas', hecho: todosPasos.length > 0 },
-    { etiqueta: 'Crea el formulario de cada paso', hecho: todosPasos.length > 0 && todosPasos.every((p) => Boolean(p.formulario)) },
-    { etiqueta: 'Agrega campos a tus formularios', hecho: todosFormularios.length > 0 && todosFormularios.every((f) => (f.campos ?? []).length > 0) },
-    { etiqueta: 'Publica el workflow para poder asignarlo a clientes', hecho: workflow.estadoWorkflow === 'publicado' },
+    {
+      etiqueta: 'Agrega al menos una etapa',
+      hecho: etapasOrdenadas.length > 0,
+      habilitado: true,
+      onClick: () => setEtapaDialogo({ abierto: true, editando: null }),
+    },
+    {
+      etiqueta: 'Agrega pasos dentro de tus etapas',
+      hecho: todosPasos.length > 0,
+      habilitado: Boolean(primeraEtapaSinPasos),
+      onClick: () => primeraEtapaSinPasos && setPasoDialogo({ abierto: true, codEtapa: primeraEtapaSinPasos.codEtapa, editando: null }),
+    },
+    {
+      etiqueta: 'Crea el formulario de cada paso',
+      hecho: todosPasos.length > 0 && todosPasos.every((p) => Boolean(p.formulario)),
+      habilitado: Boolean(primerPasoSinFormulario),
+      onClick: () => primerPasoSinFormulario && setFormularioDialogo({ abierto: true, codPaso: primerPasoSinFormulario.codPaso, editando: null }),
+    },
+    {
+      etiqueta: 'Agrega campos a tus formularios',
+      hecho: todosFormularios.length > 0 && todosFormularios.every((f) => (f.campos ?? []).length > 0),
+      habilitado: Boolean(primerFormularioSinCampos),
+      onClick: () => primerFormularioSinCampos && setCampoDialogo({ abierto: true, codFormulario: primerFormularioSinCampos.codFormulario, editando: null }),
+    },
+    {
+      etiqueta: 'Publica el workflow para poder asignarlo a clientes',
+      hecho: workflow.estadoWorkflow === 'publicado',
+      habilitado: workflow.estadoWorkflow !== 'publicado' && !actualizandoEstado,
+      onClick: () => handleCambiarEstado(true),
+    },
   ];
   const workflowIncompleto = guia.some((item) => !item.hecho);
+  const pasoActivoGuia = guia.findIndex((item) => !item.hecho);
 
   return (
     <Box sx={{ p: 4 }}>
@@ -315,10 +354,15 @@ const WorkflowDetalle: React.FC = () => {
               }
               label="Público (enlace sin asignación previa)"
             />
-            {workflow.esPublico && workflow.tokenPublico && (
-              <Button size="small" startIcon={<LinkIcon />} onClick={copiarEnlacePublico}>
-                Copiar enlace
-              </Button>
+            {workflow.esPublico && enlacePublico && (
+              <>
+                <Button size="small" startIcon={<LinkIcon />} onClick={copiarEnlacePublico}>
+                  Copiar enlace
+                </Button>
+                <Button size="small" startIcon={<QrCode2Icon />} onClick={() => setDialogoQrAbierto(true)}>
+                  Ver QR
+                </Button>
+              </>
             )}
           </Box>
         </Box>
@@ -342,22 +386,16 @@ const WorkflowDetalle: React.FC = () => {
             bgcolor: (theme) => alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.08 : 0.06),
           }}
         >
-          <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1 }}>Guía rápida para armar tu workflow</Typography>
-          <List dense disablePadding>
+          <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 2 }}>Guía rápida para armar tu workflow</Typography>
+          <Stepper nonLinear activeStep={pasoActivoGuia} orientation="vertical">
             {guia.map((item) => (
-              <ListItem key={item.etiqueta} disableGutters sx={{ py: 0.25 }}>
-                <ListItemIcon sx={{ minWidth: 32 }}>
-                  {item.hecho
-                    ? <CheckCircleIcon fontSize="small" color="success" />
-                    : <RadioButtonUncheckedIcon fontSize="small" color="disabled" />}
-                </ListItemIcon>
-                <ListItemText
-                  primary={item.etiqueta}
-                  slotProps={{ primary: { variant: 'body2', sx: { fontWeight: item.hecho ? 400 : 600 } } }}
-                />
-              </ListItem>
+              <Step key={item.etiqueta} completed={item.hecho}>
+                <StepButton onClick={item.onClick} disabled={!item.habilitado && !item.hecho}>
+                  <Typography variant="body2" sx={{ fontWeight: item.hecho ? 400 : 600 }}>{item.etiqueta}</Typography>
+                </StepButton>
+              </Step>
             ))}
-          </List>
+          </Stepper>
         </Paper>
       )}
 
@@ -466,6 +504,9 @@ const WorkflowDetalle: React.FC = () => {
                                       </Box>
                                     }
                                   >
+                                    <ListItemIcon sx={{ minWidth: 36 }}>
+                                      <IconoTipoCampo tipo={campo.tipoCampo} fontSize="small" sx={{ color: 'text.secondary' }} />
+                                    </ListItemIcon>
                                     <ListItemText
                                       primary={`${campo.etiquetaCampo}${campo.requeridoCampo ? ' *' : ''}`}
                                       secondary={TIPO_CAMPO[campo.tipoCampo]?.label ?? campo.tipoCampo}
@@ -499,6 +540,15 @@ const WorkflowDetalle: React.FC = () => {
         onClose={() => setDialogoAsignarAbierto(false)}
         onAsignado={() => {}}
       />
+
+      {enlacePublico && (
+        <EnlaceQrDialogo
+          abierto={dialogoQrAbierto}
+          enlace={enlacePublico}
+          nombreWorkflow={workflow.nombreWorkflow}
+          onClose={() => setDialogoQrAbierto(false)}
+        />
+      )}
 
       <EtapaDialogo
         abierto={etapaDialogo.abierto}

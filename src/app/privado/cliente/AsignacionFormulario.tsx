@@ -7,8 +7,7 @@ import {
 } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import {
-  ShortTextRounded, NotesRounded, NumbersRounded, CalendarTodayRounded,
-  ToggleOnRounded, RadioButtonCheckedRounded, PlaylistAddCheckRounded,
+  RadioButtonCheckedRounded, PlaylistAddCheckRounded,
   UploadFileRounded, DownloadRounded, VisibilityRounded,
 } from '@mui/icons-material';
 import { crearMensaje } from '../../../app/utilidades/funciones/mensaje';
@@ -17,6 +16,7 @@ import {
 } from '../../../app/servicios/privados/AsignacionServicio';
 import { Campo } from '../../../app/servicios/privados/WorkflowServicio';
 import { DocumentoValor, esDocumentoValor, descargarArchivo, previsualizarArchivo } from '../../../app/utilidades/dominios/documentos';
+import IconoTipoCampo from '../../../app/utilidades/dominios/iconoTipoCampo';
 import Tarjeta from '../../../compartido/ui/Tarjeta';
 import TituloPagina from '../../../compartido/ui/TituloPagina';
 import VisorDocumentoDialog from '../../../compartido/ui/VisorDocumentoDialog';
@@ -297,18 +297,9 @@ interface CampoDinamicoProps {
 }
 
 /** Ícono por tipo de campo: da una pista visual inmediata de qué tipo de dato se espera. */
-const IconoCampo: React.FC<{ tipo: Campo['tipoCampo'] }> = ({ tipo }) => {
-  const props = { fontSize: 'small' as const, sx: { color: 'text.disabled' } };
-  switch (tipo) {
-    case 'area_texto': return <NotesRounded {...props} />;
-    case 'numero': return <NumbersRounded {...props} />;
-    case 'fecha': return <CalendarTodayRounded {...props} />;
-    case 'booleano': return <ToggleOnRounded {...props} />;
-    case 'documento': return <UploadFileRounded {...props} />;
-    case 'texto':
-    default: return <ShortTextRounded {...props} />;
-  }
-};
+const IconoCampo: React.FC<{ tipo: Campo['tipoCampo'] }> = ({ tipo }) => (
+  <IconoTipoCampo tipo={tipo} fontSize="small" sx={{ color: 'text.disabled' }} />
+);
 
 interface CampoDocumentoProps {
   campo: Campo;
