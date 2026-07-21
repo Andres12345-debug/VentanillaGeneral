@@ -24,6 +24,7 @@ const AsignacionesLista: React.FC = () => {
   const [asignacionActiva, setAsignacionActiva] = useState<AsignacionResumen | null>(null);
   const [motivoRechazo, setMotivoRechazo] = useState('');
   const [procesando, setProcesando] = useState(false);
+  const [exportando, setExportando] = useState(false);
 
   const cargar = useCallback(async () => {
     setCargando(true);
@@ -75,6 +76,27 @@ const AsignacionesLista: React.FC = () => {
     }
   };
 
+  const handleExportar = async () => {
+    if (!workflowId) return;
+    setExportando(true);
+    try {
+      const estado = filtroEstado === TODOS ? undefined : (filtroEstado as AsignacionResumen['estadoAsignacion']);
+      const blob = await AsignacionServicio.exportarExcel(Number(workflowId), estado);
+      const url = URL.createObjectURL(blob);
+      const enlace = document.createElement('a');
+      enlace.href = url;
+      enlace.download = `respuestas-workflow-${workflowId}.xlsx`;
+      document.body.appendChild(enlace);
+      enlace.click();
+      enlace.remove();
+      URL.revokeObjectURL(url);
+    } catch (error: unknown) {
+      crearMensaje('error', error instanceof Error ? error.message : 'Error al exportar a Excel');
+    } finally {
+      setExportando(false);
+    }
+  };
+
   const columnas: ColumnaTabla<AsignacionResumen>[] = [
     { id: 'id', etiqueta: 'ID', render: (a) => a.codAsignacion },
     { id: 'cliente', etiqueta: 'Cliente', render: (a) => a.nombreCliente },
@@ -108,15 +130,22 @@ const AsignacionesLista: React.FC = () => {
         <TituloPagina>
           Asignaciones {workflowId ? `— Workflow #${workflowId}` : ''}
         </TituloPagina>
-        <FormControl size="small" sx={{ minWidth: 160 }}>
-          <InputLabel>Filtrar por estado</InputLabel>
-          <Select value={filtroEstado} label="Filtrar por estado" onChange={(e) => setFiltroEstado(e.target.value)}>
-            <MenuItem value={TODOS}>Todos</MenuItem>
-            {(Object.keys(ESTADO_ASIGNACION) as Array<keyof typeof ESTADO_ASIGNACION>).map((k) => (
-              <MenuItem key={k} value={k}>{ESTADO_ASIGNACION[k].label}</MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+          <FormControl size="small" sx={{ minWidth: 160 }}>
+            <InputLabel>Filtrar por estado</InputLabel>
+            <Select value={filtroEstado} label="Filtrar por estado" onChange={(e) => setFiltroEstado(e.target.value)}>
+              <MenuItem value={TODOS}>Todos</MenuItem>
+              {(Object.keys(ESTADO_ASIGNACION) as Array<keyof typeof ESTADO_ASIGNACION>).map((k) => (
+                <MenuItem key={k} value={k}>{ESTADO_ASIGNACION[k].label}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          {workflowId && (
+            <Button variant="outlined" disabled={exportando} onClick={handleExportar}>
+              {exportando ? 'Exportando...' : 'Exportar a Excel'}
+            </Button>
+          )}
+        </Box>
       </Box>
 
       <TablaDatos

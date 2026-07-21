@@ -116,6 +116,13 @@ export const AsignacionServicio = {
     return ApiServicio.get<AsignacionResumen[]>(url);
   },
 
+  exportarExcel(codWorkflow: number, estado?: EstadoAsignacion): Promise<Blob> {
+    const url = estado
+      ? `${URLS.ASIGNACIONES_EXPORTAR(codWorkflow)}?estado=${estado}`
+      : URLS.ASIGNACIONES_EXPORTAR(codWorkflow);
+    return ApiServicio.getBlob(url);
+  },
+
   miAsignaciones(): Promise<AsignacionResumen[]> {
     return ApiServicio.get<AsignacionResumen[]>(URLS.MIS_ASIGNACIONES);
   },

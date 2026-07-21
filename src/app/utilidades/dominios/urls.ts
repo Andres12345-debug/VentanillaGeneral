@@ -59,6 +59,7 @@ export const URLS = {
   // ─── Asignaciones (admin) ───────────────────────────────────────────────
   ASIGNACIONES: `${URL_BASE}/asignaciones`,
   ASIGNACIONES_POR_WORKFLOW: (workflowId: number) => `${URL_BASE}/workflows/${workflowId}/asignaciones`,
+  ASIGNACIONES_EXPORTAR: (workflowId: number) => `${URL_BASE}/workflows/${workflowId}/asignaciones/exportar`,
   ASIGNACION_POR_ID: (id: number) => `${URL_BASE}/asignaciones/${id}`,
   ASIGNACION_REVISOR: (id: number) => `${URL_BASE}/asignaciones/${id}/revisor`,
   ASIGNACION_APROBAR: (id: number) => `${URL_BASE}/asignaciones/${id}/aprobar`,
